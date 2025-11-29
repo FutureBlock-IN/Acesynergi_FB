@@ -1,0 +1,870 @@
+================================================================================
+                    ACESYNERGI LEARNING PLATFORM
+                      DEVELOPER HANDOVER DOCUMENTATION
+================================================================================
+
+Project Handover Date: November 3, 2025
+Project Owner: Emmanuel (emmanuel012k@gmail.com)
+Trainer/Consultant: Sai Ram
+Platform Purpose: Professional EdTech learning platform for IT certifications
+                  and corporate training programs
+
+================================================================================
+SECTION 1: PROJECT OVERVIEW
+================================================================================
+
+Project Name: AceSynergi Learning Platform
+Website: Professional EdTech platform for IT certification courses
+
+Purpose:
+- Provide online IT certification training courses
+- Offer corporate training programs
+- Enable professional consultation bookings
+- Facilitate course enrollment and scheduling
+
+Target Audience:
+- IT professionals seeking certifications (PMP, ITIL, Agile, Six Sigma, etc.)
+- Companies requiring corporate training programs
+- Individuals looking for expert IT consultation
+
+Key Features:
+- Course catalog with detailed course information
+- Training schedule with enrollment system
+- Shopping cart with quantity management and pricing
+- Contact form for general inquiries
+- Corporate training inquiry form
+- Expert consultation booking (Calendly integration)
+- Responsive design (mobile, tablet, desktop)
+- Email notifications for form submissions
+
+================================================================================
+SECTION 2: TECHNOLOGY STACK
+================================================================================
+
+FRONTEND:
+- Framework: React 18
+- Routing: Wouter
+- Styling: Tailwind CSS 3
+- UI Components: shadcn/ui (Radix UI primitives)
+- State Management: React Context API (Cart), TanStack Query
+- Animations: Framer Motion
+- TypeScript: Yes (fully typed)
+- Build Tool: Vite
+
+BACKEND:
+- Runtime: Node.js
+- Framework: Express.js
+- Language: TypeScript
+- Email Service: Nodemailer
+
+KEY LIBRARIES & PACKAGES:
+- @tanstack/react-query (v5) - Data fetching and caching
+- wouter - Lightweight routing
+- framer-motion - Animations
+- lucide-react - Icons
+- react-hook-form - Form handling
+- @hookform/resolvers/zod - Form validation
+- zod - Schema validation
+- nodemailer - Email sending
+- shadcn/ui components:
+  * Button, Card, Badge, Avatar, Input, Textarea
+  * Dialog, Dropdown, Toast, Tooltip
+  * Accordion, Tabs, Select
+
+INTEGRATIONS:
+- Calendly: https://calendly.com/emmanuelg7 (for consultation booking)
+- Email: emmanuel012k@gmail.com (admin notifications)
+
+================================================================================
+SECTION 3: FILE STRUCTURE
+================================================================================
+
+acesynergi-platform/
+├── client/                          # Frontend application
+│   └── src/
+│       ├── components/              # Reusable React components
+│       │   ├── Header.tsx           # Navigation header with mobile menu
+│       │   ├── Footer.tsx           # Dark navy footer
+│       │   ├── HeroSection.tsx      # Homepage hero banner
+│       │   ├── AboutSection.tsx     # About company section
+│       │   ├── CategoriesCarousel.tsx  # Course categories carousel
+│       │   ├── FeaturedCourses.tsx  # Course carousel
+│       │   ├── TestimonialsCarousel.tsx # 3-card testimonials grid
+│       │   ├── CTASection.tsx       # Call-to-action section
+│       │   └── ui/                  # shadcn UI components
+│       │       ├── button.tsx
+│       │       ├── card.tsx
+│       │       ├── badge.tsx
+│       │       ├── avatar.tsx
+│       │       └── ... (other shadcn components)
+│       ├── pages/                   # Page components
+│       │   ├── Home.tsx             # Homepage
+│       │   ├── Courses.tsx          # Course listing page
+│       │   ├── CourseDetails.tsx    # Individual course page
+│       │   ├── Schedule.tsx         # Training schedule/calendar
+│       │   ├── Cart.tsx             # Shopping cart
+│       │   ├── Contact.tsx          # Contact form
+│       │   ├── Corporate.tsx        # Corporate training inquiry
+│       │   ├── BookConsultation.tsx # NEW - Consultation booking page
+│       │   └── not-found.tsx        # 404 page
+│       ├── lib/                     # Utilities and context
+│       │   ├── cartContext.tsx      # Shopping cart state management
+│       │   └── queryClient.ts       # TanStack Query configuration
+│       ├── App.tsx                  # Main app component with routing
+│       ├── index.css                # Global styles & Tailwind config
+│       └── main.tsx                 # App entry point
+│
+├── server/                          # Backend application
+│   ├── routes.ts                    # API routes (email endpoints)
+│   ├── storage.ts                   # Data storage interface
+│   ├── index.ts                     # Server entry point
+│   └── vite.ts                      # Vite dev server configuration
+│
+├── attached_assets/                 # Static assets
+│   ├── generated_images/            # AI-generated images
+│   └── stock_images/                # Stock photos
+│
+├── shared/                          # Shared TypeScript types
+│   └── schema.ts                    # Data schemas
+│
+├── package.json                     # Dependencies
+├── tsconfig.json                    # TypeScript configuration
+├── tailwind.config.ts               # Tailwind CSS configuration
+├── vite.config.ts                   # Vite build configuration
+├── design_guidelines.md             # Design system documentation
+├── replit.md                        # Project notes and memory
+└── DEVELOPER_HANDOVER.txt           # This file
+
+================================================================================
+SECTION 4: PAGE DESCRIPTIONS
+================================================================================
+
+1. HOMEPAGE (/)
+   - Hero banner with gradient background and CTA buttons
+   - About section with company introduction
+   - Categories carousel (Web Dev, Data Science, Marketing, UI/UX)
+   - Featured courses carousel (3 cards at a time)
+   - Testimonials section (3-card grid layout)
+   - Call-to-action section
+   - Footer with contact information
+
+2. COURSES PAGE (/courses)
+   - Hero banner with gradient
+   - Course grid (4 columns desktop, 2 tablet, 1 mobile)
+   - Professional course cards with:
+     * Course image with gradient overlay
+     * Category badge
+     * Course code in corner
+     * Arrow icon for navigation
+   - Courses: PMP, PMI-ACP, PRINCE2, Lean Six Sigma, Agile Scrum, etc.
+
+3. COURSE DETAILS PAGE (/courses/:id)
+   - Hero banner with course title
+   - Two-column layout (content + sidebar)
+   - Main content:
+     * Tabs: Overview, Curriculum, FAQs
+     * Expandable curriculum modules
+     * Expandable FAQ accordions
+   - Sidebar:
+     * Core Features card
+     * Next Cohort card with enrollment
+     * Both cards use shadows (no borders)
+
+4. SCHEDULE PAGE (/schedule)
+   - Training schedule calendar
+   - Filter tabs (All, Project Management, Agile, Quality, etc.)
+   - Schedule cards with:
+     * Course information
+     * Date, time, duration
+     * Quantity selector
+     * Price (₹ INR)
+     * Add to cart button
+     * Expandable details section
+   - Responsive grid layout
+
+5. CART PAGE (/cart)
+   - Shopping cart with items
+   - Cart items:
+     * Course image and details
+     * Quantity controls
+     * Individual pricing
+     * Remove button
+   - Order summary sidebar:
+     * Subtotal
+     * Discount (coupon code)
+     * SGST/CGST (9% each)
+     * Total
+     * Coupon code input
+     * Checkout button
+   - Empty cart state
+   - Responsive (sidebar below items on mobile)
+
+6. CONTACT PAGE (/contact)
+   - Hero banner
+   - Two-column layout (form + contact info)
+   - Contact form:
+     * Name, Email, Phone, Subject, Message
+     * Submit sends email to emmanuel012k@gmail.com
+     * Success/error messages
+   - Contact information:
+     * AceSynergi LLC (USA)
+     * AceSynergi Pvt Ltd (India)
+     * Addresses, phone numbers, email
+
+7. CORPORATE PAGE (/corporate)
+   - Hero banner
+   - Two-column layout (content + form)
+   - Left: Corporate training information
+   - Right: Application form
+     * Name, Email, Phone, Comment
+     * Submit sends email to emmanuel012k@gmail.com
+     * Success/error messages
+
+8. BOOK CONSULTATION PAGE (/book-consultation) **NEW**
+   - Hero banner
+   - Two-column layout (profile + calendar)
+   - Left: Trainer profile
+     * Avatar (Sai Ram - SR initials)
+     * Name and title
+     * Statistics (600+ students, 50+ corporate sessions, 15+ years, 4.9★)
+     * About section
+     * Areas of expertise (PMP, ITIL, Six Sigma, Cloud, Data Analytics, etc.)
+     * Consultation details ($223/hr, 24hr response, Video/Phone)
+   - Right: Calendly integration
+     * Embedded iframe: https://calendly.com/emmanuelg7
+     * Booking interface
+   - Responsive (stacks vertically on mobile)
+
+================================================================================
+SECTION 5: KEY FUNCTIONALITIES
+================================================================================
+
+1. NAVIGATION
+   - Header with logo and navigation links
+   - Responsive hamburger menu on mobile/tablet
+   - Sticky header with scroll effect
+   - Links: Courses, Corporate, Contact Us, Book a Consultation
+
+2. COURSE BROWSING
+   - Course grid with filtering
+   - Course cards with hover effects
+   - Category badges
+   - Click to view course details
+
+3. COURSE DETAILS
+   - Tabbed interface (Overview, Curriculum, FAQs)
+   - Expandable accordion sections
+   - Sidebar with course features
+   - Enrollment form
+
+4. SHOPPING CART
+   - Add courses to cart from schedule
+   - Quantity management (increase/decrease)
+   - Price calculation (base price × quantity)
+   - Subtotal, tax (SGST/CGST 9% each), total
+   - Coupon code application (10% discount with "SAVE10")
+   - Remove items from cart
+   - Cart state persisted via React Context
+
+5. EMAIL NOTIFICATIONS
+   - Contact form → sends email to emmanuel012k@gmail.com
+   - Corporate form → sends email to emmanuel012k@gmail.com
+   - Email includes:
+     * User information (name, email, phone)
+     * Message/comment
+     * Timestamp
+   - HTML-formatted emails with branding
+   - Success/error messages to user
+   - Loading states during submission
+
+6. CALENDLY INTEGRATION
+   - Embedded Calendly iframe for consultation booking
+   - URL: https://calendly.com/emmanuelg7
+   - Responsive iframe
+   - Note about booking confirmation
+
+7. RESPONSIVE DESIGN
+   - Mobile: 320px - 767px (single column layouts)
+   - Tablet: 768px - 1023px (2-column grids)
+   - Desktop: 1024px+ (3-4 column grids)
+   - Hamburger menu on mobile
+   - Stacked layouts on smaller screens
+   - Touch-friendly buttons (minimum 44px)
+   - Scaled fonts and spacing
+
+8. ANIMATIONS
+   - Framer Motion animations
+   - Fade-in on scroll (viewport once)
+   - Hover effects (elevate, scale)
+   - Accordion expand/collapse
+   - Carousel transitions
+   - Modal/drawer animations
+
+9. STATE MANAGEMENT
+   - Cart state: React Context (CartProvider)
+   - Form state: React Hook Form
+   - Server state: TanStack Query
+   - Local state: useState hooks
+
+================================================================================
+SECTION 6: COLOR SCHEME & DESIGN SYSTEM
+================================================================================
+
+COLORS:
+- Primary: Deep Blue (#1E40AF) - Main brand color
+- Secondary: Cyan (#06B6D4) - Accent color, links, highlights
+- Accent: Amber (#F59E0B) - Badges, ratings, special highlights
+- Background: White (#FFFFFF)
+- Muted Background: Light Blue-Gray (#F8FAFC)
+- Footer: Dark Navy (#0F172A)
+- Text: 
+  * Primary: Dark Gray (#1F2937)
+  * Secondary: Medium Gray (#4B5563)
+  * Muted: Light Gray (#6B7280)
+- Borders: Light Gray (#E5E7EB) - Only for dividers/separators
+- Success: Green (for discount, positive states)
+- Error: Red (for errors, validation)
+
+DESIGN PRINCIPLES:
+- NO BLACK BORDERS anywhere - use shadows only for depth
+- White card surfaces with subtle shadows
+- Minimal animations (subtle, professional)
+- Professional corporate aesthetic (Coursera/Udemy/LinkedIn Learning style)
+- Consistent spacing and padding
+- Clean, modern, professional look
+
+SHADOWS:
+- Card shadows: shadow-[0_2px_12px_rgba(0,0,0,0.1)]
+- Module/FAQ cards: shadow-[0_2px_8px_rgba(0,0,0,0.08)]
+- Hover: shadow-[0_4px_16px_rgba(0,0,0,0.15)]
+- Button: shadow-lg
+
+BORDERS:
+- Light gray (border-gray-200) ONLY for:
+  * Dividers between sections
+  * Top/bottom borders in accordions
+  * Separator lines
+- NEVER for card borders or major elements
+
+================================================================================
+SECTION 7: TYPOGRAPHY
+================================================================================
+
+Font Family: Inter, Poppins (system fallback: sans-serif)
+
+Heading Sizes:
+- H1: text-4xl md:text-5xl lg:text-6xl (36-60px) - Hero titles
+- H2: text-3xl md:text-4xl lg:text-5xl (30-48px) - Section titles
+- H3: text-2xl md:text-3xl (24-30px) - Card titles, subsections
+- H4: text-xl md:text-2xl (20-24px) - Smaller headings
+
+Body Text:
+- Base: text-base (16px)
+- Small: text-sm (14px)
+- Tiny: text-xs (12px)
+- Large: text-lg (18px)
+
+Font Weights:
+- Bold: font-bold (700)
+- Semi-bold: font-semibold (600)
+- Medium: font-medium (500)
+- Regular: font-normal (400)
+
+Line Heights:
+- Tight: leading-tight
+- Normal: leading-normal
+- Relaxed: leading-relaxed
+
+Mobile Typography:
+- H1: Reduce by 10-20% (text-3xl md:text-5xl)
+- H2: Reduce by 10-20% (text-2xl md:text-4xl)
+- Body: Keep at 16px (text-base)
+- Small: Keep at 14px (text-sm)
+
+================================================================================
+SECTION 8: RESPONSIVE BREAKPOINTS
+================================================================================
+
+TAILWIND BREAKPOINTS:
+- sm: 640px
+- md: 768px
+- lg: 1024px
+- xl: 1280px
+- 2xl: 1536px
+
+PROJECT BREAKPOINTS:
+- Mobile: 320px - 767px
+- Tablet: 768px - 1023px
+- Desktop: 1024px+
+
+RESPONSIVE PATTERNS:
+
+Grid Layouts:
+- 4-column desktop → 2-column tablet → 1-column mobile
+  grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
+
+- 3-column desktop → 2-column tablet → 1-column mobile
+  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+
+Two-Column Layout:
+- Side-by-side desktop → stacked mobile
+  grid lg:grid-cols-2 gap-8
+
+Flex Direction:
+- Horizontal desktop → vertical mobile
+  flex flex-col sm:flex-row
+
+Text Sizes:
+- text-4xl md:text-5xl lg:text-6xl (progressive scaling)
+
+Spacing:
+- Desktop: py-20 (80px)
+- Tablet/Mobile: py-12 or py-16 (48-64px)
+- px-6 (24px horizontal padding on all screens)
+
+Touch Targets:
+- Minimum 44px height for buttons on mobile
+- h-12 (48px) for primary buttons
+- Adequate spacing between clickable elements
+
+================================================================================
+SECTION 9: THIRD-PARTY INTEGRATIONS
+================================================================================
+
+1. CALENDLY
+   - URL: https://calendly.com/emmanuelg7
+   - Implementation: Embedded iframe in BookConsultation page
+   - Purpose: Schedule expert consultation appointments
+   - Trainer: Sai Ram
+   - Rate: $223/hour
+   - Response time: Usually within 24 hours
+   - Consultation type: Video or Phone
+
+2. EMAIL SERVICE
+   - Recipient: emmanuel012k@gmail.com (admin)
+   - Implementation: Nodemailer (backend)
+   - Forms: Contact Us, Corporate Training
+   - Email format: HTML with branding
+   - Includes: Name, Email, Phone, Message, Timestamp
+
+3. ENVIRONMENT VARIABLES (Optional)
+   - EMAIL_SERVICE: Email service provider (e.g., Gmail, SendGrid)
+   - EMAIL_USER: Sender email address
+   - EMAIL_PASS: Email password or app password
+   - If not set: Falls back to console logging (development mode)
+
+================================================================================
+SECTION 10: DATA & PRICING
+================================================================================
+
+CURRENCY:
+- All prices in Indian Rupees (₹ INR)
+- Example: ₹10,999 for PMP Certification
+
+PRICING STRUCTURE:
+- Base price per course
+- Quantity multiplier (price × quantity)
+- Discount: 10% with coupon code "SAVE10"
+- Taxes:
+  * SGST: 9%
+  * CGST: 9%
+  * Total tax: 18%
+
+CALCULATION:
+1. Subtotal = (Course Price × Quantity) for all cart items
+2. Discount = Subtotal × 10% (if coupon applied)
+3. After Discount = Subtotal - Discount
+4. SGST = After Discount × 9%
+5. CGST = After Discount × 9%
+6. Total = After Discount + SGST + CGST
+
+COURSES:
+- PMP Certification Training
+- PMI-ACP Certification Training
+- PRINCE2 Foundation & Practitioner
+- PRINCE2 Agile Foundation & Practitioner
+- Lean Six Sigma Green Belt
+- Lean Six Sigma Black Belt
+- Agile Scrum Master Training
+- Agile Scrum Methodology & Practice
+
+CATEGORIES:
+- Project Management
+- Agile & PMI
+- Quality Management
+- Agile & Scrum
+
+================================================================================
+SECTION 11: SETUP INSTRUCTIONS
+================================================================================
+
+1. CLONE/DOWNLOAD PROJECT
+   git clone [repository-url]
+   cd acesynergi-platform
+
+2. INSTALL DEPENDENCIES
+   npm install
+
+3. CONFIGURE EMAIL SERVICE (Optional)
+   Create .env file (or use Replit Secrets):
+   
+   EMAIL_SERVICE=gmail
+   EMAIL_USER=your-email@gmail.com
+   EMAIL_PASS=your-app-password
+   
+   Note: If not configured, emails will be logged to console instead
+
+4. RUN LOCALLY
+   npm run dev
+   
+   Server will start on:
+   - Frontend: http://localhost:5000
+   - Backend API: http://localhost:5000/api
+
+5. BUILD FOR PRODUCTION
+   npm run build
+   
+   Generates optimized production build in dist/ folder
+
+6. DEPLOY
+   - Platform: Replit (configured)
+   - Auto-deploy on push
+   - Environment: Node.js
+   - Port: 5000 (frontend and backend on same port)
+
+================================================================================
+SECTION 12: ENVIRONMENT VARIABLES
+================================================================================
+
+REQUIRED:
+- SESSION_SECRET: Session encryption key (already configured)
+
+OPTIONAL (Email Configuration):
+- EMAIL_SERVICE: Email service provider (gmail, outlook, sendgrid, etc.)
+- EMAIL_USER: Sender email address
+- EMAIL_PASS: Email password or app-specific password
+
+HOW TO GET EMAIL CREDENTIALS:
+1. Gmail App Password:
+   - Enable 2FA on Google account
+   - Go to https://myaccount.google.com/apppasswords
+   - Generate app password for "Mail"
+   - Use this password in EMAIL_PASS
+
+2. SendGrid:
+   - Sign up at https://sendgrid.com
+   - Create API key
+   - Use "sendgrid" as EMAIL_SERVICE
+   - Use API key as EMAIL_PASS
+
+3. Other Services:
+   - Configure based on provider documentation
+   - Nodemailer supports most SMTP services
+
+================================================================================
+SECTION 13: API ENDPOINTS
+================================================================================
+
+POST /api/contact
+- Description: Submit contact form
+- Body: { name, email, phone, subject, message }
+- Response: { success: true, message: "..." }
+- Sends email to: emmanuel012k@gmail.com
+- Email subject: "New Contact Form Submission - [Name]"
+
+POST /api/corporate
+- Description: Submit corporate training inquiry
+- Body: { name, email, phone, comment }
+- Response: { success: true, message: "..." }
+- Sends email to: emmanuel012k@gmail.com
+- Email subject: "New Corporate Training Inquiry - [Name]"
+
+================================================================================
+SECTION 14: KNOWN ISSUES / TODO
+================================================================================
+
+COMPLETED FEATURES:
+✅ All pages created and functional
+✅ Responsive design implemented
+✅ Email functionality working
+✅ Calendly integration complete
+✅ Shopping cart functionality
+✅ Design system implemented (no black borders)
+✅ Navigation with mobile menu
+✅ All forms validated
+✅ Success/error messages
+✅ Loading states
+
+FUTURE ENHANCEMENTS:
+- Payment gateway integration (Stripe/Razorpay)
+- User authentication and accounts
+- Course progress tracking
+- Certificate generation
+- Live chat support
+- Blog/articles section
+- Course reviews and ratings (currently hardcoded)
+- Admin dashboard for course management
+- Database for persistent cart storage
+- Order history
+- Email template customization
+- Newsletter subscription
+- Social media integration
+- Multi-language support
+- Dark mode toggle
+- Accessibility improvements (WCAG 2.1)
+
+OPTIMIZATION OPPORTUNITIES:
+- Image optimization (WebP format, lazy loading)
+- Code splitting for better performance
+- Service worker for offline capability
+- SEO meta tags and structured data
+- Analytics integration (Google Analytics, Hotjar)
+- A/B testing setup
+- Performance monitoring
+- Error tracking (Sentry)
+
+================================================================================
+SECTION 15: IMPORTANT NOTES
+================================================================================
+
+CRITICAL INFORMATION:
+1. All form submissions send to: emmanuel012k@gmail.com
+2. Consultation bookings via Calendly: https://calendly.com/emmanuelg7
+3. Trainer name: Sai Ram (senior IT consultant)
+4. Currency: Indian Rupees (₹)
+5. Default quantity: 1 (price multiplies with quantity)
+6. Coupon code: "SAVE10" for 10% discount
+7. Tax: SGST + CGST = 18% total
+
+DESIGN REQUIREMENTS:
+- NO black borders anywhere (use shadows only)
+- Professional corporate aesthetic
+- Deep Blue + Cyan + Amber color scheme
+- White cards with shadows
+- Minimal animations
+- Mobile-first responsive
+
+AUTHENTICATION:
+- NOT currently implemented
+- No user login/registration
+- All users are guests
+- Cart state lost on page refresh (uses Context, not persisted)
+- Future: Add authentication and database persistence
+
+PAYMENT:
+- NOT currently implemented
+- "Proceed to Checkout" button is placeholder
+- Future: Integrate payment gateway
+- Recommended: Razorpay (for India) or Stripe
+
+EMAIL CONFIGURATION:
+- Works without configuration (logs to console)
+- For production: Configure EMAIL_SERVICE, EMAIL_USER, EMAIL_PASS
+- Uses Nodemailer with SMTP
+- Fallback: Console logging if not configured
+
+================================================================================
+SECTION 16: MAINTENANCE & UPDATES
+================================================================================
+
+HOW TO ADD NEW COURSES:
+1. Open client/src/pages/Courses.tsx
+2. Add course object to courses array:
+   {
+     id: "unique-id",
+     code: "COURSE CODE",
+     title: "Full Course Title",
+     image: importedImage,
+     category: "Category Name"
+   }
+3. Add course image to attached_assets/stock_images/
+4. Import image at top of file
+5. Create course details in CourseDetails.tsx or make dynamic
+
+HOW TO UPDATE TRAINER PROFILE:
+1. Open client/src/pages/BookConsultation.tsx
+2. Update name, title, bio in component
+3. Update stats array (students, sessions, experience, rating)
+4. Update expertiseAreas array
+5. Update consultation rate and details
+6. Replace avatar image if needed
+
+HOW TO MODIFY EMAIL TEMPLATES:
+1. Open server/routes.ts
+2. Find /api/contact or /api/corporate endpoint
+3. Modify mailOptions.html content
+4. Update branding colors (#1E40AF, #06B6D4)
+5. Test with sample submission
+
+HOW TO UPDATE PRICING:
+1. Course prices: Update in CourseDetails.tsx or Schedule.tsx
+2. Tax rates: Modify in Cart.tsx (currently SGST/CGST 9% each)
+3. Discount: Modify in Cart.tsx (currently 10% with "SAVE10")
+4. Consultation rate: Update in BookConsultation.tsx (currently $223/hr)
+
+HOW TO UPDATE CONTACT INFORMATION:
+1. Open client/src/pages/Contact.tsx
+2. Update addresses, phone numbers, email
+3. Update for both AceSynergi LLC and AceSynergi Pvt Ltd
+
+HOW TO MODIFY NAVIGATION:
+1. Open client/src/components/Header.tsx
+2. Update navLinks array
+3. Add/remove links as needed
+4. Update routing in client/src/App.tsx
+
+================================================================================
+SECTION 17: TESTING & QUALITY ASSURANCE
+================================================================================
+
+MANUAL TESTING CHECKLIST:
+□ Homepage loads correctly
+□ All navigation links work
+□ Mobile menu opens/closes
+□ Course cards clickable
+□ Course details page displays correctly
+□ Tabs switch (Overview, Curriculum, FAQs)
+□ Accordions expand/collapse
+□ Schedule page displays training sessions
+□ Add to cart functionality works
+□ Cart quantity controls work
+□ Cart calculations correct (subtotal, tax, total)
+□ Coupon code applies discount
+□ Remove from cart works
+□ Empty cart message displays
+□ Contact form submits (check email/logs)
+□ Corporate form submits (check email/logs)
+□ Calendly iframe loads
+□ Responsive design works on mobile
+□ Responsive design works on tablet
+□ All images load correctly
+□ No console errors
+□ Animations work smoothly
+□ Loading states display
+□ Success/error messages show
+
+RESPONSIVE TESTING:
+- Test on iPhone (375px width)
+- Test on iPad (768px width)
+- Test on Desktop (1920px width)
+- Check hamburger menu on mobile
+- Verify stacked layouts on mobile
+- Check touch targets (minimum 44px)
+
+BROWSER COMPATIBILITY:
+- Chrome (recommended)
+- Firefox
+- Safari
+- Edge
+- Mobile Safari (iOS)
+- Chrome Mobile (Android)
+
+================================================================================
+SECTION 18: CONTACT INFORMATION
+================================================================================
+
+PROJECT CONTACTS:
+- Admin Email: emmanuel012k@gmail.com
+- Trainer: Sai Ram (IT Consultant)
+- Calendly: https://calendly.com/emmanuelg7
+
+COMPANY INFORMATION:
+- AceSynergi LLC
+  39899, Balentine Drive Suite 200
+  Newark, CA 94560
+  United States
+
+- AceSynergi Pvt Ltd
+  403, 4th 6th Floor, JP Homes Apartment
+  Govind Reddy Layout Ameerpet
+  Hyderabad, TG 500045
+  India
+
+  Email: reachus@acesynergi.com
+  Phone (USA): +1-408-444-7579
+  Phone (India): +91-40-42036080
+
+SUPPORT:
+- For technical issues: Check browser console for errors
+- For email issues: Verify EMAIL_SERVICE configuration
+- For design questions: Refer to design_guidelines.md
+- For questions: Contact emmanuel012k@gmail.com
+
+================================================================================
+SECTION 19: REVISION HISTORY
+================================================================================
+
+Version 1.0 - November 3, 2025
+- Initial handover documentation
+- All 8 pages implemented
+- Email functionality added
+- Calendly integration complete
+- Responsive design implemented
+- Design system finalized (no black borders, shadow-based depth)
+- Shopping cart functional
+- Form validation complete
+
+RECENT MAJOR CHANGES:
+- Added "Book a Consultation" page with Sai Ram's profile
+- Integrated Calendly for appointment scheduling
+- Implemented email notifications (Contact & Corporate forms)
+- Redesigned Testimonials to 3-card grid layout
+- Changed Footer to dark navy (#0F172A) background
+- Removed ALL black borders platform-wide
+- Changed ALL orange buttons to Deep Blue (#1E40AF)
+- Made all pages fully responsive
+
+================================================================================
+SECTION 20: QUICK REFERENCE
+================================================================================
+
+COMMON TASKS:
+
+Start Development Server:
+$ npm run dev
+
+View Application:
+http://localhost:5000
+
+Check Email Logs:
+Check server console for "=== EMAIL WOULD BE SENT ===" messages
+
+Update Colors:
+Edit client/src/index.css (CSS variables in :root)
+
+Add New Page:
+1. Create component in client/src/pages/
+2. Add route in client/src/App.tsx
+3. Add nav link in client/src/components/Header.tsx
+
+Modify Design:
+Refer to design_guidelines.md for color scheme and principles
+
+TROUBLESHOOTING:
+
+Issue: Email not sending
+Fix: Check EMAIL_SERVICE, EMAIL_USER, EMAIL_PASS environment variables
+     Or check console logs for simulated email output
+
+Issue: Cart not working
+Fix: Verify CartProvider wraps app in App.tsx
+
+Issue: Page not found
+Fix: Check route definition in App.tsx
+
+Issue: Mobile menu not working
+Fix: Check Header.tsx, verify Framer Motion is installed
+
+Issue: Calendly not loading
+Fix: Check iframe src URL, verify internet connection
+
+================================================================================
+END OF DEVELOPER HANDOVER DOCUMENTATION
+================================================================================
+
+For additional questions or clarification, contact:
+Emmanuel - emmanuel012k@gmail.com
+
+Thank you for maintaining and improving the AceSynergi Learning Platform!
+
+================================================================================
