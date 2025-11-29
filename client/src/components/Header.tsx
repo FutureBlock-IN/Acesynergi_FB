@@ -26,7 +26,15 @@ const courseCategories: CourseCategory[] = [
   },
   { 
     name: "Project Management", 
-    href: "/courses" 
+    subItems: [
+      { name: "PMP Certification Training", href: "/courses/pmpcertificationtraining" },
+      { name: "CAPM Certification Training", href: "/courses/capm" },
+      { name: "PMI PBA Certification Training", href: "/courses/pmipba" },
+      { name: "Foundation Certification", href: "/courses/foundation" },
+      { name: "Practitioner Certification", href: "/courses/practitioner" },
+      { name: "Foundation and Practitioner Certification", href: "/courses/fp" },
+      { name: "Agile® Foundation & Practitioner", href: "/courses/agilefp" },
+    ] 
   },
   { 
     name: "Business Management", 
@@ -39,7 +47,12 @@ const courseCategories: CourseCategory[] = [
   },
   { 
     name: "Agile and Scrum", 
-    href: "/courses" 
+    subItems: [
+      { name: "CSM Certification", href: "/courses/cbap" },
+      { name: "CSPO Certification", href: "/courses/ecba" },
+      { name: "PMI-ACP Certification", href: "/courses/ccba" },
+      { name: "Agile Scrum Master Training", href: "/courses/ccba-prep" },
+    ] 
   },
   { 
     name: "Gen AI Courses", 
@@ -53,7 +66,21 @@ const courseCategories: CourseCategory[] = [
   },
   { 
     name: "Quality Management", 
-    href: "/courses" 
+     subItems: [
+      { name: "Lean Six Sigma Green Belt Certification Training", href: "/courses/genai-scrum-master" },
+      { name: "Lean Six Sigma Black Belt Certification Training", href: "/courses/genai-project-managers" },
+      { name: "Certified Process Mapping Practitioner", href: "/courses/genai-product-owner" },  
+    ] 
+  },
+  { 
+    name: "Skills Training", 
+     subItems: [
+      { name: "Conflict Management Training", href: "/courses/genai-scrum-master" },
+      { name: "Management Skills Training", href: "/courses/genai-project-managers" },
+      { name: "Leadership skills", href: "/courses/genai-product-owner" },
+      { name: "Agile Scrum Methodology & Practice", href: "/courses/genai-business-analysts" },
+      { name: "Bundled Skill Courses", href: "/courses/genai-interview-prep" },
+    ]
   },
   { 
     name: "IT Service Management", 
@@ -63,10 +90,7 @@ const courseCategories: CourseCategory[] = [
     name: "DevOps", 
     href: "/courses" 
   },
-  { 
-    name: "Skills Training", 
-    href: "/courses" 
-  },
+  
   { 
     name: "Cyber Security", 
     href: "/courses" 
@@ -202,7 +226,7 @@ export default function Header() {
               </span>
             </Link> */}
 
-            <div ref={coursesRef} className="relative">
+            {/* <div ref={coursesRef} className="relative group">
               <button
                 onClick={() => setIsCoursesOpen(!isCoursesOpen)}
                 className="flex items-center gap-1 text-foreground hover:text-primary transition-colors font-medium"
@@ -265,7 +289,82 @@ export default function Header() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </div> */}
+
+            <div 
+  ref={coursesRef} 
+  className="relative group"
+  onMouseEnter={() => setIsCoursesOpen(true)}
+  onMouseLeave={() => {
+    setIsCoursesOpen(false);
+    setActiveSubmenu(null);
+  }}
+>
+  <button
+    className="flex items-center gap-1 text-foreground hover:text-primary transition-colors font-medium"
+    data-testid="dropdown-courses"
+  >
+    Courses
+    <ChevronDown className={`w-4 h-4 transition-transform ${isCoursesOpen ? 'rotate-180' : ''}`} />
+  </button>
+
+  <AnimatePresence>
+    {isCoursesOpen && (
+      <motion.div
+        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+        className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl py-2 z-50"
+      >
+        {courseCategories.map((category) => (
+          <div
+            key={category.name}
+            className="relative"
+            onMouseEnter={() => category.subItems && setActiveSubmenu(category.name)}
+            onMouseLeave={() => setActiveSubmenu(null)}
+          >
+            {category.subItems ? (
+              <div className="flex items-center justify-between px-4 py-2.5 text-gray-700 hover:bg-primary/5 hover:text-primary cursor-pointer transition-colors">
+                <span className="font-medium">{category.name}</span>
+                <ChevronRight className="w-4 h-4" />
+              </div>
+            ) : (
+              <div
+                onClick={() => {
+                  handleCategoryClick(category);
+                  setIsCoursesOpen(false);
+                }}
+                className="flex items-center px-4 py-2.5 text-gray-700 hover:bg-primary/5 hover:text-primary cursor-pointer transition-colors"
+              >
+                <span className="font-medium">{category.name}</span>
+              </div>
+            )}
+
+            {category.subItems && activeSubmenu === category.name && (
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="absolute left-full top-0 w-56 bg-white rounded-xl shadow-2xl py-2 ml-1"
+              >
+                {category.subItems.map((subItem) => (
+                  <Link key={subItem.name} href={subItem.href}>
+                    <span
+                      onClick={() => setIsCoursesOpen(false)}
+                      className="block px-4 py-2.5 text-gray-700 hover:bg-primary/5 hover:text-primary cursor-pointer transition-colors font-medium"
+                    >
+                      {subItem.name}
+                    </span>
+                  </Link>
+                ))}
+              </motion.div>
+            )}
+          </div>
+        ))}
+      </motion.div>
+    )}
+  </AnimatePresence>
+</div>
 
             {/* <Link href="/training-schedule">
               <span className="text-foreground hover:text-primary transition-colors font-medium cursor-pointer">
@@ -335,7 +434,7 @@ export default function Header() {
                         </select>
                       </div>
 
-                      <div>
+                      {/* <div>
                         <label 
                           htmlFor="city-select" 
                           className="block text-sm font-medium text-gray-600 mb-1.5"
@@ -358,16 +457,16 @@ export default function Header() {
                             </option>
                           ))}
                         </select>
-                      </div>
+                      </div> */}
 
-                      <Button
+                      {/* <Button
                         onClick={handleCountrySubmit}
                         className="w-full bg-primary hover:bg-primary/90 text-white"
                         disabled={!selectedCountry || !selectedCity}
                         data-testid="button-country-submit"
                       >
                         Submit
-                      </Button>
+                      </Button> */}
                     </div>
                   </motion.div>
                 )}
@@ -414,14 +513,14 @@ export default function Header() {
                 </span>
               </Link>
 
-              <Link href="/about">
+              {/* <Link href="/about">
                 <span
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block py-3 text-gray-800 hover:text-primary font-medium transition-colors"
                 >
                   About
                 </span>
-              </Link>
+              </Link> */}
 
               <div>
                 <button
@@ -490,14 +589,14 @@ export default function Header() {
                 </AnimatePresence>
               </div>
 
-              <Link href="/training-schedule">
+              {/* <Link href="/training-schedule">
                 <span
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block py-3 text-gray-800 hover:text-primary font-medium transition-colors"
                 >
                   Training Schedule
                 </span>
-              </Link>
+              </Link> */}
 
               <Link href="/corporate">
                 <span
@@ -560,7 +659,7 @@ export default function Header() {
                         </select>
                       </div>
 
-                      <div>
+                      {/* <div>
                         <label 
                           htmlFor="mobile-city-select" 
                           className="block text-sm font-medium text-gray-600 mb-1.5"
@@ -582,7 +681,7 @@ export default function Header() {
                             </option>
                           ))}
                         </select>
-                      </div>
+                      </div> */}
 
                       <Button
                         onClick={handleCountrySubmit}
