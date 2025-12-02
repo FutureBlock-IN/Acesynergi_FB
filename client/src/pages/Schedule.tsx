@@ -79,45 +79,45 @@ const onlineSchedules: Schedule[] = [
     ],
     instructor: "Dr. Sarah Mitchell, CBAP, PMI-PBA"
   },
-  { 
-    id: "2", 
-    courseId: "cbap",
-    title: "CBAP Certification Training", 
-    dates: "Dec 15 - 18, 2025",
-    startDate: "Dec 15",
-    endDate: "Dec 18", 
-    mode: "Live Online Classroom", 
-    price: 1299,
-    originalPrice: 1799,
-    time: "9 AM - 5 PM",
-    venue: "Online Classroom",
-    days: 4,
-    description: "This CBAP certification training is ideal for professionals seeking to gain a globally recognized certified business analysis professional certification aligned with BABOK® Guide v3.",
-    whatYouLearn: [
-      "Planning and monitoring business analysis processes",
-      "Eliciting, analysing, and managing requirements",
-      "Managing the entire project lifecycle",
-      "Conducting strategic analysis for business solutions",
-      "Evaluating and optimising solutions"
-    ],
-    prerequisites: [
-      "High school diploma or undergraduate degree",
-      "7,500 hours of business analysis experience in the last 10 years",
-      "900 hours in four of the six BABOK® v3 Knowledge Areas",
-      "35 hours of professional development in the past four years"
-    ],
-    curriculum: [
-      "Introduction to CBAP® Certification",
-      "Introduction to BABOK® V3",
-      "Business Analysis Planning and Monitoring",
-      "Elicitation and Collaboration",
-      "Requirements Life Cycle Management",
-      "Strategy Analysis",
-      "Requirements Analysis and Design Definition",
-      "Solution Evaluation"
-    ],
-    instructor: "Dr. Sarah Mitchell, CBAP, PMI-PBA"
-  },
+  // { 
+  //   id: "2", 
+  //   courseId: "cbap",
+  //   title: "CBAP Certification Training", 
+  //   dates: "Dec 15 - 18, 2025",
+  //   startDate: "Dec 15",
+  //   endDate: "Dec 18", 
+  //   mode: "Live Online Classroom", 
+  //   price: 1299,
+  //   originalPrice: 1799,
+  //   time: "9 AM - 5 PM",
+  //   venue: "Online Classroom",
+  //   days: 4,
+  //   description: "This CBAP certification training is ideal for professionals seeking to gain a globally recognized certified business analysis professional certification aligned with BABOK® Guide v3.",
+  //   whatYouLearn: [
+  //     "Planning and monitoring business analysis processes",
+  //     "Eliciting, analysing, and managing requirements",
+  //     "Managing the entire project lifecycle",
+  //     "Conducting strategic analysis for business solutions",
+  //     "Evaluating and optimising solutions"
+  //   ],
+  //   prerequisites: [
+  //     "High school diploma or undergraduate degree",
+  //     "7,500 hours of business analysis experience in the last 10 years",
+  //     "900 hours in four of the six BABOK® v3 Knowledge Areas",
+  //     "35 hours of professional development in the past four years"
+  //   ],
+  //   curriculum: [
+  //     "Introduction to CBAP® Certification",
+  //     "Introduction to BABOK® V3",
+  //     "Business Analysis Planning and Monitoring",
+  //     "Elicitation and Collaboration",
+  //     "Requirements Life Cycle Management",
+  //     "Strategy Analysis",
+  //     "Requirements Analysis and Design Definition",
+  //     "Solution Evaluation"
+  //   ],
+  //   instructor: "Dr. Sarah Mitchell, CBAP, PMI-PBA"
+  // },
   { 
     id: "3", 
     courseId: "ecba",
@@ -193,7 +193,7 @@ const onlineSchedules: Schedule[] = [
   { 
     id: "5", 
     courseId: "genai-scrum-master",
-    title: "Gen AI for Scrum Masters", 
+    title: "PMP Certification Training", 
     dates: "Dec 8 - 9, 2025",
     startDate: "Dec 8",
     endDate: "Dec 9", 
@@ -227,7 +227,7 @@ const onlineSchedules: Schedule[] = [
   { 
     id: "6", 
     courseId: "genai-project-managers",
-    title: "Gen AI for Project Managers", 
+    title: "PMI PBA Certification Training", 
     dates: "Dec 18 - 20, 2025",
     startDate: "Dec 18",
     endDate: "Dec 20", 
