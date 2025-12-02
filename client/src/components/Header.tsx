@@ -27,13 +27,13 @@ const courseCategories: CourseCategory[] = [
   { 
     name: "Project Management", 
     subItems: [
-      { name: "PMP Certification Training", href: "/courses/pmpcertificationtraining" },
-      { name: "CAPM Certification Training", href: "/courses/capm" },
+      { name: "PMP Certification Training", href: "/courses/pmp" },
+      // { name: "CAPM Certification Training", href: "/courses/capm" },
       { name: "PMI PBA Certification Training", href: "/courses/pmipba" },
-      { name: "Foundation Certification", href: "/courses/foundation" },
-      { name: "Practitioner Certification", href: "/courses/practitioner" },
-      { name: "Foundation and Practitioner Certification", href: "/courses/fp" },
-      { name: "Agile® Foundation & Practitioner", href: "/courses/agilefp" },
+      // { name: "Foundation Certification", href: "/courses/foundation" },
+      // { name: "Practitioner Certification", href: "/courses/practitioner" },
+      // { name: "Foundation and Practitioner Certification", href: "/courses/fp" },
+      // { name: "Agile® Foundation & Practitioner", href: "/courses/agilefp" },
     ] 
   },
   { 
@@ -45,56 +45,56 @@ const courseCategories: CourseCategory[] = [
       { name: "CCBA Prep Course", href: "/courses/ccba-prep" },
     ]
   },
-  { 
-    name: "Agile and Scrum", 
-    subItems: [
-      { name: "CSM Certification", href: "/courses/cbap" },
-      { name: "CSPO Certification", href: "/courses/ecba" },
-      { name: "PMI-ACP Certification", href: "/courses/ccba" },
-      { name: "Agile Scrum Master Training", href: "/courses/ccba-prep" },
-    ] 
-  },
-  { 
-    name: "Gen AI Courses", 
-    subItems: [
-      { name: "Scrum Master", href: "/courses/genai-scrum-master" },
-      { name: "Project Managers", href: "/courses/genai-project-managers" },
-      { name: "Product Owner", href: "/courses/genai-product-owner" },
-      { name: "Business Analysts", href: "/courses/genai-business-analysts" },
-      { name: "Interview Prep for Scrum Masters", href: "/courses/genai-interview-prep" },
-    ]
-  },
-  { 
-    name: "Quality Management", 
-     subItems: [
-      { name: "Lean Six Sigma Green Belt Certification Training", href: "/courses/genai-scrum-master" },
-      { name: "Lean Six Sigma Black Belt Certification Training", href: "/courses/genai-project-managers" },
-      { name: "Certified Process Mapping Practitioner", href: "/courses/genai-product-owner" },  
-    ] 
-  },
-  { 
-    name: "Skills Training", 
-     subItems: [
-      { name: "Conflict Management Training", href: "/courses/genai-scrum-master" },
-      { name: "Management Skills Training", href: "/courses/genai-project-managers" },
-      { name: "Leadership skills", href: "/courses/genai-product-owner" },
-      { name: "Agile Scrum Methodology & Practice", href: "/courses/genai-business-analysts" },
-      { name: "Bundled Skill Courses", href: "/courses/genai-interview-prep" },
-    ]
-  },
-  { 
-    name: "IT Service Management", 
-    href: "/courses" 
-  },
-  { 
-    name: "DevOps", 
-    href: "/courses" 
-  },
+  // { 
+  //   name: "Agile and Scrum", 
+  //   subItems: [
+  //     { name: "CSM Certification", href: "/courses/cbap" },
+  //     { name: "CSPO Certification", href: "/courses/ecba" },
+  //     { name: "PMI-ACP Certification", href: "/courses/ccba" },
+  //     { name: "Agile Scrum Master Training", href: "/courses/ccba-prep" },
+  //   ] 
+  // },
+  // { 
+  //   name: "Gen AI Courses", 
+  //   subItems: [
+  //     { name: "Scrum Master", href: "/courses/genai-scrum-master" },
+  //     { name: "Project Managers", href: "/courses/genai-project-managers" },
+  //     { name: "Product Owner", href: "/courses/genai-product-owner" },
+  //     { name: "Business Analysts", href: "/courses/genai-business-analysts" },
+  //     { name: "Interview Prep for Scrum Masters", href: "/courses/genai-interview-prep" },
+  //   ]
+  // },
+  // { 
+  //   name: "Quality Management", 
+  //    subItems: [
+  //     { name: "Lean Six Sigma Green Belt Certification Training", href: "/courses/genai-scrum-master" },
+  //     { name: "Lean Six Sigma Black Belt Certification Training", href: "/courses/genai-project-managers" },
+  //     { name: "Certified Process Mapping Practitioner", href: "/courses/genai-product-owner" },  
+  //   ] 
+  // },
+  // { 
+  //   name: "Skills Training", 
+  //    subItems: [
+  //     { name: "Conflict Management Training", href: "/courses/genai-scrum-master" },
+  //     { name: "Management Skills Training", href: "/courses/genai-project-managers" },
+  //     { name: "Leadership skills", href: "/courses/genai-product-owner" },
+  //     { name: "Agile Scrum Methodology & Practice", href: "/courses/genai-business-analysts" },
+  //     { name: "Bundled Skill Courses", href: "/courses/genai-interview-prep" },
+  //   ]
+  // },
+  // { 
+  //   name: "IT Service Management", 
+  //   href: "/courses" 
+  // },
+  // { 
+  //   name: "DevOps", 
+  //   href: "/courses" 
+  // },
   
-  { 
-    name: "Cyber Security", 
-    href: "/courses" 
-  },
+  // { 
+  //   name: "Cyber Security", 
+  //   href: "/courses" 
+  // },
 ];
 
 export default function Header() {
