@@ -209,10 +209,68 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4">
         <div className="flex items-center justify-between">
-          <Link href="/">
+          <Link href="/" className="flex items-center gap-2 group">
+            {/* Abstract Logo - Interconnected Nodes representing Synergy */}
+            <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
+              <svg
+                viewBox="0 0 48 48"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-full h-full"
+              >
+                {/* Background circle with gradient */}
+                <circle
+                  cx="24"
+                  cy="24"
+                  r="22"
+                  fill="url(#logoGradient)"
+                  className="group-hover:opacity-90 transition-opacity"
+                />
+                {/* Interconnected nodes representing synergy */}
+                <circle cx="18" cy="18" r="4" fill="white" opacity="0.95" />
+                <circle cx="30" cy="18" r="4" fill="white" opacity="0.95" />
+                <circle cx="24" cy="30" r="4" fill="white" opacity="0.95" />
+                {/* Connection lines */}
+                <line
+                  x1="20.5"
+                  y1="20.5"
+                  x2="27.5"
+                  y2="20.5"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  opacity="0.8"
+                />
+                <line
+                  x1="20.5"
+                  y1="20.5"
+                  x2="22"
+                  y2="27.5"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  opacity="0.8"
+                />
+                <line
+                  x1="27.5"
+                  y1="20.5"
+                  x2="26"
+                  y2="27.5"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  opacity="0.8"
+                />
+                <defs>
+                  <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#1E40AF" />
+                    <stop offset="50%" stopColor="#3B82F6" />
+                    <stop offset="100%" stopColor="#06B6D4" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
             <span className="text-2xl md:text-3xl font-bold cursor-pointer">
-              <span className="text-primary">Acesynergi</span>
-              {/* <span className="text-secondary">synergi</span> */}
+              <span className="bg-gradient-to-r from-[#1E40AF] via-[#3B82F6] to-[#06B6D4] bg-clip-text text-transparent group-hover:from-[#3B82F6] group-hover:via-[#06B6D4] group-hover:to-[#1E40AF] transition-all duration-500">
+                Acesynergi
+              </span>
             </span>
           </Link>
 
