@@ -211,8 +211,8 @@ export default function Header() {
         <div className="flex items-center justify-between">
           <Link href="/">
             <span className="text-2xl md:text-3xl font-bold cursor-pointer">
-              <span className="text-primary">Ace</span>
-              <span className="text-secondary">synergi</span>
+              <span className="text-primary">Acesynergi</span>
+              {/* <span className="text-secondary">synergi</span> */}
             </span>
           </Link>
 

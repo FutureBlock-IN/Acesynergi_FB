@@ -13,7 +13,7 @@ export default function Home() {
       <main>
         <HeroSection />
         <FeaturedCourses />
-        <CategoriesCarousel />
+        {/* <CategoriesCarousel /> */}
         <TestimonialsCarousel />
         <CTASection />
       </main>

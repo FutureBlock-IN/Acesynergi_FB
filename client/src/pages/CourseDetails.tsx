@@ -68,19 +68,156 @@ const coursesData: Record<string, CourseData> = {
       details: "Formulated from the BABOK Guide v3, exam contains both scenario and case study-based questions that are designed to test your ability to apply the BA concepts.",
     },
     curriculum: [
-      "Introduction to CBAP® Certification",
-      "Introduction to BABOK® V3",
-      "Business Analysis Planning and Monitoring",
-      "Elicitation and Collaboration",
-      "Requirements Life Cycle Management",
-      "Strategy Analysis",
-      "Requirements Analysis and Design Definition",
-      "Solution Evaluation",
-      "Introduction to Agile Perspective",
-      "Business Intelligence Perspective",
-      "Information Technology Perspective",
-      "Business Architecture Perspective",
-      "Business Process Management Perspective",
+      {
+        title: "Introduction to CBAP® Certification",
+        items: [
+          "Introduction to CBAP® Certification",
+        ],
+      },
+      {
+        title: "Introduction to BABOK® V3",
+        items: [
+          "Introduction to BABOK",
+          "Business Analysis",
+          "Competencies of a Business Analyst",
+          "Techniques referred to by BABOK® V3",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Business Analysis Planning and Monitoring",
+        items: [
+          "Introduction to Business Analysis Planning and Monitoring",
+          "Plan Stakeholder Engagement",
+          "Plan Business Analysis Governance",
+          "Plan Business Analysis Information Management",
+          "Identify Business Analysis",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Elicitation and Collaboration",
+        items: [
+          "Introduction to Elicitation and Collaboration",
+          "Prepare For Elicitation",
+          "Conduct Elicitation",
+          "Confirm Elicitation Results",
+          "Communicate Business Analysis Information",
+          "Manage stakeholder collaboration",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Requirements Life Cycle Management",
+        items: [
+          "Introduction to Requirements Life Cycle Management",
+          "Trace Requirements",
+          "Maintain Requirements",
+          "Prioritize Requirements",
+          "Assess Requirements Changes",
+          "Approve Requirements",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Strategy Analysis",
+        items: [
+          "Introduction to Strategy Analysis",
+          "Analyze Current State",
+          "Define Future State",
+          "Assess Risks",
+          "Define Change Strategy",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Requirements Analysis and Design Definition",
+        items: [
+          "Introduction to Requirements Analysis and Design Definition",
+          "Specify and Model Requirements",
+          "Verify Requirements",
+          "Validate Requirements",
+          "Define Requirements Architecture",
+          "Define Design Options",
+          "Analyze Potential Value and Recommend Solution",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Solution Evaluation",
+        items: [
+          "Introduction to Solution Evaluation",
+          "Measure Solution Performance",
+          "Analyze Performance Measures",
+          "Assess Solution Limitations",
+          "Assess Enterprise Limitations",
+          "Recommend Actions to Increase Solution Value",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Introduction to Agile Perspective",
+        items: [
+          "Change Scope",
+          "Business Analysis Scope",
+          "Approaches and techniques",
+          "Business Analysis Planning and Monitoring",
+          "Elicitation and Collaboration",
+          "Requirements life cycle management",
+          "Strategy Analysis",
+          "Requirement analysis and design definition",
+          "Solution evaluation",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Business Intelligence Perspective",
+        items: [
+          "Introduction to Business Intelligence Perspective",
+          "Change Scope",
+          "Business Analysis Scope",
+          "Methodologies And Approaches",
+          "Underlying Competencies",
+          "Impact On Knowledge Areas",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Information Technology Perspective",
+        items: [
+          "Introduction to Information Technology Perspective",
+          "Change Scope",
+          "Business Analysis Scope",
+          "Methodologies",
+          "Underlying Competencies",
+          "Impact on Knowledge Areas",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Business Architecture Perspective",
+        items: [
+          "Introduction to Business Architecture Perspective",
+          "Change Scope",
+          "Business Analysis Scope",
+          "Business Architecture Reference Models",
+          "Underlying Competencies",
+          "Impact On Knowledge Areas",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Business Process Management Perspective",
+        items: [
+          "Introduction to Business Process Management Perspective",
+          "Change Scope",
+          "Business Analysis Scope",
+          "Frameworks, Methodologies, and Techniques",
+          "Underlying Competencies",
+          "Impact on Knowledge Areas",
+          "Quiz",
+        ],
+      },
     ],
     features: [
       { icon: Clock, text: "35 hours" },
@@ -96,16 +233,24 @@ const coursesData: Record<string, CourseData> = {
         answer: "To qualify for the CBAP® exam, you need a high school diploma or undergraduate degree, 7,500 hours of business analysis experience in the last 10 years with 900 hours in four of the six BABOK® v3 Knowledge Areas, and 35 hours of professional development in the past four years.",
       },
       {
+        question: "What is the CBAP exam format?",
+        answer: "The CBAP certification exam pattern is as follows: Number of questions: 120. Question type: Multiple choice questions. Duration: 3.5 hours. Formulated from the BABOK Guide v3, exam contains both scenario and case study-based questions that are designed to test your ability to apply the BA concepts.",
+      },
+      {
         question: "How long is the CBAP certification valid?",
         answer: "CBAP certification is valid for three years. To maintain your certification, you need to earn 60 Continuing Development Units (CDUs) within the three-year cycle.",
       },
       {
-        question: "What is the CBAP exam format?",
-        answer: "The CBAP exam consists of 120 multiple choice questions to be completed in 3.5 hours. Questions are scenario and case study-based, designed to test your ability to apply BA concepts from the BABOK Guide v3.",
-      },
-      {
         question: "Is this training aligned with BABOK v3?",
         answer: "Yes, our CBAP certification training is fully aligned with the BABOK® Guide v3, covering all six knowledge areas and perspectives required for the certification exam.",
+      },
+      {
+        question: "Who can attend CBAP Certification Training?",
+        answer: "The CBAP is ideal for Business Architects, Business Systems Analysts, Data Analysts, Enterprise Analysts, Management Consultants, Process Analysts, Product Managers, Product Owners, Requirements Engineers, and Systems Analysts.",
+      },
+      {
+        question: "What will you learn in CBAP Certification Training?",
+        answer: "You will learn planning and monitoring business analysis processes, eliciting, analysing, and managing requirements, managing the entire project lifecycle, conducting strategic analysis for business solutions, and evaluating and optimising solutions.",
       },
     ],
   },
@@ -140,7 +285,6 @@ const coursesData: Record<string, CourseData> = {
     ],
     features: [
       { icon: Clock, text: "21 hours" },
-      { icon: Award, text: "21 CDU's" },
       { icon: BookOpen, text: "Exam Application Assistance" },
       { icon: Users, text: "BABOK Guide Version 3" },
       { icon: CheckCircle, text: "Practice Tests" },
@@ -153,7 +297,7 @@ const coursesData: Record<string, CourseData> = {
       },
       {
         question: "What is the exam format?",
-        answer: "The ECBA exam consists of 50 multiple choice questions to be completed in 1 hour.",
+        answer: "Requires 1 hour 15 minutes for 50 multiple choice questions",
       },
     ],
   },
@@ -177,18 +321,111 @@ const coursesData: Record<string, CourseData> = {
       "Project Coordinators",
     ],
     curriculum: [
-      "CCBA Certification Overview",
-      "Business Analysis Planning and Monitoring",
-      "Elicitation and Collaboration Techniques",
-      "Requirements Life Cycle Management",
-      "Strategy Analysis",
-      "Requirements Analysis and Design Definition",
-      "Solution Evaluation",
-      "CCBA Exam Strategies",
+      {
+        title: "CCBA Certification Overview",
+        items: [
+          "CCBA Certification Overview",
+        ],
+      },
+      {
+        title: "Introduction to BABOK® V3",
+        items: [
+          "Introduction to BABOK",
+          "Business Analysis",
+          "Competencies of a Business Analyst",
+          "Techniques referred to by BABOK® V3",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Business Analysis Planning and Monitoring",
+        items: [
+          "Introduction to Business Analysis Planning and Monitoring",
+          "Plan Stakeholder Engagement",
+          "Plan Business Analysis Governance",
+          "Plan Business Analysis Information Management",
+          "Identify Business Analysis",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Elicitation and Collaboration",
+        items: [
+          "Introduction to Elicitation and Collaboration",
+          "Prepare For Elicitation",
+          "Conduct Elicitation",
+          "Confirm Elicitation Results",
+          "Communicate Business Analysis Information",
+          "Manage stakeholder collaboration",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Requirements Life Cycle Management",
+        items: [
+          "Introduction to Requirements Life Cycle Management",
+          "Trace Requirements",
+          "Maintain Requirements",
+          "Prioritize Requirements",
+          "Assess Requirements Changes",
+          "Approve Requirements",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Strategy Analysis",
+        items: [
+          "Introduction to Strategy Analysis",
+          "Analyze Current State",
+          "Define Future State",
+          "Assess Risks",
+          "Define Change Strategy",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Requirements Analysis and Design Definition",
+        items: [
+          "Introduction to Requirements Analysis and Design Definition",
+          "Specify and Model Requirements",
+          "Verify Requirements",
+          "Validate Requirements",
+          "Define Requirements Architecture",
+          "Define Design Options",
+          "Analyze Potential Value and Recommend Solution",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Solution Evaluation",
+        items: [
+          "Introduction to Solution Evaluation",
+          "Measure Solution Performance",
+          "Analyze Performance Measures",
+          "Assess Solution Limitations",
+          "Assess Enterprise Limitations",
+          "Recommend Actions to Increase Solution Value",
+          "Quiz",
+        ],
+      },
+      {
+        title: "Techniques and Competencies",
+        items: [
+          "Business Analysis Techniques",
+          "Underlying Competencies",
+          "Analytical Thinking and Problem Solving",
+          "Behavioral Characteristics",
+          "Business Knowledge",
+          "Communication Skills",
+          "Interaction Skills",
+          "Software Applications",
+          "Quiz",
+        ],
+      },
     ],
     features: [
       { icon: Clock, text: "28 hours" },
-      { icon: Award, text: "28 CDU's" },
+      { icon: Award, text: "21 PDU's" },
       { icon: BookOpen, text: "Exam Application Assistance" },
       { icon: Users, text: "BABOK Guide Version 3" },
       { icon: CheckCircle, text: "Case Studies" },
@@ -609,65 +846,136 @@ const coursesData: Record<string, CourseData> = {
 
    pmipba: {
     title: "PMI PBA Certification Training",
-    description: "Project Management Professional (PMI-PMP)® has shaped thousands of professionals globally and is a workforce skill in high demand. PMI's Project Management Professional (PMP)® credential is the most important industry-recognized certification for project managers. Globally recognized and demanded, PMP® certification demonstrates that you have the experience, education and competency to lead and direct projects.",
+    description: "Business Analysis has become an important component of Project Management. One of the top three causes of project failure is inaccurate gathering of project requirements. Therefore, performing this function properly is of critical value for project managers. Business analysis, when performed in a planned manner, reduces overall cost for the project. PMI-PBA training will help managers by actively performing the process of gathering and elicitation of requirements. Business analysts can help the project come to a definite understanding of what is needed from the solution to be successful. Audience: Project managers or program managers who manage requirements in a project can benefit from this PMI-PBA course greatly.",
     learningPoints: [
-      "Terminologies and concepts",
-      "Learn and practice project management best practices",
-      "Manage your stakeholders professionally",
-      "Problem solving",
-      "Project cost estimating",
-      "Leadership",
-      "Full prep for exam",
+      "Understand the problems and goals of the enterprise",
+      "Analyse needs and solutions",
+      "Develop change strategies",
+      "Drive change",
+      "Facilitate stakeholder collaboration",
     ],
-    prerequisites: "PMP® Certification Requirements: Either (1) Four-year degree with 36 months leading projects, or (2) High school diploma with 60 months leading projects. Plus 35 hours of project management education.",
+    prerequisites: "Eligibility for PMI Professional in Business Analysis Certification Program: Must have a Secondary degree Must have at least 60 months of work experience in business analysis Must have 35 contact hours of education in the field of business analysis OR Must hold a bachelor's degree or the global equivalent Must have at least 36 months of work experience in business analysis Must have 35 contact hours of education certificate in business analysis",
     whoCanDo: [
-      "Project Managers",
-      "Team Leads",
-      "Program Managers",
-      "Project Coordinators",
-      "PMO Managers",
+      "Project managers",
+      "Asst Project managers",
+      "Project coordinators",
+      "Project leaders",
+      "Senior project managers",
+      "Team leaders",
+      "Product / Program Managers",
+      "Project Sponsors",
+      "Project team members seeking the PMP certification",
+      "PMO team members",
+      "Senior Executives",
+      "Project Coordinator",
     ],
     examFormat: {
-      questions: "180",
-      type: "Multiple choice, multiple responses, matching, hotspot, and limited fill-in-the-blank",
-      duration: "230 minutes",
-      details: "The exam tests knowledge across predictive, agile, and hybrid approaches to project management.",
+      questions: "200",
+      type: "Multiple Choice Questions",
+      duration: "4 hours",
+      details: "Exam format – Multiple Choice Questions. Number of questions - 200. Exam duration – 4 hours.",
     },
     curriculum: [
-      "Introduction to PMP",
-      "Project Management Framework",
-      "Project Integration Management",
-      "Project Scope Management",
-      "Project Schedule Management",
-      "Project Cost Management",
-      "Project Quality Management",
-      "Project Resource Management",
-      "Project Communications Management",
-      "Project Risk Management",
-      "Project Procurement Management",
-      "Project Stakeholder Management",
-      "Agile and Hybrid Approaches",
+      {
+        title: "Module 1: INTRODUCTION",
+        items: [
+          "What is Business Analysis?",
+          "Who Performs Business Analysis?",
+          "Definition of Requirement",
+        ],
+      },
+      {
+        title: "Module 2: NEEDS ASSESSMENT",
+        items: [
+          "Overview of this Section",
+          "Why Perform Needs Assessments",
+          "Identify Problem or Opportunity",
+          "Assess Current State of the Organization",
+          "Recommend Action to Address Business Needs",
+          "Assemble the Business Case",
+        ],
+      },
+      {
+        title: "Module 3: BUSINESS ANALYSIS PLANNING",
+        items: [
+          "Overview of this Section",
+          "The Importance of Business Analysis Planning",
+          "Conduct or Refine the Stakeholder Analysis",
+          "Create the Business Analysis Plan",
+          "Plan the Business Analysis Work",
+        ],
+      },
+      {
+        title: "Module 4: REQUIREMENTS ELICITATION AND ANALYSIS",
+        items: [
+          "Purpose of this Section",
+          "What it means to Elicit Information",
+          "Plan for Elicitation",
+          "Prepare for Elicitation",
+        ],
+      },
+      {
+        title: "Module 5: TRACEABILITY AND MONITORING",
+        items: [
+          "Overview of this Section",
+          "Traceability",
+          "Relationships and Dependencies",
+          "Approving Requirements",
+          "Base lining Approved Requirements",
+          "Monitoring Requirements Using a Traceability Matrix",
+          "The Requirements Life Cycle",
+          "Managing Changes to Requirements",
+        ],
+      },
+      {
+        title: "Module 6: SOLUTION EVALUATION",
+        items: [
+          "Overview of this Section",
+          "Purpose of Solution Evaluation",
+          "Recommended Mindset for Evaluation",
+          "Plan for Evaluation of the Solution",
+          "Determine What to Evaluate",
+          "When and How to Validate Solution Results",
+          "Evaluate Acceptance Criteria and Address Defects",
+          "Facilitate the Go/No-Go Decision",
+          "Obtain Signoff of the Solution",
+          "Evaluate the Long-Term Performance of the Solution",
+          "Solution Replacement/Phase out",
+        ],
+      },
     ],
     features: [
-      { icon: Clock, text: "36 Hours" },
+      { icon: Clock, text: "35 Hours" },
       { icon: BookOpen, text: "35 Contact Hours" },
-      { icon: Award, text: "Exam Application Assistance" },
-      { icon: Users, text: "Latest PMBOK Guide" },
-      { icon: CheckCircle, text: "600+ Practice Questions" },
-      { icon: TrendingUp, text: "24/7 Support" },
+      { icon: Award, text: "Course Materials" },
+      { icon: Users, text: "Case Studies" },
+      { icon: CheckCircle, text: "Exam Tips and Techniques" },
+      { icon: TrendingUp, text: "24/7 support" },
     ],
     faqs: [
       {
-        question: "What are the prerequisites for PMP certification?",
-        answer: "Either a four-year degree with 36 months of project leadership experience, or a high school diploma with 60 months of project leadership experience. Plus 35 hours of PM education.",
+        question: "What is business analysis?",
+        answer: "Business analysis refers to the knowledge, tasks, and techniques required to identify business needs and determine solutions to various business problems.",
       },
       {
-        question: "How long is PMP certification valid?",
-        answer: "PMP certification is valid for 3 years. You need to earn 60 PDUs in each 3-year cycle to maintain it.",
+        question: "When Will I Receive The PMI Professional In Business Analysis Certificate?",
+        answer: "On completion of the PMI PBA training course, the candidate will receive a course completion certificate from Learners Ink and on clearing the exam, the PMI-Professional in Business Analysis certification from Project Management Institute is awarded.",
       },
       {
-        question: "What is the exam format?",
-        answer: "The PMP exam has 180 questions to be completed in 230 minutes. It includes multiple choice, multiple responses, matching, hotspot, and fill-in-the-blank questions.",
+        question: "What Is The Rate Of Passing For PMI PBA Training Offered By Learners Ink?",
+        answer: "The average pass rate of candidates who took up Learners Ink PMI PBA training programs is 98.6 %.",
+      },
+      {
+        question: "Will this training help me to get a better job with a high salary package?",
+        answer: "Individuals who hold Business Analysis skills get higher ranks in companies and get paid more than an average Project Management Professional.",
+      },
+      {
+        question: "What will I learn in the PMI Professional in Business Analysis (PMI-PBA) Training?",
+        answer: "PMI Professional in Business Analysis (PMI-PBA) Training will provide you with an in-depth understanding of business analysis concepts. During this training, you will gain a comprehensive knowledge of different domains, including various tasks to learn to establish a roadmap for delivering expected solutions and outcomes.",
+      },
+      {
+        question: "Can you customise training material according to our company requirements?",
+        answer: "Yes, we have subject matter experts who will work according to your company requirements.",
       },
     ],
   },
@@ -700,32 +1008,77 @@ const coursesData: Record<string, CourseData> = {
       details: "The exam tests knowledge of agile principles, tools, and techniques across various agile methodologies including Scrum, Kanban, Lean, XP, and TDD.",
     },
     curriculum: [
-      "Introduction to Agile and PMI-ACP",
-      "Agile Principles and Mindset",
-      "Value-Driven Delivery",
-      "Stakeholder Engagement",
-      "Team Performance",
-      "Adaptive Planning",
-      "Problem Detection and Resolution",
-      "Continuous Improvement",
-      "Agile Methodologies: Scrum, Kanban, XP",
-      "Agile Tools and Techniques",
-      "Agile Estimation and Planning",
-      "Agile Risk Management",
-      "Exam Preparation and Practice",
+      {
+        title: "Domain 1: Mindset (28%)",
+        items: [
+          "Experiment Early",
+          "Build early product increments for validation",
+          "Foster innovation, learning, growth environments",
+          "Embrace Agile Mindset",
+          "Apply agile values and principles",
+          "Utilize complexity models (Cynefin, Stacey Matrix, CAS)",
+          "Use agile suitability tools",
+          "Adapt models to context (use case, team, project, organization)",
+          "Apply Systems Thinking",
+          "Identify interdependencies",
+          "Analyze system-level impacts",
+          "Build High-Performing Teams",
+          "Establish team ground rules and agreements",
+          "Promote collaboration and shared vision",
+          "Leverage retrospectives to evolve practices",
+          "Facilitate Cross-Team Coordination",
+          "Tailor coordination techniques across teams",
+          "Align dependencies and managing integration",
+        ],
+      },
+      {
+        title: "Domain 2: Leadership (25%)",
+        items: [
+          "Agile leadership principles and practices",
+          "Servant leadership in agile environments",
+          "Coaching and mentoring agile teams",
+          "Conflict resolution and negotiation",
+          "Stakeholder management and engagement",
+          "Building trust and psychological safety",
+        ],
+      },
+      {
+        title: "Domain 3: Product (19%)",
+        items: [
+          "Product vision and roadmap planning",
+          "Backlog management and prioritization",
+          "User story creation and refinement",
+          "Product increment planning",
+          "Value delivery and optimization",
+          "Customer collaboration and feedback",
+        ],
+      },
+      {
+        title: "Domain 4: Delivery (28%)",
+        items: [
+          "Agile planning and estimation",
+          "Iteration and sprint execution",
+          "Agile ceremonies and practices",
+          "Continuous integration and delivery",
+          "Quality assurance in agile",
+          "Risk management in agile projects",
+          "Metrics and reporting",
+        ],
+      },
     ],
     features: [
-      { icon: Clock, text: "21 Contact Hours" },
-      { icon: BookOpen, text: "Agile Practice Guide" },
-      { icon: Award, text: "Exam Application Assistance" },
-      { icon: Users, text: "Agile Tools & Techniques" },
-      { icon: CheckCircle, text: "500+ Practice Questions" },
-      { icon: TrendingUp, text: "24/7 Support" },
+      { icon: Clock, text: "4-Day interactive instructor-led training" },
+      { icon: Users, text: "PMI-ACP Expert trainers across the globe" },
+      { icon: BookOpen, text: "PMI-ACP course material provided by PMI" },
+      { icon: CheckCircle, text: "Case Studies with real-world examples" },
+      { icon: Award, text: "28 PDU's" },
+      { icon: TrendingUp, text: "After training in coaching for real-world application" },
+      { icon: CheckCircle, text: "Robust CCR program to maintain your PMI-ACP certification" },
     ],
     faqs: [
       {
         question: "What are the prerequisites for PMI-ACP certification?",
-        answer: "You need either a secondary degree or four-year degree, 21 contact hours of training in agile practices, 12 months of general project experience within the last 5 years, and 8 months of agile project experience within the last 3 years.",
+        answer: "To apply for the PMI Agile Certified Practitioner (PMI-ACP) certification, you must meet the following requirements: Educational background: A secondary diploma (high school, GED, or global equivalent). General project experience: 2,000 hours (12 months) working on project teams within the last 5 years. A current PMP® or PgMP® counts toward this requirement. Agile project experience: 1,500 hours (8 months) working on agile project teams within the last 3 years. Agile training: 21–28 contact hours in agile practices, frameworks, and methodologies (21 hours accepted until March 2025; after that, full 28 hours required).",
       },
       {
         question: "How long is PMI-ACP certification valid?",
@@ -740,68 +1093,191 @@ const coursesData: Record<string, CourseData> = {
 
   capm: {
     title: "CAPM® Certification Training",
-    description: "The Certified Associate in Project Management (CAPM)® is an entry-level certification for project practitioners. Designed for those who are new to project management or want to demonstrate their commitment to the profession, CAPM® certification shows that you understand the fundamental knowledge, terminology, and processes of effective project management.",
+    description: "Certified Associate in Project Management (CAPM) is a credential from Project Management Institute (PMI). It is a valuable entry-level certification for project practitioners. Designed for those with little or no project experience, the CAPM® demonstrates your understanding of the fundamental knowledge, terminology and processes of effective project management. This credential is essential for entry-level project managers. Individuals who carry the CAPM designation after their name enjoy a high level of credibility from PMP® credential holders, project managers, employers and peers.",
     learningPoints: [
-      "Project management fundamentals",
-      "Project lifecycle and processes",
-      "Project integration management",
-      "Scope, schedule, and cost management",
-      "Quality and resource management",
-      "Risk and procurement management",
-      "Stakeholder and communications management",
-      "Full preparation for CAPM exam",
+      "Understand the role of the project manager in driving innovation",
+      "Demonstrate the use of standard project management tools and techniques",
+      "Analyze and plan large and small projects",
+      "Produce project scope",
+      "Interrelate project scheduling, planning, and prioritization",
     ],
-    prerequisites: "CAPM® Certification Requirements: Either (1) Secondary degree (high school diploma, associate's degree, or global equivalent) with 23 contact hours of project management education completed by the time you sit for the exam, OR (2) Secondary degree (high school diploma, associate's degree, or global equivalent) with 1,500 hours of project experience.",
+    prerequisites: "Prerequisites for the CAPM certification: Secondary degree (high school diploma, associate's degree or the global equivalent) 1,500 hours of professional project experience OR Secondary diploma (high school diploma or the global equivalent) 23 hours of formal project management training",
     whoCanDo: [
+      "Associate Project managers",
+      "Project Executive",
+      "Project Leaders",
+      "Project Analyst",
       "Project Coordinators",
-      "Entry-level Project Managers",
-      "Team Members",
-      "Students",
-      "Career Changers",
-      "Anyone new to project management",
+      "Project management job seekers",
+      "Project management experience holders",
+      "Want to apply for PMP certification in the future",
     ],
     examFormat: {
       questions: "150",
       type: "Multiple choice questions",
-      duration: "180 minutes",
-      details: "The exam tests knowledge of project management fundamentals, processes, and terminology as defined in the PMBOK Guide.",
+      duration: "180 minutes (3 hours)",
+      details: "The CAPM® exam is a 3-hour multiple choice paper consisting of 150 questions. 135 are scored and the other 15 are pre-test, and will not be scored.",
     },
     curriculum: [
-      "Introduction to CAPM and Project Management",
-      "Project Management Framework",
-      "Project Life Cycle and Organization",
-      "Project Integration Management",
-      "Project Scope Management",
-      "Project Schedule Management",
-      "Project Cost Management",
-      "Project Quality Management",
-      "Project Resource Management",
-      "Project Communications Management",
-      "Project Risk Management",
-      "Project Procurement Management",
-      "Project Stakeholder Management",
-      "Exam Preparation and Practice Tests",
+      {
+        title: "Introduction to Project Management",
+        items: [
+          "Understand the five project management process groups and the processes within each group",
+          "Recognize the relationships among project, program, portfolio, and operational management",
+          "Define a typical project lifecycle",
+          "Understand the function and importance of tailoring for different projects",
+        ],
+      },
+      {
+        title: "Project Environment",
+        items: [
+          "Identify the factors and assets that may impact the outcome of a project",
+          "Distinguish between organizational systems",
+          "Understand the purpose and activities of a Project Management Office",
+          "Recognize the hierarchy of projects, programs and portfolios",
+        ],
+      },
+      {
+        title: "State the primary functions of a project manager",
+        items: [
+          "Understand a project manager's sphere of influence",
+          "Identify the major elements included in the PMI triangle",
+          "Recognize the difference between leadership and management",
+        ],
+      },
+      {
+        title: "Project Integration Management",
+        items: [
+          "Understand the seven project management processes in the project integration management knowledge area",
+          "Identify the input, tools, techniques and outputs defined in the seven processes in project integration management",
+          "Understand the purpose of project integration management and the project manager's role within it",
+          "Identify concepts and procedures related to project change management",
+          "Identify tailoring consideration in project integration management and recognize key documents",
+          "Identify methods for project integration and knowledge management",
+        ],
+      },
+      {
+        title: "Project Scope Management",
+        items: [
+          "Understand the six project management processes in the project scope management knowledge area",
+          "Identify the Input, tools, techniques and outputs defined in the six processes in project scope management",
+          "Identify key concepts and tailoring consideration for project scope management, and key roles in scope management",
+          "Identify the purpose and elements of a Work Breakdown Structure (WBS) for both Product and Project scope",
+          "Understand project scope management for agile/adaptive projects, including the use of prototypes",
+        ],
+      },
+      {
+        title: "Project Schedule Management",
+        items: [
+          "Define the six project management processes in the project schedule management knowledge area",
+          "Identify the Input, tools, techniques and outputs defined in the six processes in project schedule management",
+          "Solve simple network diagrams problems and perform basic scheduling calculations",
+          "Identify considerations for agile/adaptive environments in project schedule management",
+        ],
+      },
+      {
+        title: "Project Cost Management",
+        items: [
+          "Understand the four project management processes in the project cost management knowledge area",
+          "Identify the Input, tools, techniques and outputs defined in the four processes in project cost management",
+          "Identify key concepts in project cost management, including tailoring and special considerations for agile/adaptive environments",
+          "Understand and apply basic forecasting and earned value methods for project cost management",
+        ],
+      },
+      {
+        title: "Project Quality Management",
+        items: [
+          "Understand the three project management processes in the project quality management knowledge area",
+          "Identify the Input, tools, techniques and outputs defined in the three quality management processes",
+          "Understand the reasons for and approaches to adapting quality management in different project environments",
+          "Identify quality tools and approaches for continuous improvement",
+        ],
+      },
+      {
+        title: "Project Resource Management",
+        items: [
+          "Define the six project management processes in the project resource management knowledge area",
+          "Identify the Input, tools, techniques and outputs defined in the six processes in project resource management",
+          "Identify key concepts and trends in project resource management, including tailoring and special considerations for agile/adaptive environments",
+          "Identify techniques for developing a team, managing conflict, and resolving resource-related problems",
+          "Understand the components of a resource management plan and data representation techniques for managing project resources",
+        ],
+      },
+      {
+        title: "Project Communication Management",
+        items: [
+          "Understand the three project management processes in the project communication management knowledge area",
+          "Identify the Input, tools, techniques and outputs defined in the three project communication management processes",
+          "Identify key concepts and approaches in project communication management, including tailoring and special considerations for agile/adaptive environments",
+          "Recognize the dimensions of communication and components of a communications management plan",
+          "Identify communications skills and methods for project communication Management",
+        ],
+      },
+      {
+        title: "Project Risk Management",
+        items: [
+          "Understand the seven project management processes in the project risk management knowledge area",
+          "Identify the Input, tools, techniques and outputs defined in project risk management",
+          "Identify the key documents in project risk management",
+          "Perform simple risk calculations",
+          "Recognize when and how to adjust risk based on the project environment",
+        ],
+      },
+      {
+        title: "Project Procurement Management",
+        items: [
+          "Understand the three processes in the project procurement management knowledge area",
+          "Identify the Input, tools, techniques and outputs defined in the three project procurement processes",
+          "Identify key concepts and tailoring considerations for project procurement management, including trends and emerging practices",
+          "Identify various types of contracts, agreements, and source selection methods",
+        ],
+      },
+      {
+        title: "Project Stakeholder Management",
+        items: [
+          "Understand the four project management processes in the project stakeholder management knowledge area",
+          "Identify the Input, tools, techniques and outputs defined in the four project stakeholder management processes",
+          "Recognize key stakeholders roles and needs",
+          "Identify the key concepts and benefits of stakeholder management",
+        ],
+      },
     ],
     features: [
-      { icon: Clock, text: "23 Contact Hours" },
-      { icon: BookOpen, text: "PMBOK Guide" },
-      { icon: Award, text: "Exam Application Assistance" },
-      { icon: Users, text: "Project Management Fundamentals" },
-      { icon: CheckCircle, text: "400+ Practice Questions" },
-      { icon: TrendingUp, text: "24/7 Support" },
+      { icon: Clock, text: "24 Hours" },
+      { icon: BookOpen, text: "23 Contact Hours" },
+      { icon: Award, text: "PMI-CAPM Exam Content" },
+      { icon: Users, text: "2 Full-Length Mock Exams" },
+      { icon: CheckCircle, text: "Exam Tips and Techniques" },
+      { icon: TrendingUp, text: "24/7 support" },
     ],
     faqs: [
       {
-        question: "What are the prerequisites for CAPM certification?",
-        answer: "You need either a secondary degree (high school diploma or equivalent) with 23 contact hours of project management education, OR a secondary degree with 1,500 hours of project experience.",
+        question: "What is the CAPM®?",
+        answer: "PMI's Certified Associate in Project Management (CAPM)® is a valuable entry-level certification for project practitioners. Designed for those with little or no project experience, the CAPM® demonstrates your understanding of the principles and terminology of A Guide to Project Management Body of Knowledge (PMBOK® Guide), the standard of project management's generally recognized good practices.",
       },
       {
-        question: "How long is CAPM certification valid?",
-        answer: "CAPM certification is valid for 5 years. After 5 years, you can either retake the exam or upgrade to PMP certification if you meet the PMP requirements.",
+        question: "What is the best way to prepare for the CAPM?",
+        answer: "A Successful CAPM candidates typically use multiple study aids — including courses, self-study and study groups — and will spend many hours to prepare, so make sure you leave yourself plenty of preparation time before you take the exam. PMI.org has a CAPM Exam Prep page dedicated to linking you to in-person and online resources to help you prepare for the CAPM Exam in a way that works for you.",
       },
       {
-        question: "What is the CAPM exam format?",
-        answer: "The CAPM exam consists of 150 multiple choice questions to be completed in 180 minutes. The exam tests your knowledge of project management fundamentals, processes, and terminology.",
+        question: "What are the passing criteria for the CAPM exam?",
+        answer: "The CAPM exam does not have any specific percentage. PMI uses its own set of rules to determine pass or fail.",
+      },
+      {
+        question: "What is the cost of the CAPM exam?",
+        answer: "Cost for PMI members is $225. Cost for nonmembers is $300. The cost for PMI membership is $129/year, plus a $10 application fee. Membership in a local PMI chapter is an additional fee which varies by chapter. Check the PMI website, www.pmi.org",
+      },
+      {
+        question: "What is the duration of the Certified Associate in Project Management exam?",
+        answer: "The duration of the exam is over three hours.",
+      },
+      {
+        question: "How can one apply for the CAPM certification?",
+        answer: "One can apply for the certification through the PMI website. These are a few steps to apply: Creating an account on the PMI website, The application must be completed, Education details should be submitted, Applying for review and approval.",
+      },
+      {
+        question: "What is the cost to retake the exam?",
+        answer: "Cost for PMI members, $150. Cost for nonmembers, $200.",
       },
     ],
   },
@@ -1038,8 +1514,8 @@ export default function CourseDetails() {
                               <ul className="space-y-2 pl-4">
                                 {section.items.map((item, itemIndex) => (
                                   <li key={itemIndex} className="flex items-start gap-3 py-2">
-                                    <span className="text-primary mt-1">•</span>
-                                    <span className="text-gray-700">{item}</span>
+                                    <span className="text-primary mt-1 text-base">•</span>
+                                    <span className="text-gray-700 text-base leading-relaxed">{item}</span>
                                   </li>
                                 ))}
                               </ul>
@@ -1049,22 +1525,22 @@ export default function CourseDetails() {
                       </Accordion>
                     ) : (
                       // Old format (flat list)
-                      <div className="space-y-3">
+                    <div className="space-y-3">
                         {(course.curriculum as string[]).map((module, index) => (
-                          <Card
-                            key={index}
-                            className="border-none overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
-                            data-testid={`module-${index}`}
-                          >
-                            <div className="px-6 py-4 flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                                {index + 1}
-                              </div>
-                              <span className="font-medium text-gray-900">{module}</span>
+                        <Card
+                          key={index}
+                          className="border-none overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+                          data-testid={`module-${index}`}
+                        >
+                          <div className="px-6 py-4 flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                              {index + 1}
                             </div>
-                          </Card>
-                        ))}
-                      </div>
+                            <span className="font-medium text-gray-900">{module}</span>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
                     )}
                   </motion.div>
                 )}
@@ -1095,7 +1571,7 @@ export default function CourseDetails() {
                                 }`}>
                                   Q
                                 </div>
-                                <h3 className="font-semibold text-gray-900">{faq.question}</h3>
+                                <h3 className="font-semibold text-gray-900 text-base">{faq.question}</h3>
                               </div>
                               <ChevronDown
                                 className={`w-5 h-5 text-gray-500 transition-transform duration-200 flex-shrink-0 ml-2 ${
@@ -1118,7 +1594,7 @@ export default function CourseDetails() {
                                       <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-bold text-xs text-white flex-shrink-0">
                                         A
                                       </div>
-                                      <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
+                                      <p className="text-gray-700 text-base leading-relaxed">{faq.answer}</p>
                                     </div>
                                   </div>
                                 </motion.div>

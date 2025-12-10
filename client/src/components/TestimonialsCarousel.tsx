@@ -4,64 +4,61 @@ import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import testimonial1 from "@assets/generated_images/Student_testimonial_portrait_female_0f7257f2.png";
-import testimonial2 from "@assets/generated_images/Student_testimonial_portrait_male_7cdd02e5.png";
-import testimonial3 from "@assets/generated_images/Professional_testimonial_portrait_female_df9be6b6.png";
 
 const testimonials = [
   {
     id: 1,
-    name: "Sarah Johnson",
-    course: "PMP Certification Training",
-    company: "Senior Project Manager, Tech Corp",
+    name: "Davina Sandifer Ph.D., SMC, ECBA",
+    course: "Business Analyst Certification",
+    company: "",
     rating: 5,
-    image: testimonial1,
-    text: "This course completely transformed my career! The instructors are incredibly knowledgeable and supportive. I landed my dream job as a frontend developer just 2 months after completing the bootcamp.",
+    image: "https://www.acesynergi.com/US/images/default-user.jpg",
+    text: "Acesynergi Solutions provides a dynamic training program for professionals seeking a Business Analyst Certification. The facilitation and learning flows at a steady pace, allowing participants to immediately develop practical experience through simulations and role plays. The curriculum follows BABOK, ensuring that participants are adequately prepared to successfully complete the certification exam on the first try. I especially endorse Sairam Bingi as facilitator and coach. His 20+ years of experience and qualifications provide specialized insight for professionals new to IT and Business Analyst roles. I highly recommend Acesynergi Solutions, as it provides high value and high impact for organizations and professionals.",
   },
   {
     id: 2,
-    name: "Michael Chen",
-    course: "Agile Scrum Master Training",
-    company: "Scrum Master, Innovation Labs",
+    name: "Supriya Rebello",
+    course: "ECBA Certification",
+    company: "",
     rating: 5,
-    image: testimonial2,
-    text: "The curriculum is well-structured and covers everything you need to become a data scientist. The hands-on projects gave me the confidence to apply these skills in real-world scenarios.",
+    image: "https://www.acesynergi.com/US/images/image.jpg",
+    text: "A good doctor is a doctor who can do the right diagnosis & identify the right problem. I had been planning to get ECBA certification for a while but was uncertain which direction I should approach to study and get certified. My trainer did the right diagnosis, and the pattern of the program is so well articulated that I was able to pass my ECBA certification on the very first attempt, even with my busy work schedule. The program is well articulated and very detail-oriented. The study material provided is very helpful. The trainer is like a mentor who keeps guiding you in every step of the course and tracks your progress during the preparation for the exam. I highly recommend Acesynergi to everyone who plans to get certified not only in ECBA but other professional certifications too.",
   },
   {
     id: 3,
-    name: "Emily Rodriguez",
-    course: "PRINCE2 Certification",
-    company: "Program Director, Global Solutions",
+    name: "Sara Tleis, Business System Analyst",
+    course: "ECBA®, SMC™",
+    company: "",
     rating: 5,
-    image: testimonial3,
-    text: "Outstanding course! I've doubled my client base since applying the strategies I learned. The instructors provide practical, actionable advice that delivers real results.",
+    image: "https://www.acesynergi.com/US/images/default-user.jpg",
+    text: "Acesynergi Solutions provided me with all the information I needed to pass my ECBA certification. The highly qualified trainer and supporting materials made preparing for the ECBA certification much smoother than what I had anticipated. I highly recommend Acesynergi for any Business Analysis training.",
   },
   {
     id: 4,
-    name: "David Kim",
-    course: "Lean Six Sigma Green Belt",
-    company: "Quality Manager, Manufacturing Inc",
+    name: "Prince Samuel",
+    course: "ECBA™, SMC™",
+    company: "Computer Hardware & Desktop Support Engineer | IT Business Systems Analyst",
     rating: 5,
-    image: testimonial1,
-    text: "The training provided exceptional value. The real-world case studies and practical exercises made complex concepts easy to understand and apply immediately.",
+    image: "https://www.acesynergi.com/US/images/image1.jpg",
+    text: "Acesynergi Solutions specializes in introducing professionals to the world of Business Analyst. The trainer is an industry expert in the world of Business Analysis. The trainer created an environment that helped me to have a good feel as to what it looks like to work as a business analyst. The program played a vital role in preparing me for the ECBA Certification exam. The prep materials such as the practice questions helped me to pass my ECBA certification in my first attempt. I would highly recommend the program for any professional seeking to become a business analyst.",
   },
   {
     id: 5,
-    name: "Priya Sharma",
-    course: "PMI-ACP Certification",
-    company: "Agile Coach, Digital Ventures",
+    name: "Kenny Zhang",
+    course: "Business System Analyst",
+    company: "Business System Analyst at Revature",
     rating: 5,
-    image: testimonial3,
-    text: "Best investment in my professional development. The certification opened doors to new opportunities and the instructor's expertise was evident throughout.",
+    image: "https://www.acesynergi.com/US/images/image4.jpg",
+    text: "Acesynergi Solutions helped me understand the fundamentals and key material to successfully secure the ECBA Certification, an essential milestone in my career as a Business System Analyst. The certification contains an extensive amount of information and requires extensive amount of preparation. The prep resources, practice tests and constant support from Acesynergy Solutions helped me to successfully pass the ECBA certification in my first attempt. Acesynergy was a key component in completing the ECBA certification. I recommend Acesynergy solution for this certification!",
   },
   {
     id: 6,
-    name: "James Wilson",
-    course: "Lean Six Sigma Black Belt",
-    company: "Process Excellence Lead, Fortune 500",
+    name: "Mike Amazan",
+    course: "Business Systems Analyst",
+    company: "Business Systems Analyst at Revature; Entry Certificate in Business Analysis™ (ECBA®) | Scrum Master Certified (SMC™)",
     rating: 5,
-    image: testimonial2,
-    text: "Comprehensive program with excellent support. The knowledge I gained has been instrumental in driving process improvements at my organization.",
+    image: "https://www.acesynergi.com/US/images/image5.jpg",
+    text: "Acesynergi Solutions is a great company that really helped me in learning about the world of business analysis, what it takes to be a Business Systems Analysts, and what I need to obtain my ECBA certification and SCRUM certification. I would recommend it to anyone who wants to grow as a person and is interested of being part of the Business Systems Analyst field. From interactive lessons and exercises, to practice test based on the BABOK chapters Acesynergi really helped to boost my confidence for taking my certification test and help me to feel ready to be a Business Systems Analyst in the real world.",
   },
 ];
 
@@ -113,7 +110,7 @@ export default function TestimonialsCarousel() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl font-bold text-primary mb-4" data-testid="text-testimonials-title">
-            What Our Students Say
+            What Our Customers are Saying
           </h2>
           <p className="text-lg text-gray-600">
             Real stories from learners who transformed their careers
@@ -155,7 +152,9 @@ export default function TestimonialsCarousel() {
                         </div>
                         <div className="font-bold text-lg text-primary">{testimonial.name}</div>
                         <div className="text-sm text-secondary font-medium">{testimonial.course}</div>
-                        <div className="text-sm text-gray-500">{testimonial.company}</div>
+                        {testimonial.company && (
+                          <div className="text-sm text-gray-500">{testimonial.company}</div>
+                        )}
                       </div>
                     </div>
                   </Card>
