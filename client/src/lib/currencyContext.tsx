@@ -9,6 +9,7 @@ import {
   getCitiesForCountry,
   getAvailableCountries 
 } from "./currency";
+import { detectCountryFromIP } from "./geolocation";
 
 // Storage keys for localStorage persistence
 const STORAGE_KEY_COUNTRY = "acesynergi_country";
@@ -37,13 +38,35 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
   const [city, setCityState] = useState<string>("");
   const [isInitialized, setIsInitialized] = useState(false);
   
-  // Load from localStorage on mount
+  // Load from localStorage on mount, then auto-detect country if not set
   useEffect(() => {
     try {
       const savedCountry = localStorage.getItem(STORAGE_KEY_COUNTRY) || "";
       const savedCity = localStorage.getItem(STORAGE_KEY_CITY) || "";
-      if (savedCountry) setCountryState(savedCountry);
-      if (savedCity) setCityState(savedCity);
+      if (savedCountry) {
+        setCountryState(savedCountry);
+      }
+      if (savedCity) {
+        setCityState(savedCity);
+      }
+      
+      // Auto-detect country from IP if no saved country
+      if (!savedCountry) {
+        detectCountryFromIP()
+          .then((detectedCountry) => {
+            if (detectedCountry) {
+              // Verify the detected country is in our available countries list
+              const availableCountries = getAvailableCountries();
+              if (availableCountries.includes(detectedCountry)) {
+                setCountryState(detectedCountry);
+              }
+            }
+          })
+          .catch((error) => {
+            // Silently fail - don't break the app if geolocation fails
+            console.warn("Auto-detection of country failed:", error);
+          });
+      }
     } catch (e) {
       // localStorage not available
     }

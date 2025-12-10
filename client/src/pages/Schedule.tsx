@@ -258,6 +258,166 @@ const onlineSchedules: Schedule[] = [
     ],
     instructor: "Rachel Adams, PMP, AI Strategist"
   },
+  { 
+    id: "7", 
+    courseId: "pmi-acp",
+    title: "PMI-ACP® Certification Training", 
+    dates: "Jan 10 - 12, 2026",
+    startDate: "Jan 10",
+    endDate: "Jan 12", 
+    mode: "Live Online Classroom", 
+    price: 899,
+    originalPrice: 1299,
+    time: "9 AM - 5 PM",
+    venue: "Online Classroom",
+    days: 3,
+    description: "The PMI Agile Certified Practitioner (PMI-ACP)® certification demonstrates your knowledge of agile principles and your skill with agile techniques. This comprehensive training covers Scrum, Kanban, Lean, XP, and other agile methodologies.",
+    whatYouLearn: [
+      "Agile principles and methodologies",
+      "Scrum, Kanban, and Lean practices",
+      "Agile planning and estimation techniques",
+      "Stakeholder engagement in agile projects",
+      "Agile team dynamics and collaboration",
+      "Continuous improvement practices"
+    ],
+    prerequisites: [
+      "Secondary degree or four-year degree",
+      "21 contact hours of training in agile practices",
+      "12 months of general project experience within the last 5 years",
+      "8 months of agile project experience within the last 3 years"
+    ],
+    curriculum: [
+      "Introduction to Agile and PMI-ACP",
+      "Agile Principles and Mindset",
+      "Value-Driven Delivery",
+      "Stakeholder Engagement",
+      "Team Performance",
+      "Adaptive Planning",
+      "Problem Detection and Resolution",
+      "Continuous Improvement"
+    ],
+    instructor: "Michael Chen, PMI-ACP, CSM"
+  },
+  { 
+    id: "8", 
+    courseId: "pmi-acp",
+    title: "PMI-ACP® Certification Training", 
+    dates: "Jan 20 - 22, 2026",
+    startDate: "Jan 20",
+    endDate: "Jan 22", 
+    mode: "Live Online Classroom", 
+    price: 899,
+    originalPrice: 1299,
+    time: "9 AM - 5 PM",
+    venue: "Online Classroom",
+    days: 3,
+    description: "The PMI Agile Certified Practitioner (PMI-ACP)® certification demonstrates your knowledge of agile principles and your skill with agile techniques. This comprehensive training covers Scrum, Kanban, Lean, XP, and other agile methodologies.",
+    whatYouLearn: [
+      "Agile principles and methodologies",
+      "Scrum, Kanban, and Lean practices",
+      "Agile planning and estimation techniques",
+      "Stakeholder engagement in agile projects",
+      "Agile team dynamics and collaboration",
+      "Continuous improvement practices"
+    ],
+    prerequisites: [
+      "Secondary degree or four-year degree",
+      "21 contact hours of training in agile practices",
+      "12 months of general project experience within the last 5 years",
+      "8 months of agile project experience within the last 3 years"
+    ],
+    curriculum: [
+      "Introduction to Agile and PMI-ACP",
+      "Agile Principles and Mindset",
+      "Value-Driven Delivery",
+      "Stakeholder Engagement",
+      "Team Performance",
+      "Adaptive Planning",
+      "Problem Detection and Resolution",
+      "Continuous Improvement"
+    ],
+    instructor: "Michael Chen, PMI-ACP, CSM"
+  },
+  { 
+    id: "9", 
+    courseId: "capm",
+    title: "CAPM® Certification Training", 
+    dates: "Jan 15 - 17, 2026",
+    startDate: "Jan 15",
+    endDate: "Jan 17", 
+    mode: "Live Online Classroom", 
+    price: 699,
+    originalPrice: 999,
+    time: "9 AM - 5 PM",
+    venue: "Online Classroom",
+    days: 3,
+    description: "The Certified Associate in Project Management (CAPM)® is an entry-level certification for project practitioners. Designed for those who are new to project management, this certification demonstrates your understanding of fundamental project management knowledge and processes.",
+    whatYouLearn: [
+      "Project management fundamentals",
+      "Project lifecycle and processes",
+      "Project integration management",
+      "Scope, schedule, and cost management",
+      "Quality and resource management",
+      "Risk and procurement management",
+      "Stakeholder and communications management"
+    ],
+    prerequisites: [
+      "Secondary degree (high school diploma or equivalent)",
+      "23 contact hours of project management education",
+      "OR 1,500 hours of project experience"
+    ],
+    curriculum: [
+      "Introduction to CAPM and Project Management",
+      "Project Management Framework",
+      "Project Life Cycle and Organization",
+      "Project Integration Management",
+      "Project Scope Management",
+      "Project Schedule Management",
+      "Project Cost Management",
+      "Project Quality Management"
+    ],
+    instructor: "Sarah Johnson, CAPM, PMP"
+  },
+  { 
+    id: "10", 
+    courseId: "capm",
+    title: "CAPM® Certification Training", 
+    dates: "Feb 5 - 7, 2026",
+    startDate: "Feb 5",
+    endDate: "Feb 7", 
+    mode: "Live Online Classroom", 
+    price: 699,
+    originalPrice: 999,
+    time: "9 AM - 5 PM",
+    venue: "Online Classroom",
+    days: 3,
+    description: "The Certified Associate in Project Management (CAPM)® is an entry-level certification for project practitioners. Designed for those who are new to project management, this certification demonstrates your understanding of fundamental project management knowledge and processes.",
+    whatYouLearn: [
+      "Project management fundamentals",
+      "Project lifecycle and processes",
+      "Project integration management",
+      "Scope, schedule, and cost management",
+      "Quality and resource management",
+      "Risk and procurement management",
+      "Stakeholder and communications management"
+    ],
+    prerequisites: [
+      "Secondary degree (high school diploma or equivalent)",
+      "23 contact hours of project management education",
+      "OR 1,500 hours of project experience"
+    ],
+    curriculum: [
+      "Introduction to CAPM and Project Management",
+      "Project Management Framework",
+      "Project Life Cycle and Organization",
+      "Project Integration Management",
+      "Project Scope Management",
+      "Project Schedule Management",
+      "Project Cost Management",
+      "Project Quality Management"
+    ],
+    instructor: "Sarah Johnson, CAPM, PMP"
+  },
 ];
 
 const relatedCourses: RelatedCourse[] = [
@@ -265,6 +425,9 @@ const relatedCourses: RelatedCourse[] = [
   { id: "ecba", title: "ECBA Certification Training", category: "Business Management", duration: "21 hours" },
   { id: "ccba", title: "CCBA Certification Training", category: "Business Management", duration: "28 hours" },
   { id: "ccba-prep", title: "CCBA Prep Course", category: "Business Management", duration: "16 hours" },
+  { id: "pmp", title: "PMP Certification Training", category: "Project Management", duration: "36 hours" },
+  { id: "pmi-acp", title: "PMI-ACP® Certification Training", category: "Project Management", duration: "21 hours" },
+  { id: "capm", title: "CAPM® Certification Training", category: "Project Management", duration: "23 hours" },
   { id: "genai-scrum-master", title: "Gen AI for Scrum Masters", category: "Gen AI Courses", duration: "16 hours" },
   { id: "genai-project-managers", title: "Gen AI for Project Managers", category: "Gen AI Courses", duration: "20 hours" },
   { id: "genai-product-owner", title: "Gen AI for Product Owners", category: "Gen AI Courses", duration: "16 hours" },

@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { Star, Users, Clock, ChevronLeft, ChevronRight, Award } from "lucide-react";
+import { Star, Users, Clock, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Link } from "wouter";
-import { useState } from "react";
 
 const courses = [
   {
@@ -19,6 +19,7 @@ const courses = [
     originalPrice: 1499,
     badge: "Best Seller",
     category: "Business Analysis",
+    type: "certification", // certification, skill-based, popular
   },
   {
     id: "ecba",
@@ -33,6 +34,7 @@ const courses = [
     originalPrice: 999,
     badge: "Popular",
     category: "Business Analysis",
+    type: "popular", // Also popular
   },
   {
     id: "ccba",
@@ -47,167 +49,158 @@ const courses = [
     originalPrice: 1299,
     badge: "Premium",
     category: "Business Analysis",
+    type: "certification",
   },
   {
-    id: "ccba-prep",
-    title: "CCBA Prep Course",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop&q=80",
-    instructor: "Lisa Park, CCBA",
-    rating: 4.7,
-    reviewCount: 892,
-    students: 3120,
-    duration: "16 hours",
-    price: 499,
-    originalPrice: 799,
-    badge: "Hot",
-    category: "Business Analysis",
-  },
-  {
-    id: "genai-scrum-master",
-    title: "Gen AI for Scrum Masters",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop&q=80",
-    instructor: "Alex Thompson, CSM",
-    rating: 4.9,
-    reviewCount: 892,
-    students: 3450,
-    duration: "16 hours",
-    price: 599,
-    originalPrice: 899,
-    badge: "New",
-    category: "Gen AI",
-  },
-  {
-    id: "genai-project-managers",
-    title: "Gen AI for Project Managers",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop&q=80",
+    id: "pmp",
+    title: "PMP® Certification Training",
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&h=400&fit=crop&q=80",
     instructor: "David Lee, PMP",
+    rating: 4.9,
+    reviewCount: 3456,
+    students: 12450,
+    duration: "36 hours",
+    price: 999,
+    originalPrice: 1499,
+    badge: "Best Seller",
+    category: "Project Management",
+    type: "certification",
+  },
+  {
+    id: "pmi-acp",
+    title: "PMI-ACP® Certification Training",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop&q=80",
+    instructor: "Michael Chen, PMI-ACP",
     rating: 4.8,
-    reviewCount: 1245,
-    students: 4870,
-    duration: "20 hours",
+    reviewCount: 2156,
+    students: 8560,
+    duration: "21 hours",
+    price: 899,
+    originalPrice: 1299,
+    badge: "Popular",
+    category: "Project Management",
+    type: "popular",
+  },
+  {
+    id: "capm",
+    title: "CAPM® Certification Training",
+    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&h=400&fit=crop&q=80",
+    instructor: "Sarah Johnson, CAPM",
+    rating: 4.7,
+    reviewCount: 1834,
+    students: 7230,
+    duration: "23 hours",
     price: 699,
     originalPrice: 999,
-    badge: "Trending",
-    category: "Gen AI",
-  },
-  {
-    id: "genai-product-owner",
-    title: "Gen AI for Product Owners",
-    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&h=400&fit=crop&q=80",
-    instructor: "Maria Santos, CSPO",
-    rating: 4.7,
-    reviewCount: 756,
-    students: 2890,
-    duration: "16 hours",
-    price: 599,
-    originalPrice: 899,
-    badge: "Popular",
-    category: "Gen AI",
-  },
-  {
-    id: "genai-business-analysts",
-    title: "Gen AI for Business Analysts",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop&q=80",
-    instructor: "Emily Rodriguez, CBAP",
-    rating: 4.7,
-    reviewCount: 967,
-    students: 2890,
-    duration: "16 hours",
-    price: 599,
-    originalPrice: 899,
-    badge: "Popular",
-    category: "Gen AI",
-  },
-  {
-    id: "genai-interview-prep",
-    title: "Interview Prep for Scrum Masters",
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600&h=400&fit=crop&q=80",
-    instructor: "James Wilson, CSM",
-    rating: 4.6,
-    reviewCount: 634,
-    students: 1890,
-    duration: "8 hours",
-    price: 299,
-    originalPrice: 499,
     badge: "New",
-    category: "Gen AI",
+    category: "Project Management",
+    type: "certification",
+  },
+  {
+    id: "pmipba",
+    title: "PMI PBA Certification Training",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop&q=80",
+    instructor: "Emily Rodriguez, PMI-PBA",
+    rating: 4.8,
+    reviewCount: 1245,
+    students: 5670,
+    duration: "24 hours",
+    price: 749,
+    originalPrice: 1099,
+    badge: "Premium",
+    category: "Project Management",
+    type: "certification",
   },
 ];
 
 export default function FeaturedCourses() {
-  const [currentRow, setCurrentRow] = useState(0);
-  const coursesPerRow = 3;
-  const totalRows = Math.ceil(courses.length / coursesPerRow);
-
-  const nextRow = () => {
-    setCurrentRow((prev) => (prev + 1) % totalRows);
-  };
-
-  const prevRow = () => {
-    setCurrentRow((prev) => (prev - 1 + totalRows) % totalRows);
-  };
-
-  const getVisibleCourses = () => {
-    const start = currentRow * coursesPerRow;
-    return courses.slice(start, start + coursesPerRow);
+  const getFilteredCourses = (type: string) => {
+    // All courses in the dropdown menu - Project Management first, then Business Analysis
+    const dropdownCourseIds = ["pmp", "pmi-acp", "capm", "pmipba", "cbap", "ccba", "ecba"];
+    
+    if (type === "popular") {
+      // Show all courses from the dropdown menu, sorted: Project Management first, then Business Analysis
+      const filtered = courses.filter((course) => dropdownCourseIds.includes(course.id));
+      return filtered.sort((a, b) => {
+        // Project Management courses first
+        if (a.category === "Project Management" && b.category !== "Project Management") return -1;
+        if (a.category !== "Project Management" && b.category === "Project Management") return 1;
+        // Within same category, maintain dropdown order
+        const indexA = dropdownCourseIds.indexOf(a.id);
+        const indexB = dropdownCourseIds.indexOf(b.id);
+        return indexA - indexB;
+      });
+    } else if (type === "certification") {
+      return courses.filter((course) => course.type === "certification");
+    } else if (type === "skill-based") {
+      return courses.filter((course) => course.type === "skill-based");
+    }
+    return courses;
   };
 
   return (
-    <section className="py-20 md:py-24 bg-slate-50" data-testid="section-courses" id="courses">
+    <section className="py-12 md:py-16 bg-slate-50" data-testid="section-courses" id="courses">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-6"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900" data-testid="text-courses-title">
-            Featured Courses of This Month
+          <h2 className="text-3xl md:text-4xl font-bold mb-2 text-gray-900" data-testid="text-courses-title">
+            Expert-Recommended Courses
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Handpicked professional certification courses from industry experts
-          </p>
         </motion.div>
 
-        <div className="relative">
-          <Button
-            size="icon"
-            onClick={prevRow}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg"
-            data-testid="button-carousel-prev"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </Button>
-
-          <Button
-            size="icon"
-            onClick={nextRow}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg"
-            data-testid="button-carousel-next"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </Button>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {getVisibleCourses().map((course, index) => (
-              <CourseCard key={course.id} course={course} index={index} />
-            ))}
+        <Tabs defaultValue="popular" className="w-full">
+          <div className="flex items-center justify-between mb-8">
+            <TabsList className="bg-transparent border-b border-gray-200 rounded-none p-0 h-auto">
+              <TabsTrigger
+                value="popular"
+                className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-6 py-3 text-base font-semibold"
+              >
+                Popular Courses
+              </TabsTrigger>
+              <TabsTrigger
+                value="certification"
+                className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-6 py-3 text-base font-semibold"
+              >
+                Certification Programs
+              </TabsTrigger>
+              <TabsTrigger
+                value="skill-based"
+                className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-6 py-3 text-base font-semibold"
+              >
+                Skill-based Courses
+              </TabsTrigger>
+            </TabsList>
           </div>
 
-          <div className="flex justify-center gap-2 mt-8">
-            {Array.from({ length: totalRows }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentRow(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  currentRow === index ? 'w-8 bg-primary' : 'w-2 bg-gray-300'
-                }`}
-                data-testid={`dot-${index}`}
-              />
-            ))}
-          </div>
-        </div>
+          <TabsContent value="popular" className="mt-0">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {getFilteredCourses("popular").map((course, index) => (
+                <CourseCard key={course.id} course={course} index={index} />
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="certification" className="mt-0">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {getFilteredCourses("certification").map((course, index) => (
+                <CourseCard key={course.id} course={course} index={index} />
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="skill-based" className="mt-0">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {getFilteredCourses("skill-based").map((course, index) => (
+                <CourseCard key={course.id} course={course} index={index} />
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -1,6 +1,5 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import AboutSection from "@/components/AboutSection";
 import CategoriesCarousel from "@/components/CategoriesCarousel";
 import FeaturedCourses from "@/components/FeaturedCourses";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
@@ -13,9 +12,8 @@ export default function Home() {
       <Header />
       <main>
         <HeroSection />
-        <AboutSection />
-        <CategoriesCarousel />
         <FeaturedCourses />
+        <CategoriesCarousel />
         <TestimonialsCarousel />
         <CTASection />
       </main>

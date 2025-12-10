@@ -6,9 +6,15 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Link, useRoute } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import heroImg from "@assets/stock_images/professional_busines_e2b710fa.jpg";
+
+interface CurriculumSection {
+  title: string;
+  items: string[];
+}
 
 interface CourseData {
   title: string;
@@ -22,7 +28,7 @@ interface CourseData {
     duration: string;
     details: string;
   };
-  curriculum: string[];
+  curriculum: string[] | CurriculumSection[];
   features: { icon: any; text: string }[];
   faqs: { question: string; answer: string }[];
 }
@@ -494,19 +500,79 @@ const coursesData: Record<string, CourseData> = {
       details: "The exam tests knowledge across predictive, agile, and hybrid approaches to project management.",
     },
     curriculum: [
-      "Introduction to PMP",
-      "Project Management Framework",
-      "Project Integration Management",
-      "Project Scope Management",
-      "Project Schedule Management",
-      "Project Cost Management",
-      "Project Quality Management",
-      "Project Resource Management",
-      "Project Communications Management",
-      "Project Risk Management",
-      "Project Procurement Management",
-      "Project Stakeholder Management",
-      "Agile and Hybrid Approaches",
+      {
+        title: "Business Environment",
+        items: [
+          "Aligning with Organizational Trends and Global Strategy",
+          "Project benefits and business value",
+          "Organizational Culture and Change Management",
+          "Project Governance",
+          "Project Compliance",
+          "Summary",
+          "Assessment",
+        ],
+      },
+      {
+        title: "Starting The Project",
+        items: [
+          "Determine Appropriate Project Methodology/Methods And Practices",
+          "Plan And Manage Scope",
+          "Plan And Manage Budget And Resources",
+          "Plan And Manage Schedule",
+          "Plan And Manage Quality Of Products And Deliverables",
+          "Integrate Project Planning Activities",
+          "Plan And Manage Procurement",
+          "Establish Project Governance Structure",
+          "Plan And Manage Project/Phase Closure",
+        ],
+      },
+      {
+        title: "Plan the Project",
+        items: [
+          "Project Planning",
+          "Scope and Schedule Management",
+          "Cost and Quality Management",
+          "Resource",
+          "Procurement Management",
+          "Integration",
+          "Summary",
+          "Assessment",
+        ],
+      },
+      {
+        title: "Lead the Project Team",
+        items: [
+          "Craft Your Leadership Skills",
+          "Create a Collaborative Project Team Environment",
+          "Empower the Team",
+          "Support Team Member Performance",
+          "Communicate and Collaborate with Stakeholders",
+          "Training, Coaching and Mentoring",
+          "Manage Conflicts",
+          "Summary",
+          "Assessment",
+        ],
+      },
+      {
+        title: "Support the Project Team Performance",
+        items: [
+          "Implement On-Going Improvements",
+          "Support Performance",
+          "Evaluate Project Progress",
+          "Manage Issues and Impediments",
+          "Manage Changes",
+        ],
+      },
+      {
+        title: "Close Project / Phase",
+        items: [
+          "Project / Phase Closure",
+          "Benefits Realization",
+          "Knowledge Transfer",
+          "Summary",
+          "Assessment",
+        ],
+      },
     ],
     features: [
       { icon: Clock, text: "36 Hours" },
@@ -518,16 +584,24 @@ const coursesData: Record<string, CourseData> = {
     ],
     faqs: [
       {
-        question: "What are the prerequisites for PMP certification?",
-        answer: "Either a four-year degree with 36 months of project leadership experience, or a high school diploma with 60 months of project leadership experience. Plus 35 hours of PM education.",
+        question: "What are the educational prerequisites must have to be eligible for PMP Exam?",
+        answer: "The candidate should have attended at least 35 hours of classroom training on Project Management.",
       },
       {
-        question: "How long is PMP certification valid?",
-        answer: "PMP certification is valid for 3 years. You need to earn 60 PDUs in each 3-year cycle to maintain it.",
+        question: "What is the format of the PMP exam?",
+        answer: "The certification exam for PMP consists 180 multiple-choice questions. The time allotted to complete the exam is 230 minutes.",
       },
       {
-        question: "What is the exam format?",
-        answer: "The PMP exam has 180 questions to be completed in 230 minutes. It includes multiple choice, multiple responses, matching, hotspot, and fill-in-the-blank questions.",
+        question: "What score is required to pass the PMP Exam?",
+        answer: "PMI has decided to no more publish passing scores for its exams and has also removed all quantitative elements from the post-exam review for test candidates. The passing score is estimated inside a range between 61% and 75%.",
+      },
+      {
+        question: "How much does it cost to take exam?",
+        answer: "It is highly recommended that you become PMI member prior to applying for the PMP exam to take the test. The membership fee is $129 + $10 for the first time. It is an annual fee and your application can be submitted online at www.pmi.org. If you are a PMI member, the exam fee is $405, for non-members, the exam fee is $575. Your PMI membership fee would help you to save and gain several privileges.",
+      },
+      {
+        question: "What are the benefits of becoming PMP certified to an individual?",
+        answer: "The benefits of being PMP certified are: Increases your value to your organization, Increases your marketability, Professional/personal recognition, Provides advancement in your field, Demonstrated ability to meet standardized and recognized project management body of knowledge, Raises customer confidence in you and your company's services.",
       },
     ],
   },
@@ -594,6 +668,140 @@ const coursesData: Record<string, CourseData> = {
       {
         question: "What is the exam format?",
         answer: "The PMP exam has 180 questions to be completed in 230 minutes. It includes multiple choice, multiple responses, matching, hotspot, and fill-in-the-blank questions.",
+      },
+    ],
+  },
+
+  "pmi-acp": {
+    title: "PMI-ACP® Certification Training",
+    description: "The PMI Agile Certified Practitioner (PMI-ACP)® certification demonstrates your knowledge of agile principles and your skill with agile techniques. It's the fastest-growing PMI certification and validates your ability to work in agile environments. This certification covers a variety of agile approaches including Scrum, Kanban, Lean, extreme programming (XP), and test-driven development (TDD).",
+    learningPoints: [
+      "Agile principles and methodologies",
+      "Scrum, Kanban, and Lean practices",
+      "Agile planning and estimation techniques",
+      "Stakeholder engagement in agile projects",
+      "Agile team dynamics and collaboration",
+      "Continuous improvement practices",
+      "Full preparation for PMI-ACP exam",
+    ],
+    prerequisites: "PMI-ACP® Certification Requirements: Either (1) Secondary degree with 21 contact hours of training in agile practices, 12 months of general project experience within the last 5 years, and 8 months of agile project experience within the last 3 years, OR (2) Four-year degree with 21 contact hours of training in agile practices, 12 months of general project experience within the last 5 years, and 8 months of agile project experience within the last 3 years.",
+    whoCanDo: [
+      "Agile Project Managers",
+      "Scrum Masters",
+      "Product Owners",
+      "Agile Coaches",
+      "Team Leads",
+      "Project Managers transitioning to Agile",
+    ],
+    examFormat: {
+      questions: "120",
+      type: "Multiple choice questions",
+      duration: "180 minutes",
+      details: "The exam tests knowledge of agile principles, tools, and techniques across various agile methodologies including Scrum, Kanban, Lean, XP, and TDD.",
+    },
+    curriculum: [
+      "Introduction to Agile and PMI-ACP",
+      "Agile Principles and Mindset",
+      "Value-Driven Delivery",
+      "Stakeholder Engagement",
+      "Team Performance",
+      "Adaptive Planning",
+      "Problem Detection and Resolution",
+      "Continuous Improvement",
+      "Agile Methodologies: Scrum, Kanban, XP",
+      "Agile Tools and Techniques",
+      "Agile Estimation and Planning",
+      "Agile Risk Management",
+      "Exam Preparation and Practice",
+    ],
+    features: [
+      { icon: Clock, text: "21 Contact Hours" },
+      { icon: BookOpen, text: "Agile Practice Guide" },
+      { icon: Award, text: "Exam Application Assistance" },
+      { icon: Users, text: "Agile Tools & Techniques" },
+      { icon: CheckCircle, text: "500+ Practice Questions" },
+      { icon: TrendingUp, text: "24/7 Support" },
+    ],
+    faqs: [
+      {
+        question: "What are the prerequisites for PMI-ACP certification?",
+        answer: "You need either a secondary degree or four-year degree, 21 contact hours of training in agile practices, 12 months of general project experience within the last 5 years, and 8 months of agile project experience within the last 3 years.",
+      },
+      {
+        question: "How long is PMI-ACP certification valid?",
+        answer: "PMI-ACP certification is valid for 3 years. You need to earn 30 PDUs in agile topics within each 3-year cycle to maintain your certification.",
+      },
+      {
+        question: "What is the PMI-ACP exam format?",
+        answer: "The PMI-ACP exam consists of 120 multiple choice questions to be completed in 180 minutes. The exam tests your knowledge of agile principles, tools, and techniques across various agile methodologies.",
+      },
+    ],
+  },
+
+  capm: {
+    title: "CAPM® Certification Training",
+    description: "The Certified Associate in Project Management (CAPM)® is an entry-level certification for project practitioners. Designed for those who are new to project management or want to demonstrate their commitment to the profession, CAPM® certification shows that you understand the fundamental knowledge, terminology, and processes of effective project management.",
+    learningPoints: [
+      "Project management fundamentals",
+      "Project lifecycle and processes",
+      "Project integration management",
+      "Scope, schedule, and cost management",
+      "Quality and resource management",
+      "Risk and procurement management",
+      "Stakeholder and communications management",
+      "Full preparation for CAPM exam",
+    ],
+    prerequisites: "CAPM® Certification Requirements: Either (1) Secondary degree (high school diploma, associate's degree, or global equivalent) with 23 contact hours of project management education completed by the time you sit for the exam, OR (2) Secondary degree (high school diploma, associate's degree, or global equivalent) with 1,500 hours of project experience.",
+    whoCanDo: [
+      "Project Coordinators",
+      "Entry-level Project Managers",
+      "Team Members",
+      "Students",
+      "Career Changers",
+      "Anyone new to project management",
+    ],
+    examFormat: {
+      questions: "150",
+      type: "Multiple choice questions",
+      duration: "180 minutes",
+      details: "The exam tests knowledge of project management fundamentals, processes, and terminology as defined in the PMBOK Guide.",
+    },
+    curriculum: [
+      "Introduction to CAPM and Project Management",
+      "Project Management Framework",
+      "Project Life Cycle and Organization",
+      "Project Integration Management",
+      "Project Scope Management",
+      "Project Schedule Management",
+      "Project Cost Management",
+      "Project Quality Management",
+      "Project Resource Management",
+      "Project Communications Management",
+      "Project Risk Management",
+      "Project Procurement Management",
+      "Project Stakeholder Management",
+      "Exam Preparation and Practice Tests",
+    ],
+    features: [
+      { icon: Clock, text: "23 Contact Hours" },
+      { icon: BookOpen, text: "PMBOK Guide" },
+      { icon: Award, text: "Exam Application Assistance" },
+      { icon: Users, text: "Project Management Fundamentals" },
+      { icon: CheckCircle, text: "400+ Practice Questions" },
+      { icon: TrendingUp, text: "24/7 Support" },
+    ],
+    faqs: [
+      {
+        question: "What are the prerequisites for CAPM certification?",
+        answer: "You need either a secondary degree (high school diploma or equivalent) with 23 contact hours of project management education, OR a secondary degree with 1,500 hours of project experience.",
+      },
+      {
+        question: "How long is CAPM certification valid?",
+        answer: "CAPM certification is valid for 5 years. After 5 years, you can either retake the exam or upgrade to PMP certification if you meet the PMP requirements.",
+      },
+      {
+        question: "What is the CAPM exam format?",
+        answer: "The CAPM exam consists of 150 multiple choice questions to be completed in 180 minutes. The exam tests your knowledge of project management fundamentals, processes, and terminology.",
       },
     ],
   },
@@ -818,22 +1026,46 @@ export default function CourseDetails() {
                     transition={{ duration: 0.3 }}
                   >
                     <h2 className="text-2xl font-bold mb-6 text-foreground">Course Curriculum</h2>
-                    <div className="space-y-3">
-                      {course.curriculum.map((module, index) => (
-                        <Card
-                          key={index}
-                          className="border-none overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
-                          data-testid={`module-${index}`}
-                        >
-                          <div className="px-6 py-4 flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                              {index + 1}
+                    {Array.isArray(course.curriculum) && course.curriculum.length > 0 && typeof course.curriculum[0] === 'object' && 'title' in course.curriculum[0] ? (
+                      // New format with sections
+                      <Accordion type="single" collapsible className="w-full">
+                        {(course.curriculum as CurriculumSection[]).map((section, sectionIndex) => (
+                          <AccordionItem key={sectionIndex} value={`section-${sectionIndex}`} className="border-b border-gray-200">
+                            <AccordionTrigger className="text-left font-semibold text-lg py-4 hover:no-underline">
+                              {section.title}
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <ul className="space-y-2 pl-4">
+                                {section.items.map((item, itemIndex) => (
+                                  <li key={itemIndex} className="flex items-start gap-3 py-2">
+                                    <span className="text-primary mt-1">•</span>
+                                    <span className="text-gray-700">{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </AccordionContent>
+                          </AccordionItem>
+                        ))}
+                      </Accordion>
+                    ) : (
+                      // Old format (flat list)
+                      <div className="space-y-3">
+                        {(course.curriculum as string[]).map((module, index) => (
+                          <Card
+                            key={index}
+                            className="border-none overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+                            data-testid={`module-${index}`}
+                          >
+                            <div className="px-6 py-4 flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                                {index + 1}
+                              </div>
+                              <span className="font-medium text-gray-900">{module}</span>
                             </div>
-                            <span className="font-medium text-gray-900">{module}</span>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
                   </motion.div>
                 )}
 

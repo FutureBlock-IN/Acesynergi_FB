@@ -27,9 +27,12 @@ const courseCategories: CourseCategory[] = [
   { 
     name: "Project Management", 
     subItems: [
-      { name: "PMP Certification Training", href: "/courses/pmp" },
+      { name: "Project Management Professional (PMP)", href: "/courses/pmp" },
+      { name: "PMI Agile Certified Practitioner (PMI-ACP)", href: "/courses/pmi-acp" },
+      { name: "PMI Certified Associate in Project Management (CAPM)", href: "/courses/capm" },
+      { name: "PMI Profession in Project Management (PMI-PBA)", href: "/courses/pmipba" },
       // { name: "CAPM Certification Training", href: "/courses/capm" },
-      { name: "PMI PBA Certification Training", href: "/courses/pmipba" },
+      // { name: "PMI PBA Certification Training", href: "/courses/pmipba" },
       // { name: "Foundation Certification", href: "/courses/foundation" },
       // { name: "Practitioner Certification", href: "/courses/practitioner" },
       // { name: "Foundation and Practitioner Certification", href: "/courses/fp" },
@@ -39,10 +42,10 @@ const courseCategories: CourseCategory[] = [
   { 
     name: "Business Management", 
     subItems: [
-      { name: "CBAP", href: "/courses/cbap" },
-      { name: "ECBA", href: "/courses/ecba" },
+      { name: "CBAP", href: "/courses/cbap" },      
       { name: "CCBA", href: "/courses/ccba" },
-      { name: "CCBA Prep Course", href: "/courses/ccba-prep" },
+      { name: "ECBA", href: "/courses/ecba" },
+      // { name: "CCBA Prep Course", href: "/courses/ccba-prep" },
     ]
   },
   // { 
