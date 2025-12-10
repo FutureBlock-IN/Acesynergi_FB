@@ -188,37 +188,10 @@ export default function Contact() {
               </h2>
 
               <div className="space-y-6">
-                {/* AceSynergi LLC */}
-                <Card className="p-8 bg-card border-primary/10 shadow-md">
-                  <h3 className="text-xl font-bold mb-6 pb-4 border-b border-primary/20 text-foreground">
-                    AceSynergi LLC
-                  </h3>
-
-                  <div className="space-y-6">
-                    <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <MapPin className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-foreground mb-2">
-                          Address
-                        </div>
-                        <div className="text-sm text-muted-foreground leading-relaxed">
-                          39899, Balentine Drive Suite 200,
-                          <br />
-                          Newark, CA 94560
-                          <br />
-                          United States
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-
                 {/* AceSynergi Pvt Ltd */}
                 <Card className="p-8 bg-card border-primary/10 shadow-md">
                   <h3 className="text-xl font-bold mb-6 pb-4 border-b border-primary/20 text-foreground">
-                    AceSynergi Pvt Ltd
+                    Acesynergi Solutions
                   </h3>
 
                   <div className="space-y-6">
@@ -231,11 +204,9 @@ export default function Contact() {
                           Address
                         </div>
                         <div className="text-sm text-muted-foreground leading-relaxed">
-                          403, 4th 6th Floor, JP Homes Apartment,
+                          Vasavi Towers 5th Floor, West Marredpally,
                           <br />
-                          Govind Reddy Layout Ameerpet,
-                          <br />
-                          Hyderabad, TG 500045
+                          Hyderabad - 500 026, Telangana.
                         </div>
                       </div>
                     </div>
@@ -266,7 +237,7 @@ export default function Contact() {
                           Phone
                         </div>
                         <div className="space-y-1 text-sm text-muted-foreground">
-                          <div className="flex justify-between">
+                          {/* <div className="flex justify-between">
                             <span className="font-medium">USA:</span>
                             <a
                               href="tel:+14084447579"
@@ -292,7 +263,7 @@ export default function Contact() {
                             >
                               +91-40-42036080
                             </a>
-                          </div>
+                          </div> */}
                           <div className="flex justify-between">
                             <span className="font-medium">India:</span>
                             <a

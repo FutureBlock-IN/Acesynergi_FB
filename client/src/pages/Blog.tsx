@@ -256,9 +256,9 @@ export default function Blog() {
                   </a>
                 </p>
                 <ul className="list-none space-y-2 text-base md:text-lg text-foreground leading-7 md:leading-8">
-                  <li>USA: 001-703 537 1885</li>
+                  {/* <li>USA: 001-703 537 1885</li>
                   <li>INDIA: +91-9951470972</li>
-                  <li>Singapore: +65 98504376</li>
+                  <li>Singapore: +65 98504376</li> */}
                 </ul>
               </div>
             </CardContent>

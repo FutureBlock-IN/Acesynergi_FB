@@ -64,13 +64,12 @@ export default function Footer() {
           <div className="flex flex-wrap gap-2">
             {topCategories.map((category, index) => (
               <span key={category.name} className="flex items-center">
-                <a
-                  href={category.href}
-                  className="text-[#F1F5F9] hover:text-[#22D3EE] transition-all duration-300 text-sm"
+                <span
+                  className="text-[#F1F5F9] text-sm"
                   data-testid={`link-footer-category-${index}`}
                 >
                   {category.name}
-                </a>
+                </span>
                 {index < topCategories.length - 1 && (
                   <span className="text-white/40 mx-2">|</span>
                 )}
@@ -85,13 +84,12 @@ export default function Footer() {
           <div className="flex flex-wrap gap-x-2 gap-y-1">
             {topCourses.map((course, index) => (
               <span key={course.name} className="flex items-center">
-                <a
-                  href={course.href}
-                  className="text-[#F1F5F9] hover:text-[#22D3EE] transition-all duration-300 text-sm"
+                <span
+                  className="text-[#F1F5F9] text-sm"
                   data-testid={`link-footer-course-${index}`}
                 >
                   {course.name}
-                </a>
+                </span>
                 {index < topCourses.length - 1 && (
                   <span className="text-white/40 mx-2">|</span>
                 )}

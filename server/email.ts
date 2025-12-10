@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 
 const FROM_EMAIL = 'AceSynergi <onboarding@resend.dev>';
-const ADMIN_EMAIL = 'emmanuel012k@gmail.com';
+const ADMIN_EMAIL = 'reachus@acesynergi.com';
 
 function getResendClient() {
   const apiKey = process.env.RESEND_API_KEY;

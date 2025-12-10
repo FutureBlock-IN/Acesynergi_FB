@@ -105,8 +105,8 @@ export default function PaymentSuccess() {
             <div className="mt-8 text-center">
               <p className="text-gray-500 text-sm">
                 Need help? Contact us at{" "}
-                <a href="mailto:emmanuel012k@gmail.com" className="text-primary hover:underline">
-                  emmanuel012k@gmail.com
+                <a href="mailto:reachus@acesynergi.com" className="text-primary hover:underline">
+                  reachus@acesynergi.com
                 </a>
               </p>
             </div>
