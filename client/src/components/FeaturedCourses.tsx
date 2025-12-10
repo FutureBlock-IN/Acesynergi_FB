@@ -168,12 +168,6 @@ export default function FeaturedCourses() {
               >
                 Certification Programs
               </TabsTrigger>
-              <TabsTrigger
-                value="skill-based"
-                className="data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none px-6 py-3 text-base font-semibold"
-              >
-                Skill-based Courses
-              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -188,14 +182,6 @@ export default function FeaturedCourses() {
           <TabsContent value="certification" className="mt-0">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {getFilteredCourses("certification").map((course, index) => (
-                <CourseCard key={course.id} course={course} index={index} />
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="skill-based" className="mt-0">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {getFilteredCourses("skill-based").map((course, index) => (
                 <CourseCard key={course.id} course={course} index={index} />
               ))}
             </div>

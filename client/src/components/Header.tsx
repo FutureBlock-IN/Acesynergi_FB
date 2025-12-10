@@ -226,33 +226,33 @@ export default function Header() {
                   fill="url(#logoGradient)"
                   className="group-hover:opacity-90 transition-opacity"
                 />
-                {/* Interconnected nodes representing synergy */}
-                <circle cx="18" cy="18" r="4" fill="white" opacity="0.95" />
-                <circle cx="30" cy="18" r="4" fill="white" opacity="0.95" />
-                <circle cx="24" cy="30" r="4" fill="white" opacity="0.95" />
+                {/* Interconnected nodes representing synergy - Inverted triangle */}
+                <circle cx="24" cy="18" r="4" fill="white" opacity="0.95" />
+                <circle cx="18" cy="30" r="4" fill="white" opacity="0.95" />
+                <circle cx="30" cy="30" r="4" fill="white" opacity="0.95" />
                 {/* Connection lines */}
                 <line
-                  x1="20.5"
+                  x1="22"
                   y1="20.5"
-                  x2="27.5"
-                  y2="20.5"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  opacity="0.8"
-                />
-                <line
-                  x1="20.5"
-                  y1="20.5"
-                  x2="22"
+                  x2="20.5"
                   y2="27.5"
                   stroke="white"
                   strokeWidth="1.5"
                   opacity="0.8"
                 />
                 <line
-                  x1="27.5"
+                  x1="22"
                   y1="20.5"
                   x2="26"
+                  y2="27.5"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  opacity="0.8"
+                />
+                <line
+                  x1="20.5"
+                  y1="27.5"
+                  x2="27.5"
                   y2="27.5"
                   stroke="white"
                   strokeWidth="1.5"
