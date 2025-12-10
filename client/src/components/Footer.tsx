@@ -3,22 +3,21 @@ import { SiPaypal, SiVisa, SiMastercard } from "react-icons/si";
 
 export default function Footer() {
   const companyLinks = [
-    { name: "About", href: "#about" },
-    { name: "Careers", href: "#careers" },
-    { name: "Blog", href: "#blog" },
+    { name: "About", href: "/about-us" },    
+    { name: "Blog", href: "/blog" },
   ];
 
   const serviceLinks = [
-    { name: "Courses", href: "#courses" },
-    { name: "Corporate Training", href: "#corporate" },
+    { name: "Courses", href: "/courses" },
+    { name: "Corporate Training", href: "/corporate" },
     { name: "Certifications", href: "#certifications" },
   ];
 
   const socialLinks = [
-    { name: "YouTube", icon: Youtube, href: "#youtube" },
-    { name: "LinkedIn", icon: Linkedin, href: "#linkedin" },
-    { name: "Instagram", icon: Instagram, href: "#instagram" },
-    { name: "Facebook", icon: Facebook, href: "#facebook" },
+    { name: "YouTube", icon: Youtube, href: "https://www.youtube.com/channel/UC6WBKrHkB3HItab3QXg71Ow" },
+    { name: "LinkedIn", icon: Linkedin, href: "https://www.linkedin.com/in/acesynergisolutions/" },
+    { name: "Instagram", icon: Instagram, href: "https://www.instagram.com/acesynergitrainings" },
+    { name: "Facebook", icon: Facebook, href: "https://www.facebook.com/acesynergi.trainings" },
   ];
 
   const topCategories = [
@@ -49,11 +48,11 @@ export default function Footer() {
   ];
 
   const legalLinks = [
-    { name: "Terms & Conditions", href: "#" },
-    { name: "Privacy Policy", href: "#" },
-    { name: "Refund Policy", href: "#" },
-    { name: "Rescheduling Policy", href: "#" },
-    { name: "Money Back Guarantee", href: "#" },
+    { name: "Terms & Conditions", href: "/terms-and-conditions" },
+    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Disclaimer", href: "/disclaimer" },
+    { name: "Refund Policy", href: "/refund-policy" },
+    { name: "Rescheduling Policy", href: "/rescheduling-policy" },    
   ];
 
   return (
@@ -138,7 +137,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-secondary text-lg font-semibold mb-4">Contact Us</h3>
+            <h3 className="text-secondary text-lg font-semibold mb-4">Reach Us</h3>
             <ul className="space-y-3">
               <li>
                 <a
@@ -209,6 +208,7 @@ export default function Footer() {
           <div className="flex gap-4">
             {socialLinks.map((social) => {
               const Icon = social.icon;
+              const shouldOpenNewTab = social.name === "LinkedIn" || social.name === "YouTube" || social.name === "Facebook" || social.name === "Instagram";
               return (
                 <a
                   key={social.name}
@@ -216,6 +216,10 @@ export default function Footer() {
                   className="w-10 h-10 rounded-full bg-white/10 hover:bg-secondary flex items-center justify-center transition-all duration-300 hover:scale-110"
                   data-testid={`link-social-${social.name.toLowerCase()}`}
                   aria-label={social.name}
+                  {...(shouldOpenNewTab && {
+                    target: "_blank",
+                    rel: "noopener noreferrer"
+                  })}
                 >
                   <Icon className="w-5 h-5 text-white" />
                 </a>

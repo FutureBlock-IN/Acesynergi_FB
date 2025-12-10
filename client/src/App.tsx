@@ -16,6 +16,13 @@ import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import BookConsultation from "@/pages/BookConsultation";
+import TermsAndConditions from "@/pages/TermsAndConditions";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import RefundPolicy from "@/pages/RefundPolicy";
+import Disclaimer from "@/pages/Disclaimer";
+import ReschedulingPolicy from "@/pages/ReschedulingPolicy";
+import AboutUs from "@/pages/AboutUs";
+import Blog from "@/pages/Blog";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -31,6 +38,13 @@ function Router() {
       <Route path="/checkout" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
       <Route path="/book-consultation" component={BookConsultation} />
+      <Route path="/terms-and-conditions" component={TermsAndConditions} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/refund-policy" component={RefundPolicy} />
+      <Route path="/disclaimer" component={Disclaimer} />
+      <Route path="/rescheduling-policy" component={ReschedulingPolicy} />
+      <Route path="/about-us" component={AboutUs} />
+      <Route path="/blog" component={Blog} />
       <Route component={NotFound} />
     </Switch>
   );
