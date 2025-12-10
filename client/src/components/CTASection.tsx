@@ -48,7 +48,9 @@ export default function CTASection() {
             size="lg"
             className="bg-gradient-to-r from-chart-3 to-chart-4 hover:from-chart-3/90 hover:to-chart-4/90 text-white text-xl px-12 h-14 animate-pulse-glow"
             data-testid="button-ready-to-start"
-            onClick={() => console.log("Ready to Start clicked")}
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           >
             Ready to Start
           </Button>

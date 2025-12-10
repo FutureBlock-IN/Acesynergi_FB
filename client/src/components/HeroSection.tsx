@@ -131,30 +131,6 @@ export default function HeroSection() {
         />
       </div>
 
-      {/* Decorative floating card - Workshop */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
-        className="absolute -bottom-2 sm:-bottom-4 left-2 sm:left-4 bg-white rounded-xl shadow-2xl p-3 sm:p-4 max-w-[200px] sm:max-w-[240px]"
-      >
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-accent flex items-center justify-center">
-            <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-          </div>
-          <div>
-            <p className="font-semibold text-xs sm:text-sm text-foreground">
-              Latest Workshop
-            </p>
-            <Button
-              size="sm"
-              className="bg-accent hover:bg-accent/90 text-white mt-1 h-7 sm:h-8 text-xs font-semibold"
-            >
-              Join Now →
-            </Button>
-          </div>
-        </div>
-      </motion.div>
     </motion.div>
   </div>
 </div>

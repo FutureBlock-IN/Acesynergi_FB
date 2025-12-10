@@ -80,7 +80,7 @@ export default function BookConsultation() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Briefcase className="w-4 h-4" />
-                        <span>40+ years experience</span>
+                        <span>25+ years experience</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <UsersIcon className="w-4 h-4" />
@@ -94,7 +94,7 @@ export default function BookConsultation() {
                       data-testid="button-book-consultation"
                     >
                       <Calendar className="w-4 h-4 mr-2" />
-                      Book Consultation - $223/hour
+                      Book Consultation - $20/hour
                     </Button>
                   </div>
                 </div>
@@ -183,7 +183,7 @@ export default function BookConsultation() {
                     data-testid="detail-rate"
                   >
                     <span className="text-sm text-muted-foreground">Rate:</span>
-                    <span className="font-bold text-foreground">$223/hour</span>
+                    <span className="font-bold text-foreground">$20/hour</span>
                   </div>
 
                   <div
