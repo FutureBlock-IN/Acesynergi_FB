@@ -76,10 +76,26 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // Serve static files from the dist/public directory
+  app.use(express.static(distPath, {
+    // Don't serve index.html for static file requests
+    index: false,
+  }));
 
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  // Fall through to index.html for all non-API routes that don't match static files
+  // This enables client-side routing (React Router)
+  // Use app.get("*") to catch all GET requests, but exclude API routes
+  app.get("*", (req, res, next) => {
+    // Skip API routes - these should return 404 if not handled by registerRoutes
+    if (req.path.startsWith("/api/") || req.path.startsWith("/paypal/")) {
+      return res.status(404).json({ error: "Not found" });
+    }
+    
+    // Serve index.html for all other routes (React Router will handle routing)
+    res.sendFile(path.resolve(distPath, "index.html"), (err) => {
+      if (err) {
+        next(err);
+      }
+    });
   });
 }

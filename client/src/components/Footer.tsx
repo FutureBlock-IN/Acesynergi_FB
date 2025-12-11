@@ -1,5 +1,6 @@
 import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
 import { SiPaypal, SiVisa, SiMastercard } from "react-icons/si";
+import { Link } from "wouter";
 
 export default function Footer() {
   const companyLinks = [
@@ -105,13 +106,14 @@ export default function Footer() {
             <ul className="space-y-3">
               {companyLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="text-[#F1F5F9] hover:text-[#22D3EE] transition-all duration-300"
-                    data-testid={`link-footer-${link.name.toLowerCase()}`}
-                  >
-                    {link.name}
-                  </a>
+                  <Link href={link.href}>
+                    <span
+                      className="text-[#F1F5F9] hover:text-[#22D3EE] transition-all duration-300 cursor-pointer"
+                      data-testid={`link-footer-${link.name.toLowerCase()}`}
+                    >
+                      {link.name}
+                    </span>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -122,13 +124,24 @@ export default function Footer() {
             <ul className="space-y-3">
               {serviceLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="text-[#F1F5F9] hover:text-[#22D3EE] transition-all duration-300"
-                    data-testid={`link-footer-${link.name.toLowerCase().replace(" ", "-")}`}
-                  >
-                    {link.name}
-                  </a>
+                  {link.href.startsWith("#") ? (
+                    <a
+                      href={link.href}
+                      className="text-[#F1F5F9] hover:text-[#22D3EE] transition-all duration-300"
+                      data-testid={`link-footer-${link.name.toLowerCase().replace(" ", "-")}`}
+                    >
+                      {link.name}
+                    </a>
+                  ) : (
+                    <Link href={link.href}>
+                      <span
+                        className="text-[#F1F5F9] hover:text-[#22D3EE] transition-all duration-300 cursor-pointer"
+                        data-testid={`link-footer-${link.name.toLowerCase().replace(" ", "-")}`}
+                      >
+                        {link.name}
+                      </span>
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -168,13 +181,14 @@ export default function Footer() {
             <ul className="space-y-3">
               {legalLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="text-[#F1F5F9] hover:text-[#22D3EE] transition-all duration-300"
-                    data-testid={`link-footer-${link.name.toLowerCase().replace(/\s+/g, "-")}`}
-                  >
-                    {link.name}
-                  </a>
+                  <Link href={link.href}>
+                    <span
+                      className="text-[#F1F5F9] hover:text-[#22D3EE] transition-all duration-300 cursor-pointer"
+                      data-testid={`link-footer-${link.name.toLowerCase().replace(/\s+/g, "-")}`}
+                    >
+                      {link.name}
+                    </span>
+                  </Link>
                 </li>
               ))}
             </ul>
