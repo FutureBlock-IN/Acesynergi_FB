@@ -10,34 +10,40 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currencyContext";
+import { useCartPricing } from "@/hooks/useCartPricing";
 
 export default function Cart() {
   const [, setLocation] = useLocation();
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(false);
   const { items: cartItems, removeFromCart, updateQuantity } = useCart();
-  const { formatPrice, country } = useCurrency();  // Use global currency formatting
+  const { formatPrice, country, currencyCode } = useCurrency();
+  const { getTotalTaxBreakdown, getTotalTax, loading: pricingLoading, pricingData } = useCartPricing();
   
-  // Tax labels based on selected country
-  // India: GST split into SGST + CGST (9% each = 18% total)
-  // USA: Sales Tax (varies by state, using ~9% average)
-  // UK: VAT (20%)
-  // Others: Service Tax (18%)
-  const getTaxInfo = () => {
-    switch (country) {
-      case "India":
-        return { label1: "SGST (9%)", label2: "CGST (9%)", rate1: 0.09, rate2: 0.09 };
-      case "USA":
-        return { label1: "Sales Tax (9%)", label2: null, rate1: 0.09, rate2: 0 };
-      case "UK":
-        return { label1: "VAT (20%)", label2: null, rate1: 0.20, rate2: 0 };
-      default:
-        return { label1: "Tax (9%)", label2: "Service Tax (9%)", rate1: 0.09, rate2: 0.09 };
+  // Format price in local currency (Excel prices are already in local currency, not USD)
+  const formatLocalPrice = (amount: number) => {
+    try {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currencyCode,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: currencyCode === "JPY" ? 0 : 2,
+      }).format(amount);
+    } catch {
+      return `${currencyCode} ${amount.toLocaleString()}`;
     }
   };
   
-  const taxInfo = getTaxInfo();
-
+  // Get pricing for a specific cart item from Excel
+  const getItemPricing = (item: typeof cartItems[0]) => {
+    if (!item.courseId) return null;
+    return Array.from(pricingData.values()).find(p => {
+      const courseNameLower = p.courseName.toLowerCase();
+      const courseIdLower = item.courseId!.toLowerCase();
+      return courseNameLower.includes(courseIdLower) || courseIdLower.includes(courseNameLower.split(' ')[0]);
+    }) || null;
+  };
+  
   const handleUpdateQuantity = (id: string, delta: number) => {
     const item = cartItems.find(i => i.id === id);
     if (item) {
@@ -51,11 +57,45 @@ export default function Cart() {
     }
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  // Get tax breakdown from Excel pricing
+  const taxBreakdown = getTotalTaxBreakdown();
+  const totalTax = getTotalTax();
+  
+  // Calculate subtotal - use Excel pricing if available, otherwise use item price
+  const subtotal = cartItems.reduce((sum, item) => {
+    // Try to find pricing from Excel for this item
+    const pricing = Array.from(pricingData.values()).find(p => {
+      if (!item.courseId) return false;
+      // Match course name with courseId
+      const courseNameLower = p.courseName.toLowerCase();
+      const courseIdLower = item.courseId.toLowerCase();
+      return courseNameLower.includes(courseIdLower) || courseIdLower.includes(courseNameLower.split(' ')[0]);
+    });
+    
+    // Use Excel pricing amount if available, otherwise use item price
+    if (pricing) {
+      return sum + (pricing.amount * item.quantity);
+    }
+    return sum + (item.price * item.quantity);
+  }, 0);
+  
   const discount = appliedCoupon ? subtotal * 0.1 : 0;
-  const tax1 = (subtotal - discount) * taxInfo.rate1;
-  const tax2 = (subtotal - discount) * taxInfo.rate2;
-  const total = subtotal - discount + tax1 + tax2;
+  const afterDiscount = subtotal - discount;
+  
+  // Calculate taxes - use Excel tax breakdown if available
+  // Otherwise fallback to percentage-based calculation
+  let finalTax = 0;
+  if (taxBreakdown.length > 0) {
+    // Use Excel tax amounts, but apply discount proportionally
+    finalTax = totalTax * (afterDiscount / subtotal);
+  } else {
+    // Fallback: calculate taxes based on country
+    const taxRate1 = country === "India" ? 0.09 : country === "USA" ? 0.09 : country === "UK" ? 0.20 : 0.09;
+    const taxRate2 = country === "India" ? 0.09 : 0;
+    finalTax = afterDiscount * (taxRate1 + taxRate2);
+  }
+  
+  const total = afterDiscount + finalTax;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -102,7 +142,15 @@ export default function Cart() {
                 </div>
 
                 <div className="space-y-4">
-                  {cartItems.map((item, index) => (
+                  {cartItems.map((item, index) => {
+                    // Get Excel pricing for this item
+                    const itemPricing = getItemPricing(item);
+                    const displayPrice = itemPricing ? itemPricing.total : item.price;
+                    const displayOriginalPrice = itemPricing 
+                      ? (itemPricing.amount + (itemPricing.sgst || 0) + (itemPricing.cgst || 0) + (itemPricing.salesTax || 0) + (itemPricing.vat || 0) + (itemPricing.tax || 0) + (itemPricing.serviceTax || 0) || itemPricing.amount * 1.18)
+                      : item.originalPrice;
+                    
+                    return (
                     <motion.div
                       key={item.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -150,10 +198,10 @@ export default function Cart() {
                             <div className="flex items-center justify-between sm:hidden mb-4">
                               <div>
                                 <div className="text-xl font-bold text-primary" data-testid={`text-cart-price-mobile-${item.id}`}>
-                                  {formatPrice(item.price * item.quantity)}
+                                  {formatLocalPrice(displayPrice * item.quantity)}
                                 </div>
                                 <div className="text-sm text-gray-500 line-through">
-                                  {formatPrice(item.originalPrice * item.quantity)}
+                                  {formatLocalPrice(displayOriginalPrice * item.quantity)}
                                 </div>
                               </div>
                             </div>
@@ -186,10 +234,10 @@ export default function Cart() {
                               {/* Price - Desktop */}
                               <div className="hidden sm:block text-right">
                                 <div className="text-xl font-bold text-primary" data-testid={`text-cart-price-${item.id}`}>
-                                  {formatPrice(item.price * item.quantity)}
+                                  {formatLocalPrice(displayPrice * item.quantity)}
                                 </div>
                                 <div className="text-sm text-gray-500 line-through" data-testid={`text-cart-original-price-${item.id}`}>
-                                  {formatPrice(item.originalPrice * item.quantity)}
+                                  {formatLocalPrice(displayOriginalPrice * item.quantity)}
                                 </div>
                               </div>
                             </div>
@@ -199,7 +247,7 @@ export default function Cart() {
                               <div className="flex justify-between items-center">
                                 <span className="text-sm text-gray-600">Item Subtotal:</span>
                                 <span className="text-base sm:text-lg font-semibold text-primary" data-testid={`text-cart-subtotal-${item.id}`}>
-                                  {formatPrice(item.price * item.quantity)}
+                                  {formatLocalPrice(displayPrice * item.quantity)}
                                 </span>
                               </div>
                             </div>
@@ -207,7 +255,8 @@ export default function Cart() {
                         </div>
                       </Card>
                     </motion.div>
-                  ))}
+                  );
+                  })}
                 </div>
 
                 <div className="mt-4 sm:mt-6">
@@ -230,39 +279,63 @@ export default function Cart() {
                     Order Summary
                   </h3>
 
-                  {/* Price Breakdown - Uses formatPrice for currency conversion */}
+                  {/* Price Breakdown - Excel prices are already in local currency */}
                   <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
                     <div className="flex justify-between text-sm sm:text-base text-gray-700">
                       <span>Subtotal:</span>
-                      <span className="font-semibold" data-testid="text-summary-subtotal">{formatPrice(subtotal)}</span>
+                      <span className="font-semibold" data-testid="text-summary-subtotal">{formatLocalPrice(subtotal)}</span>
                     </div>
 
                     {appliedCoupon && (
                       <div className="flex justify-between text-sm sm:text-base text-green-600">
                         <span>Discount (10%):</span>
-                        <span className="font-semibold" data-testid="text-summary-discount">-{formatPrice(discount)}</span>
+                        <span className="font-semibold" data-testid="text-summary-discount">-{formatLocalPrice(discount)}</span>
                       </div>
                     )}
 
-                    {/* Tax 1 - Primary tax (SGST/Sales Tax/VAT based on country) */}
-                    <div className="flex justify-between text-sm sm:text-base text-gray-700">
-                      <span>{taxInfo.label1}:</span>
-                      <span className="font-semibold" data-testid="text-summary-tax1">{formatPrice(Math.round(tax1))}</span>
-                    </div>
-
-                    {/* Tax 2 - Secondary tax (CGST for India, or combined tax) */}
-                    {taxInfo.label2 && (
-                      <div className="flex justify-between text-sm sm:text-base text-gray-700">
-                        <span>{taxInfo.label2}:</span>
-                        <span className="font-semibold" data-testid="text-summary-tax2">{formatPrice(Math.round(tax2))}</span>
-                      </div>
+                    {/* Tax breakdown from Excel pricing */}
+                    {pricingLoading ? (
+                      <div className="text-sm text-gray-500">Loading tax information...</div>
+                    ) : taxBreakdown.length > 0 ? (
+                      taxBreakdown.map((tax, index) => {
+                        // Apply discount proportionally to tax
+                        const discountedTax = tax.amount * (afterDiscount / subtotal);
+                        return (
+                          <div key={index} className="flex justify-between text-sm sm:text-base text-gray-700">
+                            <span>{tax.label}:</span>
+                            <span className="font-semibold" data-testid={`text-summary-tax-${index}`}>
+                              {formatLocalPrice(Math.round(discountedTax))}
+                            </span>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      // Fallback tax display
+                      <>
+                        <div className="flex justify-between text-sm sm:text-base text-gray-700">
+                          <span>
+                            {country === "India" ? "SGST (9%)" : country === "USA" ? "Sales Tax (9%)" : country === "UK" ? "VAT (20%)" : "Tax (9%)"}
+                          </span>
+                          <span className="font-semibold" data-testid="text-summary-tax1">
+                            {formatLocalPrice(Math.round(afterDiscount * (country === "UK" ? 0.20 : 0.09)))}
+                          </span>
+                        </div>
+                        {country === "India" && (
+                          <div className="flex justify-between text-sm sm:text-base text-gray-700">
+                            <span>CGST (9%):</span>
+                            <span className="font-semibold" data-testid="text-summary-tax2">
+                              {formatLocalPrice(Math.round(afterDiscount * 0.09))}
+                            </span>
+                          </div>
+                        )}
+                      </>
                     )}
 
                     <div className="pt-3 sm:pt-4 border-t border-gray-200">
                       <div className="flex justify-between items-center">
                         <span className="text-base sm:text-lg font-bold text-primary">Total:</span>
                         <span className="text-xl sm:text-2xl font-bold text-primary" data-testid="text-summary-total">
-                          {formatPrice(Math.round(total))}
+                          {formatLocalPrice(Math.round(total))}
                         </span>
                       </div>
                     </div>

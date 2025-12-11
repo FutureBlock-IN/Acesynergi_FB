@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currencyContext";
+import { useCartPricing } from "@/hooks/useCartPricing";
 import PayPalButton from "@/components/PayPalButton";
 import { useToast } from "@/hooks/use-toast";
 
@@ -17,6 +18,7 @@ export default function Checkout() {
   const [, setLocation] = useLocation();
   const { items: cartItems, clearCart } = useCart();
   const { formatPrice, country, currencyCode } = useCurrency();
+  const { getTotalTaxBreakdown, getTotalTax, pricingData, loading: pricingLoading } = useCartPricing();
   const { toast } = useToast();
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
@@ -30,24 +32,32 @@ export default function Checkout() {
   const paymentCurrency = getPaymentCurrency();
   const isFallbackCurrency = paymentCurrency !== currencyCode && currencyCode !== "USD";
 
-  const getTaxInfo = () => {
-    switch (country) {
-      case "India":
-        return { label1: "SGST (9%)", label2: "CGST (9%)", rate1: 0.09, rate2: 0.09 };
-      case "USA":
-        return { label1: "Sales Tax (9%)", label2: null, rate1: 0.09, rate2: 0 };
-      case "UK":
-        return { label1: "VAT (20%)", label2: null, rate1: 0.20, rate2: 0 };
-      default:
-        return { label1: "Tax (9%)", label2: "Service Tax (9%)", rate1: 0.09, rate2: 0.09 };
+  // Calculate subtotal - use Excel pricing if available
+  const subtotal = cartItems.reduce((sum, item) => {
+    const pricing = Array.from(pricingData.values()).find(p => {
+      if (!item.courseId) return false;
+      const courseNameLower = p.courseName.toLowerCase();
+      const courseIdLower = item.courseId.toLowerCase();
+      return courseNameLower.includes(courseIdLower) || courseIdLower.includes(courseNameLower.split(' ')[0]);
+    });
+    
+    if (pricing) {
+      return sum + (pricing.amount * item.quantity);
     }
-  };
+    return sum + (item.price * item.quantity);
+  }, 0);
 
-  const taxInfo = getTaxInfo();
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const tax1 = subtotal * taxInfo.rate1;
-  const tax2 = subtotal * taxInfo.rate2;
-  const total = subtotal + tax1 + tax2;
+  // Get tax breakdown from Excel
+  const taxBreakdown = getTotalTaxBreakdown();
+  const totalTax = getTotalTax();
+  
+  // Fallback tax calculation if no Excel data
+  const fallbackTax = taxBreakdown.length === 0 
+    ? subtotal * (country === "India" ? 0.18 : country === "USA" ? 0.09 : country === "UK" ? 0.20 : 0.18)
+    : 0;
+  
+  const finalTax = taxBreakdown.length > 0 ? totalTax : fallbackTax;
+  const total = subtotal + finalTax;
 
   const formatPaymentAmount = (amount: number) => {
     return amount.toFixed(2);
@@ -208,16 +218,33 @@ export default function Checkout() {
                     <span className="font-semibold" data-testid="text-checkout-subtotal">{formatPrice(subtotal)}</span>
                   </div>
 
-                  <div className="flex justify-between text-gray-700">
-                    <span>{taxInfo.label1}:</span>
-                    <span className="font-semibold">{formatPrice(Math.round(tax1))}</span>
-                  </div>
-
-                  {taxInfo.label2 && (
-                    <div className="flex justify-between text-gray-700">
-                      <span>{taxInfo.label2}:</span>
-                      <span className="font-semibold">{formatPrice(Math.round(tax2))}</span>
-                    </div>
+                  {/* Tax breakdown from Excel */}
+                  {pricingLoading ? (
+                    <div className="text-sm text-gray-500">Loading tax information...</div>
+                  ) : taxBreakdown.length > 0 ? (
+                    taxBreakdown.map((tax, index) => (
+                      <div key={index} className="flex justify-between text-gray-700">
+                        <span>{tax.label}:</span>
+                        <span className="font-semibold">{formatPrice(Math.round(tax.amount))}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <>
+                      <div className="flex justify-between text-gray-700">
+                        <span>
+                          {country === "India" ? "SGST (9%)" : country === "USA" ? "Sales Tax (9%)" : country === "UK" ? "VAT (20%)" : "Tax (9%)"}
+                        </span>
+                        <span className="font-semibold">
+                          {formatPrice(Math.round(subtotal * (country === "UK" ? 0.20 : 0.09)))}
+                        </span>
+                      </div>
+                      {country === "India" && (
+                        <div className="flex justify-between text-gray-700">
+                          <span>CGST (9%):</span>
+                          <span className="font-semibold">{formatPrice(Math.round(subtotal * 0.09))}</span>
+                        </div>
+                      )}
+                    </>
                   )}
 
                   <div className="pt-4 border-t border-gray-200">

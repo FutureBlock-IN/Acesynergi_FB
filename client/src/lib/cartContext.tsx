@@ -6,6 +6,7 @@ const STORAGE_KEY_CART = "acesynergi_cart";
 
 export interface CartItem {
   id: string;
+  courseId?: string; // Course ID for fetching pricing from Excel
   title: string;
   image: string;
   duration: string;

@@ -80,9 +80,12 @@ export function getCitiesForCountry(country: string): string[] {
 
 /**
  * Get all available countries
+ * Returns only the countries that are available for selection
  */
 export function getAvailableCountries(): string[] {
-  return Object.keys(extendedCountryData);
+  // Only show these 6 countries in the dropdown
+  const allowedCountries = ["India", "USA", "UK", "Canada", "Singapore", "UAE"];
+  return allowedCountries.filter(country => extendedCountryData[country] || countryData[country]);
 }
 
 /**

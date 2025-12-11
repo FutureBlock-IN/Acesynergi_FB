@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Link } from "wouter";
+import { useCurrency } from "@/lib/currencyContext";
+import { useCoursePricing } from "@/hooks/useCoursePricing";
 
 const courses = [
   {
@@ -211,6 +213,13 @@ export default function FeaturedCourses() {
 }
 
 function CourseCard({ course, index }: { course: typeof courses[0]; index: number }) {
+  const { formatPrice } = useCurrency();
+  const { pricing, loading } = useCoursePricing(course.id);
+  
+  // Use pricing from Excel if available, otherwise fallback to hardcoded price
+  const displayPrice = pricing ? pricing.total : course.price;
+  const displayOriginalPrice = pricing ? (pricing.amount + (pricing.sgst || 0) + (pricing.cgst || 0) + (pricing.salesTax || 0) + (pricing.vat || 0) + (pricing.tax || 0) + (pricing.serviceTax || 0) || pricing.amount * 1.18) : course.originalPrice;
+  
   const getBadgeColor = (badge: string) => {
     switch (badge) {
       case "Best Seller":
@@ -300,8 +309,14 @@ function CourseCard({ course, index }: { course: typeof courses[0]; index: numbe
 
             <div className="flex items-center justify-between pt-3 border-t border-gray-100">
               <div className="flex items-center gap-2">
-                <span className="text-xl font-bold text-primary">${course.price}</span>
-                <span className="text-sm text-gray-400 line-through">${course.originalPrice}</span>
+                {loading ? (
+                  <span className="text-sm text-gray-500">Loading price...</span>
+                ) : (
+                  <>
+                    <span className="text-xl font-bold text-primary">{formatPrice(displayPrice)}</span>
+                    <span className="text-sm text-gray-400 line-through">{formatPrice(displayOriginalPrice)}</span>
+                  </>
+                )}
               </div>
               <Button
                 size="sm"

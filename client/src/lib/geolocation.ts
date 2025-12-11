@@ -8,17 +8,13 @@ interface GeolocationResponse {
 }
 
 // Map API country names to our app's country names
-// Only includes countries that are available in the app
+// Only includes the 6 countries that are available in the app: India, USA, UK, Canada, Singapore, UAE
 const countryNameMap: Record<string, string> = {
   "United States": "USA",
   "United Kingdom": "UK",
   "Canada": "Canada",
-  "Australia": "Australia",
   "India": "India",
   "Singapore": "Singapore",
-  "France": "France",
-  "Germany": "Germany",
-  "Japan": "Japan",
   "United Arab Emirates": "UAE",
 };
 
@@ -51,8 +47,16 @@ export async function detectCountryFromIP(): Promise<string | null> {
     // Map API country name to our app's country name
     const mappedCountry = countryNameMap[data.country_name];
     
-    // Only return if the country is available in our app
+    // Only return if the country is mapped and available in our app
+    // This ensures we only return one of the 6 supported countries: India, USA, UK, Canada, Singapore, UAE
     if (!mappedCountry) {
+      // Country not in our supported list - return null
+      return null;
+    }
+    
+    // Verify the mapped country is in the allowed list (double-check for safety)
+    const allowedCountries = ["India", "USA", "UK", "Canada", "Singapore", "UAE"];
+    if (!allowedCountries.includes(mappedCountry)) {
       return null;
     }
     

@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currencyContext";
+import { useCoursePricing } from "@/hooks/useCoursePricing";
 import { Link } from "wouter";
 import scheduleBg from "@assets/stock_images/professional_busines_10dc0c76.jpg";
 
@@ -192,7 +193,7 @@ const onlineSchedules: Schedule[] = [
   },
   { 
     id: "5", 
-    courseId: "genai-scrum-master",
+    courseId: "pmp",
     title: "PMP Certification Training", 
     dates: "Dec 8 - 9, 2025",
     startDate: "Dec 8",
@@ -226,7 +227,7 @@ const onlineSchedules: Schedule[] = [
   },
   { 
     id: "6", 
-    courseId: "genai-project-managers",
+    courseId: "pmipba",
     title: "PMI PBA Certification Training", 
     dates: "Dec 18 - 20, 2025",
     startDate: "Dec 18",
@@ -459,6 +460,7 @@ export default function Schedule() {
   const handleEnroll = (schedule: Schedule) => {
     addToCart({
       id: schedule.id,
+      courseId: schedule.courseId, // Include courseId for pricing lookup
       title: schedule.title,
       image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop",
       duration: `${schedule.days} Days`,
@@ -544,13 +546,156 @@ export default function Schedule() {
           {currentSchedules.length > 0 ? (
             <div className="space-y-4">
               {currentSchedules.map((schedule, index) => (
-                <motion.div
+                <ScheduleCard
                   key={schedule.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                >
+                  schedule={schedule}
+                  index={index}
+                  quantities={quantities}
+                  expandedCard={expandedCard}
+                  onQuantityChange={handleQuantityChange}
+                  onToggleExpand={toggleExpand}
+                  onEnroll={handleEnroll}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No schedules available for this mode.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Related Courses Section */}
+      <section className="py-16 bg-white" data-testid="section-related-courses">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Explore Our Courses</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Browse our comprehensive range of professional certification courses
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedCourses.map((course, index) => (
+              <motion.div
+                key={course.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+              >
+                <Link href={`/courses/${course.id}`}>
                   <Card 
+                    className="p-6 bg-gray-50 hover:bg-white border-none shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] transition-all duration-300 cursor-pointer group"
+                    data-testid={`card-related-${course.id}`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <Badge className="bg-primary/10 text-primary text-xs mb-3">
+                          {course.category}
+                        </Badge>
+                        <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+                          {course.title}
+                        </h3>
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <BookOpen className="w-4 h-4" />
+                          <span>{course.duration}</span>
+                        </div>
+                      </div>
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary transition-colors">
+                        <ArrowRight className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-10">
+            <Link href="/courses">
+              <Button 
+                className="bg-primary hover:bg-primary/90 text-white px-8 h-12"
+                data-testid="button-view-all-courses"
+              >
+                View All Courses
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}
+
+// Separate component for schedule card to use pricing hook
+function ScheduleCard({
+  schedule,
+  index,
+  quantities,
+  expandedCard,
+  onQuantityChange,
+  onToggleExpand,
+  onEnroll,
+}: {
+  schedule: Schedule;
+  index: number;
+  quantities: Record<string, number>;
+  expandedCard: string | null;
+  onQuantityChange: (id: string, delta: number) => void;
+  onToggleExpand: (id: string) => void;
+  onEnroll: (schedule: Schedule) => void;
+}) {
+  const { formatPrice } = useCurrency();
+  const { pricing, loading, error } = useCoursePricing(schedule.courseId);
+  
+  // Debug logging
+  if (error) {
+    console.warn(`[ScheduleCard] Pricing error for ${schedule.courseId}:`, error);
+  }
+  if (pricing) {
+    console.log(`[ScheduleCard] Using Excel pricing for ${schedule.courseId}:`, pricing);
+  } else if (!loading) {
+    console.warn(`[ScheduleCard] No pricing found for ${schedule.courseId}, using fallback: ${schedule.price}`);
+  }
+  
+  // Use pricing from Excel if available, otherwise fallback to schedule price
+  // Note: Excel prices are already in local currency (INR, GBP, USD, etc.), not USD
+  const displayPrice = pricing ? pricing.total : schedule.price;
+  const displayOriginalPrice = pricing 
+    ? (pricing.amount + (pricing.sgst || 0) + (pricing.cgst || 0) + (pricing.salesTax || 0) + (pricing.vat || 0) + (pricing.tax || 0) + (pricing.serviceTax || 0) || pricing.amount * 1.18)
+    : schedule.originalPrice;
+  
+  // Format price: if from Excel, use its currency directly; otherwise use formatPrice (expects USD)
+  const formatDisplayPrice = (amount: number) => {
+    if (pricing) {
+      // Excel price is already in local currency, format it directly
+      try {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: pricing.countryCurrency,
+          minimumFractionDigits: 0,
+          maximumFractionDigits: pricing.countryCurrency === "JPY" ? 0 : 2,
+        }).format(amount);
+      } catch {
+        return `${pricing.countryCurrency} ${amount.toLocaleString()}`;
+      }
+    } else {
+      // Fallback price is in USD, use formatPrice
+      return formatPrice(amount);
+    }
+  };
+  const quantity = quantities[schedule.id] || 1;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+    >
+      <Card 
                     className="bg-white rounded-xl overflow-hidden transition-all duration-300 border-none"
                     style={{
                       boxShadow: expandedCard === schedule.id 
@@ -586,7 +731,7 @@ export default function Schedule() {
                             <span className="text-sm text-gray-600 font-medium">Qty:</span>
                             <div className="flex items-center rounded-lg bg-gray-100">
                               <button
-                                onClick={() => handleQuantityChange(schedule.id, -1)}
+                                onClick={() => onQuantityChange(schedule.id, -1)}
                                 className="p-2 hover:bg-gray-200 transition-colors rounded-l-lg"
                                 data-testid={`button-decrease-${schedule.id}`}
                               >
@@ -594,13 +739,13 @@ export default function Schedule() {
                               </button>
                               <input
                                 type="number"
-                                value={quantities[schedule.id]}
+                                value={quantity}
                                 readOnly
                                 className="w-12 text-center border-0 bg-transparent focus:outline-none font-medium text-gray-900"
                                 data-testid={`input-quantity-${schedule.id}`}
                               />
                               <button
-                                onClick={() => handleQuantityChange(schedule.id, 1)}
+                                onClick={() => onQuantityChange(schedule.id, 1)}
                                 className="p-2 hover:bg-gray-200 transition-colors rounded-r-lg"
                                 data-testid={`button-increase-${schedule.id}`}
                               >
@@ -611,23 +756,29 @@ export default function Schedule() {
 
                           {/* Price */}
                           <div className="text-center">
-                            <div 
-                              className="text-2xl font-bold text-gray-900"
-                              data-testid={`text-price-total-${schedule.id}`}
-                            >
-                              {formatPrice(schedule.price * (quantities[schedule.id] || 1))}
-                            </div>
-                            <div 
-                              className="text-base text-gray-500 line-through"
-                              data-testid={`text-price-original-${schedule.id}`}
-                            >
-                              {formatPrice(schedule.originalPrice * (quantities[schedule.id] || 1))}
-                            </div>
+                            {loading ? (
+                              <div className="text-sm text-gray-500">Loading price...</div>
+                            ) : (
+                              <>
+                                <div 
+                                  className="text-2xl font-bold text-gray-900"
+                                  data-testid={`text-price-total-${schedule.id}`}
+                                >
+                                  {formatDisplayPrice(displayPrice * quantity)}
+                                </div>
+                                <div 
+                                  className="text-base text-gray-500 line-through"
+                                  data-testid={`text-price-original-${schedule.id}`}
+                                >
+                                  {formatDisplayPrice(displayOriginalPrice * quantity)}
+                                </div>
+                              </>
+                            )}
                           </div>
 
                           {/* Enroll Button */}
                           <Button
-                            onClick={() => handleEnroll(schedule)}
+                            onClick={() => onEnroll(schedule)}
                             className="bg-primary hover:bg-primary/90 text-white px-8 h-12 font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 min-w-[120px]"
                             data-testid={`button-enroll-${schedule.id}`}
                           >
@@ -639,7 +790,7 @@ export default function Schedule() {
                       {/* More Details Toggle */}
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <button 
-                          onClick={() => toggleExpand(schedule.id)}
+                          onClick={() => onToggleExpand(schedule.id)}
                           className="flex items-center gap-2 text-primary hover:text-secondary font-medium text-sm transition-all duration-300"
                           data-testid={`button-more-details-${schedule.id}`}
                         >
@@ -743,99 +894,6 @@ export default function Schedule() {
                       )}
                     </AnimatePresence>
                   </Card>
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            /* Coming Soon Message */
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <Card className="bg-white rounded-xl p-12 text-center border-none shadow-[0_2px_12px_rgba(0,0,0,0.08)]">
-                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Calendar className="w-10 h-10 text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">Coming Soon</h3>
-                <p className="text-gray-600 max-w-md mx-auto mb-6">
-                  {activeMode === "classroom" 
-                    ? "Classroom training schedules are being finalized. Check back soon for in-person training options in your city."
-                    : "Self-paced learning modules are currently in development. Stay tuned for flexible learning options."}
-                </p>
-                <Button
-                  onClick={() => setActiveMode("online")}
-                  className="bg-primary hover:bg-primary/90 text-white"
-                  data-testid="button-view-online"
-                >
-                  View Live Online Classes
-                </Button>
-              </Card>
-            </motion.div>
-          )}
-        </div>
-      </section>
-
-      {/* Related Courses Section */}
-      <section className="py-16 bg-white" data-testid="section-related-courses">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Explore Our Courses</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Browse our comprehensive range of professional certification courses
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {relatedCourses.map((course, index) => (
-              <motion.div
-                key={course.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-              >
-                <Link href={`/courses/${course.id}`}>
-                  <Card 
-                    className="p-6 bg-gray-50 hover:bg-white border-none shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] transition-all duration-300 cursor-pointer group"
-                    data-testid={`card-related-${course.id}`}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <Badge className="bg-primary/10 text-primary text-xs mb-3">
-                          {course.category}
-                        </Badge>
-                        <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">
-                          {course.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <BookOpen className="w-4 h-4" />
-                          <span>{course.duration}</span>
-                        </div>
-                      </div>
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary transition-colors">
-                        <ArrowRight className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
-                      </div>
-                    </div>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-          
-          <div className="text-center mt-10">
-            <Link href="/courses">
-              <Button 
-                className="bg-primary hover:bg-primary/90 text-white px-8 h-12"
-                data-testid="button-view-all-courses"
-              >
-                View All Courses
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-    </div>
+    </motion.div>
   );
 }
