@@ -1,10 +1,13 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Clock, Users, Star } from "lucide-react";
+import { useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { useCurrency } from "@/lib/currencyContext";
+import { useCoursePricing } from "@/hooks/useCoursePricing";
 
 interface Course {
   id: string;
@@ -126,18 +129,6 @@ const courseCategories: CourseCategory[] = [
         students: 5230,
         price: 849,
         originalPrice: 1299,
-      },
-      {
-        id: "ccba-prep",
-        title: "CCBA Prep Course",
-        description: "Intensive preparation course for CCBA certification exam",
-        image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop&q=80",
-        duration: "16 hours",
-        level: "Intermediate",
-        rating: 4.7,
-        students: 3120,
-        price: 499,
-        originalPrice: 799,
       },
     ]
   },
@@ -449,6 +440,11 @@ const getBadgeStyle = (badge: string) => {
 };
 
 export default function Courses() {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -497,87 +493,12 @@ export default function Courses() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {category.courses.map((course, courseIndex) => (
-                  <motion.div
+                  <CourseCard
                     key={`${category.name}-${course.id}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: (categoryIndex * 0.1) + (courseIndex * 0.05) }}
-                  >
-                    <Link href={`/courses/${course.id}`}>
-                      <Card 
-                        className="group cursor-pointer overflow-hidden bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300 rounded-xl h-full flex flex-col"
-                        data-testid={`card-course-${course.id}`}
-                      >
-                        <div className="h-44 relative overflow-hidden">
-                          <img 
-                            src={course.image} 
-                            alt={course.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                          
-                          {course.badge && (
-                            <div className="absolute top-4 left-4">
-                              <span className={`${getBadgeStyle(course.badge)} text-xs font-semibold px-3 py-1.5 rounded-full shadow-md`}>
-                                {course.badge}
-                              </span>
-                            </div>
-                          )}
-                          
-                          <div className="absolute top-4 right-4">
-                            <span className={`${getLevelColor(course.level)} text-xs font-medium px-2.5 py-1 rounded-full`}>
-                              {course.level}
-                            </span>
-                          </div>
-                          
-                          <div className="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <ArrowRight className="w-5 h-5 text-primary" />
-                          </div>
-                        </div>
-                        
-                        <div className="p-5 flex-1 flex flex-col">
-                          <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                            {course.title}
-                          </h3>
-                          <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-1">
-                            {course.description}
-                          </p>
-                          
-                          <div className="flex items-center gap-2 mb-3">
-                            <div className="flex items-center gap-1">
-                              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                              <span className="text-sm font-semibold text-gray-900">{course.rating}</span>
-                            </div>
-                            <span className="text-gray-300">|</span>
-                            <div className="flex items-center gap-1 text-gray-500">
-                              <Users className="w-4 h-4" />
-                              <span className="text-sm">{course.students.toLocaleString()}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              <span>{course.duration}</span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xl font-bold text-primary">${course.price}</span>
-                              <span className="text-sm text-gray-400 line-through">${course.originalPrice}</span>
-                            </div>
-                            <Button
-                              size="sm"
-                              className="bg-primary hover:bg-primary/90 text-white px-4 text-sm font-semibold"
-                            >
-                              Enroll
-                            </Button>
-                          </div>
-                        </div>
-                      </Card>
-                    </Link>
-                  </motion.div>
+                    course={course}
+                    categoryIndex={categoryIndex}
+                    courseIndex={courseIndex}
+                  />
                 ))}
               </div>
             </motion.div>
@@ -617,5 +538,134 @@ export default function Courses() {
 
       <Footer />
     </div>
+  );
+}
+
+function CourseCard({ 
+  course, 
+  categoryIndex, 
+  courseIndex 
+}: { 
+  course: Course; 
+  categoryIndex: number; 
+  courseIndex: number;
+}) {
+  const { formatPrice } = useCurrency();
+  const { pricing, loading } = useCoursePricing(course.id);
+  
+  // Use pricing from Excel if available, otherwise fallback to hardcoded price
+  // Note: Excel prices are already in local currency (INR, GBP, USD, etc.), not USD
+  const displayPrice = pricing ? pricing.total : course.price;
+  const displayOriginalPrice = pricing 
+    ? (pricing.amount + (pricing.sgst || 0) + (pricing.cgst || 0) + (pricing.salesTax || 0) + (pricing.vat || 0) + (pricing.tax || 0) + (pricing.serviceTax || 0) || pricing.amount * 1.18)
+    : course.originalPrice;
+  
+  // Format price: if from Excel, use its currency directly; otherwise use formatPrice (expects USD)
+  const formatDisplayPrice = (amount: number) => {
+    if (pricing) {
+      // Excel price is already in local currency, format it directly
+      try {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: pricing.countryCurrency,
+          minimumFractionDigits: 0,
+          maximumFractionDigits: pricing.countryCurrency === "JPY" ? 0 : 2,
+        }).format(amount);
+      } catch {
+        return `${pricing.countryCurrency} ${amount.toLocaleString()}`;
+      }
+    } else {
+      // Fallback price is in USD, use formatPrice
+      return formatPrice(amount);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: (categoryIndex * 0.1) + (courseIndex * 0.05) }}
+    >
+      <Link href={`/courses/${course.id}`}>
+        <Card 
+          className="group cursor-pointer overflow-hidden bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all duration-300 rounded-xl h-full flex flex-col"
+          data-testid={`card-course-${course.id}`}
+        >
+          <div className="h-44 relative overflow-hidden">
+            <img 
+              src={course.image} 
+              alt={course.title}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            
+            {course.badge && (
+              <div className="absolute top-4 left-4">
+                <span className={`${getBadgeStyle(course.badge)} text-xs font-semibold px-3 py-1.5 rounded-full shadow-md`}>
+                  {course.badge}
+                </span>
+              </div>
+            )}
+            
+            <div className="absolute top-4 right-4">
+              <span className={`${getLevelColor(course.level)} text-xs font-medium px-2.5 py-1 rounded-full`}>
+                {course.level}
+              </span>
+            </div>
+            
+            <div className="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <ArrowRight className="w-5 h-5 text-primary" />
+            </div>
+          </div>
+          
+          <div className="p-5 flex-1 flex flex-col">
+            <h3 className="font-bold text-lg text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-2">
+              {course.title}
+            </h3>
+            <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-1">
+              {course.description}
+            </p>
+            
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                <span className="text-sm font-semibold text-gray-900">{course.rating}</span>
+              </div>
+              <span className="text-gray-300">|</span>
+              <div className="flex items-center gap-1 text-gray-500">
+                <Users className="w-4 h-4" />
+                <span className="text-sm">{course.students.toLocaleString()}</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                <span>{course.duration}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
+              <div className="flex items-center gap-2">
+                {loading ? (
+                  <span className="text-sm text-gray-500">Loading...</span>
+                ) : (
+                  <>
+                    <span className="text-xl font-bold text-primary">{formatDisplayPrice(displayPrice)}</span>
+                    <span className="text-sm text-gray-400 line-through">{formatDisplayPrice(displayOriginalPrice)}</span>
+                  </>
+                )}
+              </div>
+              <Button
+                size="sm"
+                className="bg-primary hover:bg-primary/90 text-white px-4 text-sm font-semibold"
+              >
+                Enroll
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </Link>
+    </motion.div>
   );
 }

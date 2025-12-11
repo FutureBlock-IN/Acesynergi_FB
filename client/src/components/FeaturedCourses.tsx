@@ -202,6 +202,9 @@ export default function FeaturedCourses() {
               size="lg"
               className="bg-primary hover:bg-primary/90 text-white px-8 shadow-lg"
               data-testid="button-view-all-courses"
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             >
               View All Courses
             </Button>
@@ -213,12 +216,35 @@ export default function FeaturedCourses() {
 }
 
 function CourseCard({ course, index }: { course: typeof courses[0]; index: number }) {
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currencyCode } = useCurrency();
   const { pricing, loading } = useCoursePricing(course.id);
   
   // Use pricing from Excel if available, otherwise fallback to hardcoded price
+  // Note: Excel prices are already in local currency (INR, GBP, USD, etc.), not USD
   const displayPrice = pricing ? pricing.total : course.price;
-  const displayOriginalPrice = pricing ? (pricing.amount + (pricing.sgst || 0) + (pricing.cgst || 0) + (pricing.salesTax || 0) + (pricing.vat || 0) + (pricing.tax || 0) + (pricing.serviceTax || 0) || pricing.amount * 1.18) : course.originalPrice;
+  const displayOriginalPrice = pricing 
+    ? (pricing.amount + (pricing.sgst || 0) + (pricing.cgst || 0) + (pricing.salesTax || 0) + (pricing.vat || 0) + (pricing.tax || 0) + (pricing.serviceTax || 0) || pricing.amount * 1.18)
+    : course.originalPrice;
+  
+  // Format price: if from Excel, use its currency directly; otherwise use formatPrice (expects USD)
+  const formatDisplayPrice = (amount: number) => {
+    if (pricing) {
+      // Excel price is already in local currency, format it directly
+      try {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: pricing.countryCurrency,
+          minimumFractionDigits: 0,
+          maximumFractionDigits: pricing.countryCurrency === "JPY" ? 0 : 2,
+        }).format(amount);
+      } catch {
+        return `${pricing.countryCurrency} ${amount.toLocaleString()}`;
+      }
+    } else {
+      // Fallback price is in USD, use formatPrice
+      return formatPrice(amount);
+    }
+  };
   
   const getBadgeColor = (badge: string) => {
     switch (badge) {
@@ -313,8 +339,8 @@ function CourseCard({ course, index }: { course: typeof courses[0]; index: numbe
                   <span className="text-sm text-gray-500">Loading price...</span>
                 ) : (
                   <>
-                    <span className="text-xl font-bold text-primary">{formatPrice(displayPrice)}</span>
-                    <span className="text-sm text-gray-400 line-through">{formatPrice(displayOriginalPrice)}</span>
+                    <span className="text-xl font-bold text-primary">{formatDisplayPrice(displayPrice)}</span>
+                    <span className="text-sm text-gray-400 line-through">{formatDisplayPrice(displayOriginalPrice)}</span>
                   </>
                 )}
               </div>

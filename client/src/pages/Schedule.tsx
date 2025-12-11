@@ -617,6 +617,9 @@ export default function Schedule() {
               <Button 
                 className="bg-primary hover:bg-primary/90 text-white px-8 h-12"
                 data-testid="button-view-all-courses"
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
               >
                 View All Courses
               </Button>

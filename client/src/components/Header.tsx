@@ -188,7 +188,12 @@ export default function Header() {
     if (category.href) {
       setLocation(category.href);
       setIsCoursesOpen(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+  
+  const handleLinkClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const toggleMobileCategory = (categoryName: string) => {
@@ -267,7 +272,10 @@ export default function Header() {
                 </defs>
               </svg>
             </div>
-            <span className="text-2xl md:text-3xl font-bold cursor-pointer">
+            <span 
+              onClick={handleLinkClick}
+              className="text-2xl md:text-3xl font-bold cursor-pointer"
+            >
               <span className="bg-gradient-to-r from-[#1E40AF] via-[#3B82F6] to-[#06B6D4] bg-clip-text text-transparent group-hover:from-[#3B82F6] group-hover:via-[#06B6D4] group-hover:to-[#1E40AF] transition-all duration-500">
                 Acesynergi
               </span>
@@ -276,7 +284,10 @@ export default function Header() {
 
           <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
             <Link href="/">
-              <span className="text-foreground hover:text-primary transition-colors font-medium cursor-pointer">
+              <span 
+                onClick={handleLinkClick}
+                className="text-foreground hover:text-primary transition-colors font-medium cursor-pointer"
+              >
                 Home
               </span>
             </Link>
@@ -411,7 +422,10 @@ export default function Header() {
                 {category.subItems.map((subItem) => (
                   <Link key={subItem.name} href={subItem.href}>
                     <span
-                      onClick={() => setIsCoursesOpen(false)}
+                      onClick={() => {
+                        setIsCoursesOpen(false);
+                        handleLinkClick();
+                      }}
                       className="block px-4 py-2.5 text-gray-700 hover:bg-primary/5 hover:text-primary cursor-pointer transition-colors font-medium"
                     >
                       {subItem.name}
@@ -434,13 +448,19 @@ export default function Header() {
             </Link> */}
 
             <Link href="/corporate">
-              <span className="text-foreground hover:text-primary transition-colors font-medium cursor-pointer">
+              <span 
+                onClick={handleLinkClick}
+                className="text-foreground hover:text-primary transition-colors font-medium cursor-pointer"
+              >
                 Corporate
               </span>
             </Link>
 
             <Link href="/contact">
-              <span className="text-foreground hover:text-primary transition-colors font-medium cursor-pointer">
+              <span 
+                onClick={handleLinkClick}
+                className="text-foreground hover:text-primary transition-colors font-medium cursor-pointer"
+              >
                 Contact Us
               </span>
             </Link>
@@ -535,7 +555,10 @@ export default function Header() {
             </div>
 
             <Link href="/book-consultation">
-              <Button className="bg-primary hover:bg-primary/90 text-white px-5">
+              <Button 
+                onClick={handleLinkClick}
+                className="bg-primary hover:bg-primary/90 text-white px-5"
+              >
                 Book Consultation
               </Button>
             </Link>
@@ -567,7 +590,10 @@ export default function Header() {
             <nav className="px-6 py-4 space-y-1">
               <Link href="/">
                 <span
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleLinkClick();
+                  }}
                   className="block py-3 text-gray-800 hover:text-primary font-medium transition-colors"
                 >
                   Home
@@ -622,7 +648,10 @@ export default function Header() {
                                     {category.subItems.map((subItem) => (
                                       <Link key={subItem.name} href={subItem.href}>
                                         <span
-                                          onClick={() => setIsMobileMenuOpen(false)}
+                                          onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            handleLinkClick();
+                                          }}
                                           className="block py-2 text-gray-500 hover:text-primary transition-colors"
                                         >
                                           {subItem.name}
@@ -636,7 +665,10 @@ export default function Header() {
                           ) : (
                             <Link href={category.href || "/courses"}>
                               <span
-                                onClick={() => setIsMobileMenuOpen(false)}
+                                onClick={() => {
+                                  setIsMobileMenuOpen(false);
+                                  handleLinkClick();
+                                }}
                                 className="block py-2 text-gray-600 hover:text-primary transition-colors"
                               >
                                 {category.name}
@@ -661,7 +693,10 @@ export default function Header() {
 
               <Link href="/corporate">
                 <span
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleLinkClick();
+                  }}
                   className="block py-3 text-gray-800 hover:text-primary font-medium transition-colors"
                 >
                   Corporate
@@ -670,7 +705,10 @@ export default function Header() {
 
               <Link href="/contact">
                 <span
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleLinkClick();
+                  }}
                   className="block py-3 text-gray-800 hover:text-primary font-medium transition-colors"
                 >
                   Contact Us
@@ -760,7 +798,10 @@ export default function Header() {
                 <Link href="/book-consultation">
                   <Button 
                     className="w-full bg-primary hover:bg-primary/90 text-white"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleLinkClick();
+                    }}
                   >
                     Book Consultation
                   </Button>
