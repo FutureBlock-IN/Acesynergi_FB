@@ -84,11 +84,14 @@ export function serveStatic(app: Express) {
 
   // Fall through to index.html for all non-API routes that don't match static files
   // This enables client-side routing (React Router)
-  // Use app.get("*") to catch all GET requests, but exclude API routes
+  // IMPORTANT: This catch-all must come AFTER all API routes are registered
+  // API routes registered in registerRoutes() will be matched first
   app.get("*", (req, res, next) => {
-    // Skip API routes - these should return 404 if not handled by registerRoutes
+    // Skip API routes - let them be handled by registerRoutes or return 404 naturally
+    // Don't force 404 here, as API routes should already be registered
     if (req.path.startsWith("/api/") || req.path.startsWith("/paypal/")) {
-      return res.status(404).json({ error: "Not found" });
+      // If we reach here, the API route wasn't found - let Express handle it
+      return next();
     }
     
     // Serve index.html for all other routes (React Router will handle routing)

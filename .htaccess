@@ -6,8 +6,10 @@
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   
-  # Don't rewrite API routes
+  # Don't rewrite API routes - let Node.js handle them
+  # cPanel Node.js Selector will automatically route these to your Node.js app
   RewriteCond %{REQUEST_URI} !^/api/
+  RewriteCond %{REQUEST_URI} !^/paypal/
   
   # Don't rewrite assets (CSS, JS, images, etc.)
   RewriteCond %{REQUEST_URI} !\.(?:css|js|jpe?g|gif|png|svg|ico|woff2?|ttf|eot)$ [NC]

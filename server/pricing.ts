@@ -39,29 +39,54 @@ let lastModified: number = 0;
  * Get the path to the Excel pricing file
  */
 function getPricingFilePath(): string {
+  // Allow environment variable to override the path (useful for cPanel deployments)
+  if (process.env.PRICING_FILE_PATH) {
+    const envPath = path.resolve(process.env.PRICING_FILE_PATH);
+    if (fs.existsSync(envPath)) {
+      log(`✓ Found pricing file at (from env): ${envPath}`, "pricing");
+      return envPath;
+    } else {
+      log(`⚠ Environment variable PRICING_FILE_PATH set but file not found: ${envPath}`, "pricing");
+    }
+  }
+
+  // Get the server directory (where pricing.ts is located)
+  const serverDir = import.meta.dirname;
+  const projectRoot = path.resolve(serverDir, "..");
+  
   // Try multiple possible locations (prioritize server/data where user placed it)
   const possiblePaths = [
-    path.resolve(process.cwd(), "server", "data", "course_pricing.xlsx"), // User's location (lowercase)
+    path.resolve(serverDir, "data", "course_pricing.xlsx"), // Relative to pricing.ts (lowercase) - MOST RELIABLE
+    path.resolve(serverDir, "Data", "course_pricing.xlsx"), // Relative to pricing.ts (capitalized)
+    path.resolve(projectRoot, "server", "data", "course_pricing.xlsx"), // From project root
+    path.resolve(projectRoot, "Server", "Data", "course_pricing.xlsx"), // Capitalized variant
+    path.resolve(process.cwd(), "server", "data", "course_pricing.xlsx"), // From current working directory
     path.resolve(process.cwd(), "Server", "Data", "course_pricing.xlsx"), // Capitalized variant
-    path.resolve(import.meta.dirname, "data", "course_pricing.xlsx"), // Relative to pricing.ts (lowercase)
-    path.resolve(import.meta.dirname, "Data", "course_pricing.xlsx"), // Relative to pricing.ts (capitalized)
     path.resolve(process.cwd(), "data", "course_pricing.xlsx"), // Root data folder
     path.resolve(process.cwd(), "course_pricing.xlsx"), // Root directory
   ];
 
+  log(`[Pricing] Current working directory: ${process.cwd()}`, "pricing");
+  log(`[Pricing] Server directory (import.meta.dirname): ${serverDir}`, "pricing");
+  log(`[Pricing] Project root: ${projectRoot}`, "pricing");
+  log(`[Pricing] Searching for pricing file in ${possiblePaths.length} locations...`, "pricing");
+
   for (const filePath of possiblePaths) {
+    log(`[Pricing] Checking: ${filePath}`, "pricing");
     if (fs.existsSync(filePath)) {
       log(`✓ Found pricing file at: ${filePath}`, "pricing");
       return filePath;
     }
   }
 
-  // Return default path (will create if doesn't exist)
-  const defaultPath = path.resolve(process.cwd(), "data", "course_pricing.xlsx");
+  // Return default path relative to server directory (most reliable)
+  const defaultPath = path.resolve(serverDir, "data", "course_pricing.xlsx");
+  log(`⚠ Pricing file not found in any location. Using default: ${defaultPath}`, "pricing");
   
   // Create data directory if it doesn't exist
   const dataDir = path.dirname(defaultPath);
   if (!fs.existsSync(dataDir)) {
+    log(`[Pricing] Creating data directory: ${dataDir}`, "pricing");
     fs.mkdirSync(dataDir, { recursive: true });
   }
 
@@ -76,13 +101,33 @@ export function readPricingFromExcel(): CoursePricing[] {
 
   // Check if file exists
   if (!fs.existsSync(filePath)) {
-    log(`Pricing file not found at ${filePath}. Using default pricing.`, "pricing");
+    log(`❌ Pricing file not found at ${filePath}. Returning empty array.`, "pricing");
+    log(`[Pricing] This means pricing will fall back to default/hardcoded values.`, "pricing");
+    log(`[Pricing] Please ensure course_pricing.xlsx is deployed to: ${filePath}`, "pricing");
+    return [];
+  }
+
+  // Check file permissions
+  try {
+    fs.accessSync(filePath, fs.constants.R_OK);
+  } catch (error: any) {
+    log(`❌ Pricing file exists but cannot be read: ${filePath}`, "pricing");
+    log(`[Pricing] Error: ${error.message}`, "pricing");
+    log(`[Pricing] Please check file permissions.`, "pricing");
     return [];
   }
 
   // Check if file was modified
-  const stats = fs.statSync(filePath);
+  let stats;
+  try {
+    stats = fs.statSync(filePath);
+  } catch (error: any) {
+    log(`❌ Error reading file stats: ${error.message}`, "pricing");
+    return [];
+  }
+
   if (stats.mtimeMs === lastModified && pricingCache !== null) {
+    log(`[Pricing] Using cached pricing data (${pricingCache.length} records)`, "pricing");
     return pricingCache;
   }
 
@@ -90,16 +135,22 @@ export function readPricingFromExcel(): CoursePricing[] {
     // Use require for xlsx (CommonJS module)
     const XLSX = require("xlsx");
     
+    log(`[Pricing] Reading Excel file: ${filePath}`, "pricing");
+    
     // Read Excel file
     const workbook = XLSX.readFile(filePath);
     const sheetName = workbook.SheetNames[0]; // Use first sheet
     const worksheet = workbook.Sheets[sheetName];
+
+    log(`[Pricing] Excel file loaded. Sheet: ${sheetName}`, "pricing");
 
     // Convert to JSON - use first row as headers
     const data = XLSX.utils.sheet_to_json(worksheet, {
       defval: null,
       raw: false, // Convert numbers to strings for parsing
     });
+
+    log(`[Pricing] Parsed ${data.length} rows from Excel`, "pricing");
 
     // Parse and validate data
     const pricing: CoursePricing[] = [];
@@ -230,10 +281,17 @@ export function readPricingFromExcel(): CoursePricing[] {
     pricingCache = pricing;
     lastModified = stats.mtimeMs;
 
-    log(`Loaded ${pricing.length} pricing records from Excel file`, "pricing");
+    log(`✅ Successfully loaded ${pricing.length} pricing records from Excel file`, "pricing");
+    if (pricing.length === 0) {
+      log(`⚠ Warning: Excel file loaded but contains no valid pricing records.`, "pricing");
+      log(`[Pricing] Please check the Excel file format and ensure it has the required columns.`, "pricing");
+    }
     return pricing;
   } catch (error: any) {
-    log(`Error reading pricing file: ${error.message}`, "pricing");
+    log(`❌ Error reading pricing file: ${error.message}`, "pricing");
+    log(`[Pricing] File path: ${filePath}`, "pricing");
+    log(`[Pricing] Error stack: ${error.stack}`, "pricing");
+    log(`[Pricing] This error will cause the application to use default/hardcoded pricing.`, "pricing");
     return [];
   }
 }

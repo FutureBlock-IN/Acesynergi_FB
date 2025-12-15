@@ -13,6 +13,13 @@ import {
 } from "./pricing";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  console.log("[Routes] Registering API routes...");
+  
+  // Health check endpoint
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", message: "API is working", timestamp: new Date().toISOString() });
+  });
+  
   // PayPal routes
   app.get("/paypal/setup", async (req, res) => {
     await loadPaypalDefault(req, res);
@@ -72,16 +79,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/pricing/:courseName/:country", async (req, res) => {
     try {
       const { courseName, country } = req.params;
-      const pricing = getCoursePricing(decodeURIComponent(courseName), decodeURIComponent(country));
+      const decodedCourseName = decodeURIComponent(courseName);
+      const decodedCountry = decodeURIComponent(country);
+      
+      console.log(`[API] Pricing request: courseName="${decodedCourseName}", country="${decodedCountry}"`);
+      
+      const pricing = getCoursePricing(decodedCourseName, decodedCountry);
       
       if (!pricing) {
-        return res.status(404).json({ error: "Pricing not found for this course and country" });
+        console.warn(`[API] Pricing not found: courseName="${decodedCourseName}", country="${decodedCountry}"`);
+        return res.status(404).json({ 
+          error: "Pricing not found for this course and country",
+          courseName: decodedCourseName,
+          country: decodedCountry
+        });
       }
       
+      console.log(`[API] Pricing found: ${pricing.courseName} - ${pricing.country} - Total: ${pricing.total}`);
       res.json(pricing);
     } catch (error: any) {
-      console.error('Pricing API error:', error);
-      res.status(500).json({ error: "Failed to fetch pricing" });
+      console.error('[API] Pricing API error:', error);
+      console.error('[API] Error stack:', error.stack);
+      res.status(500).json({ error: "Failed to fetch pricing", details: error.message });
     }
   });
 
@@ -143,6 +162,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+
+  // Log all registered routes for debugging
+  console.log("[Routes] API routes registered:");
+  console.log("[Routes]   GET  /api/health");
+  console.log("[Routes]   GET  /api/pricing/:courseName/:country");
+  console.log("[Routes]   GET  /api/pricing/:courseName");
+  console.log("[Routes]   GET  /api/pricing/country/:country");
+  console.log("[Routes]   GET  /api/pricing/courses");
+  console.log("[Routes]   GET  /api/pricing/countries");
+  console.log("[Routes]   POST /api/pricing/create-sample");
+  console.log("[Routes]   POST /api/contact");
+  console.log("[Routes]   POST /api/corporate");
+  console.log("[Routes] All routes registered successfully!");
 
   return httpServer;
 }
