@@ -1,5 +1,5 @@
 name: Azure Static Web Apps CI/CD
-
+ 
 on:
   push:
     branches:
@@ -44,3 +44,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MANGO_PLANT_08D8B8C0F }}
           action: "close"
+
