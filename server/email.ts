@@ -1,246 +1,309 @@
 import { Resend } from 'resend';
 
-const FROM_EMAIL = 'AceSynergi <onboarding@resend.dev>';
-const ADMIN_EMAIL = 'reachus@acesynergi.com';
+// =============================================================================
+// RESEND FREE TIER LIMITATIONS (LOCAL TESTING):
+// =============================================================================
+// - You can ONLY send emails TO the email address that owns the Resend account
+// - The FROM address MUST be "onboarding@resend.dev" on free tier
+// - To send to any recipient, you need a verified custom domain in Resend
+// =============================================================================
 
-function getResendClient() {
+// From address - on free tier, MUST be "onboarding@resend.dev"
+const FROM_EMAIL = 'Acesynergi <onboarding@resend.dev>';
+
+// Admin email - MUST be the Resend account owner email on free tier
+// Change this to YOUR Resend account email for local testing
+// const ADMIN_EMAIL = 'reachus@acesynergi.com';
+const ADMIN_EMAIL = 'emmanuel012k@gmail.com';
+// Cache the Resend client
+let resendClient: Resend | null = null;
+
+function getResendClient(): Resend {
+  if (resendClient) return resendClient;
+  
   const apiKey = process.env.RESEND_API_KEY;
+  
+  console.log('\n' + '='.repeat(60));
+  console.log('[Email] INITIALIZING RESEND CLIENT');
+  console.log('='.repeat(60));
+  
   if (!apiKey) {
+    console.error('[Email] ❌ RESEND_API_KEY is NOT SET!');
+    console.error('[Email] Please create a .env file in the project root with:');
+    console.error('[Email]   RESEND_API_KEY=re_your_api_key_here');
+    console.error('[Email] Get your API key from: https://resend.com/api-keys');
+    console.log('='.repeat(60) + '\n');
     throw new Error('RESEND_API_KEY environment variable is not set');
   }
-  return new Resend(apiKey);
+  
+  console.log('[Email] ✓ API Key found:', apiKey.substring(0, 10) + '...');
+  console.log('[Email] ✓ FROM_EMAIL:', FROM_EMAIL);
+  console.log('[Email] ✓ ADMIN_EMAIL:', ADMIN_EMAIL);
+  console.log('[Email]');
+  console.log('[Email] ⚠️  RESEND FREE TIER: Emails can only be sent TO:', ADMIN_EMAIL);
+  console.log('='.repeat(60) + '\n');
+  
+  resendClient = new Resend(apiKey);
+  return resendClient;
 }
 
+// Log startup config when module loads
+console.log('\n[Email] Module loaded - waiting for first email request to initialize...');
+
+/**
+ * Send email to admin and log results to console
+ */
+async function sendAdminEmail(
+  client: Resend,
+  subject: string,
+  html: string,
+  formType: string
+): Promise<{ success: boolean; id?: string; error?: string }> {
+  console.log('\n' + '-'.repeat(50));
+  console.log(`[Email] 📧 Sending ${formType} email to admin...`);
+  console.log(`[Email] TO: ${ADMIN_EMAIL}`);
+  console.log(`[Email] FROM: ${FROM_EMAIL}`);
+  console.log(`[Email] SUBJECT: ${subject}`);
+  console.log('-'.repeat(50));
+
+  try {
+    const startTime = Date.now();
+    const response = await client.emails.send({
+      from: FROM_EMAIL,
+      to: ADMIN_EMAIL,
+      subject: subject,
+      html: html,
+    });
+    const duration = Date.now() - startTime;
+
+    console.log(`[Email] Response received in ${duration}ms`);
+    console.log('[Email] Full response:', JSON.stringify(response, null, 2));
+
+    // Check for Resend error
+    if (response.error) {
+      console.error('\n[Email] ❌ ADMIN EMAIL FAILED!');
+      console.error('[Email] Error name:', response.error.name);
+      console.error('[Email] Error message:', response.error.message);
+      
+      // Common Resend free tier error
+      if (response.error.message?.includes('only send testing emails')) {
+        console.error('\n[Email] 💡 FREE TIER ISSUE: You can only send to your Resend account email');
+        console.error('[Email] Make sure ADMIN_EMAIL matches your Resend account email');
+      }
+      
+      return {
+        success: false,
+        error: response.error.message || 'Unknown Resend error'
+      };
+    }
+
+    // Success
+    if (response.data?.id) {
+      console.log('\n[Email] ✅ ADMIN EMAIL SENT SUCCESSFULLY!');
+      console.log(`[Email] Email ID: ${response.data.id}`);
+      return { success: true, id: response.data.id };
+    }
+
+    console.error('[Email] ⚠️ Unexpected response format (no data.id)');
+    return { success: false, error: 'Unexpected response from Resend' };
+
+  } catch (err: any) {
+    console.error('\n[Email] ❌ EXCEPTION while sending admin email:');
+    console.error('[Email] Error:', err?.message || err);
+    return {
+      success: false,
+      error: err?.message || 'Failed to send email'
+    };
+  }
+}
+
+/**
+ * Contact Form Email (from Contact page or Talk to Advisor)
+ */
 export async function sendContactEmail(data: {
   name: string;
   email: string;
   phone?: string;
   subject?: string;
   message: string;
-}) {
+  type?: string; // "contact" or "course_inquiry" (from advisor form)
+}): Promise<{ success: boolean; error?: string }> {
+  
+  console.log('\n' + '='.repeat(60));
+  console.log('[Email] 📬 CONTACT FORM SUBMISSION');
+  console.log('='.repeat(60));
+  console.log('[Email] Name:', data.name);
+  console.log('[Email] Email:', data.email);
+  console.log('[Email] Phone:', data.phone || 'Not provided');
+  console.log('[Email] Subject:', data.subject || 'Not provided');
+  console.log('[Email] Type:', data.type || 'contact');
+  console.log('[Email] Message preview:', data.message.substring(0, 100) + (data.message.length > 100 ? '...' : ''));
+  console.log('='.repeat(60));
+
   const client = getResendClient();
   
   const timestamp = new Date().toLocaleString('en-US', { 
-    timeZone: 'America/Los_Angeles',
+    timeZone: 'Asia/Kolkata',
     dateStyle: 'full',
     timeStyle: 'long'
   });
 
-  const adminHtmlContent = `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-  <h2 style="color: #1E40AF; border-bottom: 3px solid #06B6D4; padding-bottom: 10px;">
-    New Contact Form Submission
-  </h2>
-  
-  <div style="background: #F8FAFC; padding: 20px; border-radius: 8px; margin: 20px 0;">
-    <p><strong style="color: #1E40AF;">Name:</strong> ${data.name}</p>
-    <p><strong style="color: #1E40AF;">Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
-    <p><strong style="color: #1E40AF;">Phone:</strong> ${data.phone || 'Not provided'}</p>
-    <p><strong style="color: #1E40AF;">Subject:</strong> ${data.subject || 'Not provided'}</p>
-  </div>
-  
-  <div style="margin: 20px 0;">
-    <h3 style="color: #1E40AF;">Message:</h3>
-    <p style="background: white; padding: 15px; border-left: 4px solid #06B6D4; border-radius: 4px;">
-      ${data.message.replace(/\n/g, '<br>')}
-    </p>
-  </div>
-  
-  <p style="color: #6B7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
-    Submitted: ${timestamp}
-  </p>
-</div>
-  `;
+  // Determine form source for email subject
+  const formSource = data.type === 'course_inquiry' 
+    ? 'Talk to Our Advisor (Course Inquiry)' 
+    : 'Contact Form';
 
-  const userConfirmationHtml = `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-  <div style="background: linear-gradient(135deg, #1E40AF 0%, #06B6D4 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-    <h1 style="color: white; margin: 0; font-size: 28px;">AceSynergi</h1>
-    <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Professional Training Solutions</p>
+  const adminHtmlContent = `
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden;">
+  <div style="background: linear-gradient(135deg, #1E40AF 0%, #06B6D4 100%); padding: 20px; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 24px;">AceSynergi</h1>
+    <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 14px;">New Form Submission</p>
   </div>
   
-  <div style="background: white; padding: 30px; border: 1px solid #E5E7EB; border-top: none; border-radius: 0 0 8px 8px;">
-    <h2 style="color: #1E40AF; margin-top: 0;">Thank You for Contacting Us, ${data.name}!</h2>
+  <div style="padding: 24px;">
+    <div style="background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 12px 16px; margin-bottom: 20px; border-radius: 4px;">
+      <strong style="color: #92400E;">📧 Form Source:</strong>
+      <span style="color: #78350F; margin-left: 8px;">${formSource}</span>
+    </div>
+
+    <h2 style="color: #1E40AF; border-bottom: 2px solid #06B6D4; padding-bottom: 10px; margin-top: 0;">
+      Contact Details
+    </h2>
     
-    <p style="color: #374151; line-height: 1.6;">
-      We have received your message and our team will get back to you within 24-48 hours.
-    </p>
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <td style="padding: 8px 0; color: #6B7280; width: 120px;"><strong>Name:</strong></td>
+        <td style="padding: 8px 0; color: #111827;">${data.name}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #6B7280;"><strong>Email:</strong></td>
+        <td style="padding: 8px 0;"><a href="mailto:${data.email}" style="color: #1E40AF;">${data.email}</a></td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #6B7280;"><strong>Phone:</strong></td>
+        <td style="padding: 8px 0; color: #111827;">${data.phone || 'Not provided'}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #6B7280;"><strong>Subject:</strong></td>
+        <td style="padding: 8px 0; color: #111827;">${data.subject || 'General Inquiry'}</td>
+      </tr>
+    </table>
     
-    <div style="background: #F8FAFC; padding: 20px; border-radius: 8px; margin: 20px 0;">
-      <h3 style="color: #1E40AF; margin-top: 0;">Your Submission Details:</h3>
-      <p style="color: #374151; margin: 5px 0;"><strong>Subject:</strong> ${data.subject || 'General Inquiry'}</p>
-      <p style="color: #374151; margin: 5px 0;"><strong>Message:</strong></p>
-      <p style="color: #6B7280; font-style: italic; margin: 5px 0;">"${data.message}"</p>
+    <h3 style="color: #1E40AF; margin-top: 24px;">Message:</h3>
+    <div style="background: #F8FAFC; padding: 16px; border-left: 4px solid #06B6D4; border-radius: 4px; color: #374151; line-height: 1.6;">
+      ${data.message.replace(/\n/g, '<br>')}
     </div>
     
-    <p style="color: #374151; line-height: 1.6;">
-      In the meantime, feel free to explore our courses and training programs at 
-      <a href="https://acesynergi.com" style="color: #1E40AF;">acesynergi.com</a>.
-    </p>
-    
-    <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 30px 0;">
-    
-    <p style="color: #6B7280; font-size: 14px; margin-bottom: 0;">
-      Best regards,<br>
-      <strong style="color: #1E40AF;">The AceSynergi Team</strong>
+    <p style="color: #9CA3AF; font-size: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #E5E7EB;">
+      Submitted: ${timestamp}
     </p>
   </div>
 </div>
   `;
 
-  console.log('Sending contact form emails...');
-  console.log('Admin email:', ADMIN_EMAIL);
-  console.log('User email:', data.email);
+  const subject = data.type === 'course_inquiry'
+    ? `[Advisor Request] ${data.name} - Course Inquiry`
+    : `[Contact Form] ${data.name} - ${data.subject || 'New Message'}`;
 
-  // Send email to admin
-  try {
-    const adminResult = await client.emails.send({
-      from: FROM_EMAIL,
-      to: ADMIN_EMAIL,
-      subject: `New Contact Form Submission - ${data.name}`,
-      html: adminHtmlContent,
-    });
-    console.log('Admin email result:', JSON.stringify(adminResult, null, 2));
-  } catch (adminError: any) {
-    console.error('Admin email error:', adminError?.message || adminError);
+  // Send to admin - this is the critical email
+  const result = await sendAdminEmail(client, subject, adminHtmlContent, 'Contact');
+
+  if (!result.success) {
+    console.error('\n[Email] ❌ CONTACT FORM EMAIL FAILED - returning error to frontend');
+    throw new Error(result.error || 'Failed to send email to admin');
   }
 
-  // Send confirmation email to user (may fail on Resend free tier - that's OK)
-  try {
-    const userResult = await client.emails.send({
-      from: FROM_EMAIL,
-      to: data.email,
-      subject: `Thank You for Contacting AceSynergi - We'll Be in Touch Soon!`,
-      html: userConfirmationHtml,
-    });
-    console.log('User email result:', JSON.stringify(userResult, null, 2));
-    return { success: true, userEmailSent: true };
-  } catch (userError: any) {
-    // On Resend free tier, user emails to non-verified addresses will fail
-    // This is expected - admin still gets the notification
-    console.log('User confirmation email skipped (Resend free tier limitation):', userError?.message);
-    return { success: true, userEmailSent: false };
-  }
+  console.log('\n[Email] ✅ CONTACT FORM PROCESSED SUCCESSFULLY');
+  console.log('='.repeat(60) + '\n');
+  
+  return { success: true };
 }
 
+/**
+ * Corporate Training Inquiry Email
+ */
 export async function sendCorporateEmail(data: {
   name: string;
   email: string;
   phone?: string;
   comment?: string;
-}) {
+}): Promise<{ success: boolean; error?: string }> {
+  
+  console.log('\n' + '='.repeat(60));
+  console.log('[Email] 🏢 CORPORATE FORM SUBMISSION');
+  console.log('='.repeat(60));
+  console.log('[Email] Name:', data.name);
+  console.log('[Email] Email:', data.email);
+  console.log('[Email] Phone:', data.phone || 'Not provided');
+  console.log('[Email] Comment preview:', (data.comment || '').substring(0, 100) + ((data.comment?.length || 0) > 100 ? '...' : '') || 'None');
+  console.log('='.repeat(60));
+
   const client = getResendClient();
   
   const timestamp = new Date().toLocaleString('en-US', { 
-    timeZone: 'America/Los_Angeles',
+    timeZone: 'Asia/Kolkata',
     dateStyle: 'full',
     timeStyle: 'long'
   });
 
   const adminHtmlContent = `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-  <h2 style="color: #1E40AF; border-bottom: 3px solid #06B6D4; padding-bottom: 10px;">
-    New Corporate Training Inquiry
-  </h2>
-  
-  <div style="background: #F8FAFC; padding: 20px; border-radius: 8px; margin: 20px 0;">
-    <p><strong style="color: #1E40AF;">Contact Person:</strong> ${data.name}</p>
-    <p><strong style="color: #1E40AF;">Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
-    <p><strong style="color: #1E40AF;">Phone:</strong> ${data.phone || 'Not provided'}</p>
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden;">
+  <div style="background: linear-gradient(135deg, #1E40AF 0%, #06B6D4 100%); padding: 20px; text-align: center;">
+    <h1 style="color: white; margin: 0; font-size: 24px;">AceSynergi</h1>
+    <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 14px;">Corporate Training Inquiry</p>
   </div>
   
-  ${data.comment ? `
-  <div style="margin: 20px 0;">
-    <h3 style="color: #1E40AF;">Comment/Message:</h3>
-    <p style="background: white; padding: 15px; border-left: 4px solid #06B6D4; border-radius: 4px;">
-      ${data.comment.replace(/\n/g, '<br>')}
-    </p>
-  </div>
-  ` : ''}
-  
-  <p style="color: #6B7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
-    Submitted: ${timestamp}
-  </p>
-</div>
-  `;
-
-  const userConfirmationHtml = `
-<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-  <div style="background: linear-gradient(135deg, #1E40AF 0%, #06B6D4 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-    <h1 style="color: white; margin: 0; font-size: 28px;">AceSynergi</h1>
-    <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Corporate Training Solutions</p>
-  </div>
-  
-  <div style="background: white; padding: 30px; border: 1px solid #E5E7EB; border-top: none; border-radius: 0 0 8px 8px;">
-    <h2 style="color: #1E40AF; margin-top: 0;">Thank You for Your Interest, ${data.name}!</h2>
-    
-    <p style="color: #374151; line-height: 1.6;">
-      We have received your corporate training inquiry. Our dedicated team will review your requirements and reach out within 24 hours.
-    </p>
-    
-    <div style="background: #F8FAFC; padding: 20px; border-radius: 8px; margin: 20px 0;">
-      <h3 style="color: #1E40AF; margin-top: 0;">What Happens Next?</h3>
-      <ul style="color: #374151; line-height: 1.8; padding-left: 20px;">
-        <li>Our training specialist will contact you within 24 hours</li>
-        <li>We'll discuss your organization's specific training needs</li>
-        <li>You'll receive a customized training proposal</li>
-        <li>We'll schedule a consultation at your convenience</li>
-      </ul>
+  <div style="padding: 24px;">
+    <div style="background: #DBEAFE; border-left: 4px solid #2563EB; padding: 12px 16px; margin-bottom: 20px; border-radius: 4px;">
+      <strong style="color: #1E40AF;">🏢 Form Source:</strong>
+      <span style="color: #1E3A8A; margin-left: 8px;">Corporate Training Page</span>
     </div>
+
+    <h2 style="color: #1E40AF; border-bottom: 2px solid #06B6D4; padding-bottom: 10px; margin-top: 0;">
+      Contact Details
+    </h2>
+    
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <td style="padding: 8px 0; color: #6B7280; width: 120px;"><strong>Name:</strong></td>
+        <td style="padding: 8px 0; color: #111827;">${data.name}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #6B7280;"><strong>Email:</strong></td>
+        <td style="padding: 8px 0;"><a href="mailto:${data.email}" style="color: #1E40AF;">${data.email}</a></td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #6B7280;"><strong>Phone:</strong></td>
+        <td style="padding: 8px 0; color: #111827;">${data.phone || 'Not provided'}</td>
+      </tr>
+    </table>
     
     ${data.comment ? `
-    <div style="background: #FEF3C7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #F59E0B;">
-      <p style="color: #92400E; margin: 0;"><strong>Your Message:</strong></p>
-      <p style="color: #78350F; font-style: italic; margin: 10px 0 0 0;">"${data.comment}"</p>
+    <h3 style="color: #1E40AF; margin-top: 24px;">Comment/Message:</h3>
+    <div style="background: #F8FAFC; padding: 16px; border-left: 4px solid #06B6D4; border-radius: 4px; color: #374151; line-height: 1.6;">
+      ${data.comment.replace(/\n/g, '<br>')}
     </div>
     ` : ''}
     
-    <p style="color: #374151; line-height: 1.6;">
-      In the meantime, explore our comprehensive course catalog at 
-      <a href="https://acesynergi.com" style="color: #1E40AF;">acesynergi.com</a>.
-    </p>
-    
-    <hr style="border: none; border-top: 1px solid #E5E7EB; margin: 30px 0;">
-    
-    <p style="color: #6B7280; font-size: 14px; margin-bottom: 0;">
-      Best regards,<br>
-      <strong style="color: #1E40AF;">The AceSynergi Corporate Training Team</strong>
+    <p style="color: #9CA3AF; font-size: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #E5E7EB;">
+      Submitted: ${timestamp}
     </p>
   </div>
 </div>
   `;
 
-  console.log('Sending corporate training emails...');
-  console.log('Admin email:', ADMIN_EMAIL);
-  console.log('User email:', data.email);
+  const subject = `[Corporate Inquiry] ${data.name} - Training Request`;
 
-  // Send email to admin
-  try {
-    const adminResult = await client.emails.send({
-      from: FROM_EMAIL,
-      to: ADMIN_EMAIL,
-      subject: `New Corporate Training Inquiry - ${data.name}`,
-      html: adminHtmlContent,
-    });
-    console.log('Corporate admin email result:', JSON.stringify(adminResult, null, 2));
-  } catch (adminError: any) {
-    console.error('Corporate admin email error:', adminError?.message || adminError);
+  // Send to admin - this is the critical email
+  const result = await sendAdminEmail(client, subject, adminHtmlContent, 'Corporate');
+
+  if (!result.success) {
+    console.error('\n[Email] ❌ CORPORATE FORM EMAIL FAILED - returning error to frontend');
+    throw new Error(result.error || 'Failed to send email to admin');
   }
 
-  // Send confirmation email to user (may fail on Resend free tier - that's OK)
-  try {
-    const userResult = await client.emails.send({
-      from: FROM_EMAIL,
-      to: data.email,
-      subject: `Thank You for Your Corporate Training Inquiry - AceSynergi`,
-      html: userConfirmationHtml,
-    });
-    console.log('Corporate user email result:', JSON.stringify(userResult, null, 2));
-    return { success: true, userEmailSent: true };
-  } catch (userError: any) {
-    // On Resend free tier, user emails to non-verified addresses will fail
-    // This is expected - admin still gets the notification
-    console.log('Corporate user confirmation email skipped (Resend free tier limitation):', userError?.message);
-    return { success: true, userEmailSent: false };
-  }
+  console.log('\n[Email] ✅ CORPORATE FORM PROCESSED SUCCESSFULLY');
+  console.log('='.repeat(60) + '\n');
+  
+  return { success: true };
 }

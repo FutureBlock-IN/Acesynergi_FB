@@ -14,7 +14,7 @@
       "destination": "/api/index"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!api|paypal|assets|_next|.*\\..*).*)",
       "destination": "/index.html"
     }
   ],

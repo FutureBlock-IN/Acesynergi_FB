@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Tag, Minus, Plus, Clock, MapPin, ChevronDown, ChevronUp, ArrowRight, BookOpen } from "lucide-react";
@@ -9,28 +9,44 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currencyContext";
-import { useCoursePricing } from "@/hooks/useCoursePricing";
+import { getHardcodedCoursePricing, formatMoney } from "@/lib/hardcodedCoursePricing";
 import { Link } from "wouter";
 import scheduleBg from "@assets/stock_images/professional_busines_10dc0c76.jpg";
+import schedulesData from "@/data/schedules.json";
 
+// JSON structure interfaces
+interface Session {
+  start_date: string;
+  end_date: string;
+  format: string;
+  price: { currency: string; amount: number };
+  quantity: number;
+}
+
+interface CourseSchedule {
+  course_code: string;
+  course_name: string;
+  sessions: Session[];
+}
+
+interface SchedulesData {
+  courses: CourseSchedule[];
+}
+
+// Converted Schedule interface for UI
 interface Schedule {
   id: string;
-  courseId: string;
+  courseCode: string;
+  courseName: string;
   title: string;
   dates: string;
   startDate: string;
   endDate: string;
   mode: string;
   price: number;
-  originalPrice: number;
-  time: string;
-  venue: string;
+  currency: string;
+  quantity: number;
   days: number;
-  description: string;
-  whatYouLearn: string[];
-  prerequisites: string[];
-  curriculum: string[];
-  instructor: string;
 }
 
 interface RelatedCourse {
@@ -40,386 +56,69 @@ interface RelatedCourse {
   duration: string;
 }
 
-const onlineSchedules: Schedule[] = [
-  { 
-    id: "1", 
-    courseId: "cbap",
-    title: "CBAP Certification Training", 
-    dates: "Dec 5 - 8, 2025",
-    startDate: "Dec 5",
-    endDate: "Dec 8", 
-    mode: "Live Online Classroom", 
-    price: 1299,
-    originalPrice: 1799,
-    time: "9 AM - 5 PM",
-    venue: "Online Classroom",
-    days: 4,
-    description: "This CBAP certification training is ideal for professionals seeking to gain a globally recognized certified business analysis professional certification aligned with BABOK® Guide v3.",
-    whatYouLearn: [
-      "Planning and monitoring business analysis processes",
-      "Eliciting, analysing, and managing requirements",
-      "Managing the entire project lifecycle",
-      "Conducting strategic analysis for business solutions",
-      "Evaluating and optimising solutions"
-    ],
-    prerequisites: [
-      "High school diploma or undergraduate degree",
-      "7,500 hours of business analysis experience in the last 10 years",
-      "900 hours in four of the six BABOK® v3 Knowledge Areas",
-      "35 hours of professional development in the past four years"
-    ],
-    curriculum: [
-      "Introduction to CBAP® Certification",
-      "Introduction to BABOK® V3",
-      "Business Analysis Planning and Monitoring",
-      "Elicitation and Collaboration",
-      "Requirements Life Cycle Management",
-      "Strategy Analysis",
-      "Requirements Analysis and Design Definition",
-      "Solution Evaluation"
-    ],
-    instructor: "Dr. Sarah Mitchell, CBAP, PMI-PBA"
-  },
-  // { 
-  //   id: "2", 
-  //   courseId: "cbap",
-  //   title: "CBAP Certification Training", 
-  //   dates: "Dec 15 - 18, 2025",
-  //   startDate: "Dec 15",
-  //   endDate: "Dec 18", 
-  //   mode: "Live Online Classroom", 
-  //   price: 1299,
-  //   originalPrice: 1799,
-  //   time: "9 AM - 5 PM",
-  //   venue: "Online Classroom",
-  //   days: 4,
-  //   description: "This CBAP certification training is ideal for professionals seeking to gain a globally recognized certified business analysis professional certification aligned with BABOK® Guide v3.",
-  //   whatYouLearn: [
-  //     "Planning and monitoring business analysis processes",
-  //     "Eliciting, analysing, and managing requirements",
-  //     "Managing the entire project lifecycle",
-  //     "Conducting strategic analysis for business solutions",
-  //     "Evaluating and optimising solutions"
-  //   ],
-  //   prerequisites: [
-  //     "High school diploma or undergraduate degree",
-  //     "7,500 hours of business analysis experience in the last 10 years",
-  //     "900 hours in four of the six BABOK® v3 Knowledge Areas",
-  //     "35 hours of professional development in the past four years"
-  //   ],
-  //   curriculum: [
-  //     "Introduction to CBAP® Certification",
-  //     "Introduction to BABOK® V3",
-  //     "Business Analysis Planning and Monitoring",
-  //     "Elicitation and Collaboration",
-  //     "Requirements Life Cycle Management",
-  //     "Strategy Analysis",
-  //     "Requirements Analysis and Design Definition",
-  //     "Solution Evaluation"
-  //   ],
-  //   instructor: "Dr. Sarah Mitchell, CBAP, PMI-PBA"
-  // },
-  { 
-    id: "3", 
-    courseId: "ecba",
-    title: "ECBA Certification Training", 
-    dates: "Dec 10 - 12, 2025",
-    startDate: "Dec 10",
-    endDate: "Dec 12", 
-    mode: "Live Online Classroom", 
-    price: 899,
-    originalPrice: 1299,
-    time: "9 AM - 5 PM",
-    venue: "Online Classroom",
-    days: 3,
-    description: "The Entry Certificate in Business Analysis (ECBA) training is designed for professionals new to business analysis who want to demonstrate foundational knowledge.",
-    whatYouLearn: [
-      "Understanding business analysis fundamentals",
-      "Learning BABOK® Guide v3 knowledge areas",
-      "Developing requirements elicitation techniques",
-      "Documenting and managing requirements",
-      "Understanding stakeholder analysis"
-    ],
-    prerequisites: [
-      "No prior experience required",
-      "21 hours of professional development training in business analysis"
-    ],
-    curriculum: [
-      "Introduction to Business Analysis",
-      "Business Analysis Planning and Monitoring",
-      "Elicitation and Collaboration",
-      "Requirements Life Cycle Management",
-      "Strategy Analysis",
-      "Requirements Analysis and Design Definition"
-    ],
-    instructor: "Michael Chen, ECBA, CCBA"
-  },
-  { 
-    id: "4", 
-    courseId: "ccba",
-    title: "CCBA Certification Training", 
-    dates: "Dec 12 - 15, 2025",
-    startDate: "Dec 12",
-    endDate: "Dec 15", 
-    mode: "Live Online Classroom", 
-    price: 1099,
-    originalPrice: 1599,
-    time: "9 AM - 5 PM",
-    venue: "Online Classroom",
-    days: 4,
-    description: "The Certification of Capability in Business Analysis (CCBA) training is designed for professionals with 2-3 years of business analysis experience.",
-    whatYouLearn: [
-      "Advanced requirements elicitation techniques",
-      "Complex stakeholder management",
-      "Business process modeling",
-      "Solution assessment and validation",
-      "Strategic analysis methodologies"
-    ],
-    prerequisites: [
-      "3,750 hours of business analysis work experience in the last 7 years",
-      "900 hours in two of the six BABOK® v3 Knowledge Areas",
-      "21 hours of professional development"
-    ],
-    curriculum: [
-      "CCBA Certification Overview",
-      "Business Analysis Planning and Monitoring",
-      "Elicitation and Collaboration Techniques",
-      "Requirements Life Cycle Management",
-      "Strategy Analysis",
-      "Requirements Analysis and Design Definition",
-      "Solution Evaluation"
-    ],
-    instructor: "Jessica Wong, CCBA, CBAP"
-  },
-  { 
-    id: "5", 
-    courseId: "pmp",
-    title: "PMP Certification Training", 
-    dates: "Dec 8 - 9, 2025",
-    startDate: "Dec 8",
-    endDate: "Dec 9", 
-    mode: "Live Online Classroom", 
-    price: 699,
-    originalPrice: 999,
-    time: "9 AM - 5 PM",
-    venue: "Online Classroom",
-    days: 2,
-    description: "Learn how to leverage Generative AI tools to enhance your Scrum Master role with AI-powered sprint planning and team productivity optimization.",
-    whatYouLearn: [
-      "Using AI for sprint planning and estimation",
-      "AI-powered retrospective analysis",
-      "Automating Scrum artifacts with AI",
-      "AI tools for team collaboration",
-      "Predictive analytics for sprint success"
-    ],
-    prerequisites: [
-      "Basic understanding of Scrum framework",
-      "CSM or PSM certification preferred but not required"
-    ],
-    curriculum: [
-      "Introduction to Gen AI in Agile",
-      "AI Tools for Sprint Planning",
-      "Automating Daily Standups",
-      "AI-Powered Retrospectives",
-      "Predictive Analytics for Sprints"
-    ],
-    instructor: "David Park, CSM, AI Specialist"
-  },
-  { 
-    id: "6", 
-    courseId: "pmipba",
-    title: "PMI PBA Certification Training", 
-    dates: "Dec 18 - 20, 2025",
-    startDate: "Dec 18",
-    endDate: "Dec 20", 
-    mode: "Live Online Classroom", 
-    price: 899,
-    originalPrice: 1299,
-    time: "9 AM - 5 PM",
-    venue: "Online Classroom",
-    days: 3,
-    description: "Master the use of Generative AI to streamline project management workflows, automate reporting, and enhance decision-making.",
-    whatYouLearn: [
-      "AI-powered project planning and scheduling",
-      "Automated risk assessment with AI",
-      "AI tools for stakeholder communication",
-      "Predictive project analytics",
-      "AI-driven resource optimization"
-    ],
-    prerequisites: [
-      "Project management experience required",
-      "PMP or PRINCE2 certification preferred"
-    ],
-    curriculum: [
-      "Gen AI Fundamentals for PM",
-      "AI in Project Planning",
-      "Risk Management with AI",
-      "AI-Powered Reporting",
-      "Resource Optimization"
-    ],
-    instructor: "Rachel Adams, PMP, AI Strategist"
-  },
-  { 
-    id: "7", 
-    courseId: "pmi-acp",
-    title: "PMI-ACP® Certification Training", 
-    dates: "Jan 10 - 12, 2026",
-    startDate: "Jan 10",
-    endDate: "Jan 12", 
-    mode: "Live Online Classroom", 
-    price: 899,
-    originalPrice: 1299,
-    time: "9 AM - 5 PM",
-    venue: "Online Classroom",
-    days: 3,
-    description: "The PMI Agile Certified Practitioner (PMI-ACP)® certification demonstrates your knowledge of agile principles and your skill with agile techniques. This comprehensive training covers Scrum, Kanban, Lean, XP, and other agile methodologies.",
-    whatYouLearn: [
-      "Agile principles and methodologies",
-      "Scrum, Kanban, and Lean practices",
-      "Agile planning and estimation techniques",
-      "Stakeholder engagement in agile projects",
-      "Agile team dynamics and collaboration",
-      "Continuous improvement practices"
-    ],
-    prerequisites: [
-      "Secondary degree or four-year degree",
-      "21 contact hours of training in agile practices",
-      "12 months of general project experience within the last 5 years",
-      "8 months of agile project experience within the last 3 years"
-    ],
-    curriculum: [
-      "Introduction to Agile and PMI-ACP",
-      "Agile Principles and Mindset",
-      "Value-Driven Delivery",
-      "Stakeholder Engagement",
-      "Team Performance",
-      "Adaptive Planning",
-      "Problem Detection and Resolution",
-      "Continuous Improvement"
-    ],
-    instructor: "Michael Chen, PMI-ACP, CSM"
-  },
-  { 
-    id: "8", 
-    courseId: "pmi-acp",
-    title: "PMI-ACP® Certification Training", 
-    dates: "Jan 20 - 22, 2026",
-    startDate: "Jan 20",
-    endDate: "Jan 22", 
-    mode: "Live Online Classroom", 
-    price: 899,
-    originalPrice: 1299,
-    time: "9 AM - 5 PM",
-    venue: "Online Classroom",
-    days: 3,
-    description: "The PMI Agile Certified Practitioner (PMI-ACP)® certification demonstrates your knowledge of agile principles and your skill with agile techniques. This comprehensive training covers Scrum, Kanban, Lean, XP, and other agile methodologies.",
-    whatYouLearn: [
-      "Agile principles and methodologies",
-      "Scrum, Kanban, and Lean practices",
-      "Agile planning and estimation techniques",
-      "Stakeholder engagement in agile projects",
-      "Agile team dynamics and collaboration",
-      "Continuous improvement practices"
-    ],
-    prerequisites: [
-      "Secondary degree or four-year degree",
-      "21 contact hours of training in agile practices",
-      "12 months of general project experience within the last 5 years",
-      "8 months of agile project experience within the last 3 years"
-    ],
-    curriculum: [
-      "Introduction to Agile and PMI-ACP",
-      "Agile Principles and Mindset",
-      "Value-Driven Delivery",
-      "Stakeholder Engagement",
-      "Team Performance",
-      "Adaptive Planning",
-      "Problem Detection and Resolution",
-      "Continuous Improvement"
-    ],
-    instructor: "Michael Chen, PMI-ACP, CSM"
-  },
-  { 
-    id: "9", 
-    courseId: "capm",
-    title: "CAPM® Certification Training", 
-    dates: "Jan 15 - 17, 2026",
-    startDate: "Jan 15",
-    endDate: "Jan 17", 
-    mode: "Live Online Classroom", 
-    price: 699,
-    originalPrice: 999,
-    time: "9 AM - 5 PM",
-    venue: "Online Classroom",
-    days: 3,
-    description: "The Certified Associate in Project Management (CAPM)® is an entry-level certification for project practitioners. Designed for those who are new to project management, this certification demonstrates your understanding of fundamental project management knowledge and processes.",
-    whatYouLearn: [
-      "Project management fundamentals",
-      "Project lifecycle and processes",
-      "Project integration management",
-      "Scope, schedule, and cost management",
-      "Quality and resource management",
-      "Risk and procurement management",
-      "Stakeholder and communications management"
-    ],
-    prerequisites: [
-      "Secondary degree (high school diploma or equivalent)",
-      "23 contact hours of project management education",
-      "OR 1,500 hours of project experience"
-    ],
-    curriculum: [
-      "Introduction to CAPM and Project Management",
-      "Project Management Framework",
-      "Project Life Cycle and Organization",
-      "Project Integration Management",
-      "Project Scope Management",
-      "Project Schedule Management",
-      "Project Cost Management",
-      "Project Quality Management"
-    ],
-    instructor: "Sarah Johnson, CAPM, PMP"
-  },
-  { 
-    id: "10", 
-    courseId: "capm",
-    title: "CAPM® Certification Training", 
-    dates: "Feb 5 - 7, 2026",
-    startDate: "Feb 5",
-    endDate: "Feb 7", 
-    mode: "Live Online Classroom", 
-    price: 699,
-    originalPrice: 999,
-    time: "9 AM - 5 PM",
-    venue: "Online Classroom",
-    days: 3,
-    description: "The Certified Associate in Project Management (CAPM)® is an entry-level certification for project practitioners. Designed for those who are new to project management, this certification demonstrates your understanding of fundamental project management knowledge and processes.",
-    whatYouLearn: [
-      "Project management fundamentals",
-      "Project lifecycle and processes",
-      "Project integration management",
-      "Scope, schedule, and cost management",
-      "Quality and resource management",
-      "Risk and procurement management",
-      "Stakeholder and communications management"
-    ],
-    prerequisites: [
-      "Secondary degree (high school diploma or equivalent)",
-      "23 contact hours of project management education",
-      "OR 1,500 hours of project experience"
-    ],
-    curriculum: [
-      "Introduction to CAPM and Project Management",
-      "Project Management Framework",
-      "Project Life Cycle and Organization",
-      "Project Integration Management",
-      "Project Scope Management",
-      "Project Schedule Management",
-      "Project Cost Management",
-      "Project Quality Management"
-    ],
-    instructor: "Sarah Johnson, CAPM, PMP"
-  },
-];
+// Helper function to map courseId to course_code
+function getCourseCode(courseId: string): string {
+  const courseCodeMap: Record<string, string> = {
+    "pmp": "PMP",
+    "pmi-acp": "PMI-ACP",
+    "pmipba": "PMI-PBA",
+    "capm": "CAPM",
+    "cbap": "CBAP",
+    "ecba": "ECBA",
+    "ccba": "CCBA",
+  };
+  return courseCodeMap[courseId.toLowerCase()] || courseId.toUpperCase();
+}
+
+// Helper function to calculate days between dates
+function calculateDays(startDate: string, endDate: string): number {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const diffTime = Math.abs(end.getTime() - start.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end days
+  return diffDays;
+}
+
+// Helper function to format date range
+function formatDateRange(startDate: string, endDate: string): string {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const startFormatted = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const endFormatted = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return `${startFormatted} - ${endFormatted}`;
+}
+
+// Convert JSON sessions to Schedule format
+function convertSessionsToSchedules(data: SchedulesData): Schedule[] {
+  const schedules: Schedule[] = [];
+  
+  data.courses.forEach((course) => {
+    course.sessions.forEach((session, index) => {
+      const startDate = new Date(session.start_date);
+      const endDate = new Date(session.end_date);
+      
+      schedules.push({
+        id: `${course.course_code}-${index}-${session.start_date}`,
+        courseCode: course.course_code,
+        courseName: course.course_name,
+        title: course.course_name,
+        dates: formatDateRange(session.start_date, session.end_date),
+        startDate: startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        endDate: endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        mode: session.format,
+        price: session.price.amount,
+        currency: session.price.currency,
+        quantity: session.quantity,
+        days: calculateDays(session.start_date, session.end_date),
+      });
+    });
+  });
+  
+  return schedules;
+}
+
+// Legacy hardcoded schedules (removed - now using JSON)
+const onlineSchedules: Schedule[] = [];
 
 const relatedCourses: RelatedCourse[] = [
   { id: "cbap", title: "CBAP Certification Training", category: "Business Management", duration: "35 hours" },
@@ -436,50 +135,134 @@ const relatedCourses: RelatedCourse[] = [
   { id: "genai-interview-prep", title: "Gen AI Interview Prep for Scrum Masters", category: "Gen AI Courses", duration: "8 hours" },
 ];
 
+// Helper function to map courseId to category slug
+function getCourseCategory(courseId: string): "project-management" | "business-management" | null {
+  const projectManagementCourses = ["pmp", "pmi-acp", "capm", "pmipba"];
+  const businessManagementCourses = ["cbap", "ecba", "ccba"];
+  
+  if (projectManagementCourses.includes(courseId)) {
+    return "project-management";
+  }
+  if (businessManagementCourses.includes(courseId)) {
+    return "business-management";
+  }
+  return null;
+}
+
 export default function Schedule() {
   const [, setLocation] = useLocation();
   const { addToCart } = useCart();
   const { formatPrice } = useCurrency();
   const [activeMode, setActiveMode] = useState<"classroom" | "online" | "self">("online");
-  const [quantities, setQuantities] = useState<Record<string, number>>(
-    onlineSchedules.reduce((acc, schedule) => ({ ...acc, [schedule.id]: 1 }), {})
-  );
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
-
+  
+  // Get category and course_code from URL query params
+  const searchParams = new URLSearchParams(window.location.search);
+  const selectedCategory = searchParams.get("category") as "project-management" | "business-management" | null;
+  const selectedCourseCode = searchParams.get("course_code") as string | null;
+  
+  // Load schedules from JSON
+  const allSchedules = useMemo(() => {
+    return convertSessionsToSchedules(schedulesData as SchedulesData);
+  }, []);
+  
+  // Initialize quantities from loaded schedules
+  const [quantities, setQuantities] = useState<Record<string, number>>(() => {
+    return allSchedules.reduce((acc, schedule) => ({ ...acc, [schedule.id]: schedule.quantity || 1 }), {});
+  });
+  
   const handleQuantityChange = (id: string, delta: number) => {
     setQuantities(prev => ({
       ...prev,
       [id]: Math.max(1, (prev[id] || 1) + delta)
     }));
   };
-
+  
   const toggleExpand = (id: string) => {
     setExpandedCard(expandedCard === id ? null : id);
   };
-
+  
   const handleEnroll = (schedule: Schedule) => {
+    // Map course_code back to courseId for cart
+    const courseIdMap: Record<string, string> = {
+      "PMP": "pmp",
+      "PMI-ACP": "pmi-acp",
+      "PMI-PBA": "pmipba",
+      "CAPM": "capm",
+      "CBAP": "cbap",
+      "ECBA": "ecba",
+      "CCBA": "ccba",
+    };
+    const courseId = courseIdMap[schedule.courseCode] || schedule.courseCode.toLowerCase();
+    
     addToCart({
       id: schedule.id,
-      courseId: schedule.courseId, // Include courseId for pricing lookup
+      courseId: courseId,
       title: schedule.title,
       image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop",
       duration: `${schedule.days} Days`,
       format: schedule.mode,
       price: schedule.price,
-      originalPrice: schedule.originalPrice,
+      originalPrice: schedule.price, // Use same price as original for now
       quantity: quantities[schedule.id] || 1,
       dates: schedule.dates,
     });
     setLocation("/cart");
   };
-
+  
   const getSchedulesForMode = () => {
-    if (activeMode === "online") return onlineSchedules;
-    return [];
+    // Filter by format/mode
+    const modeMap: Record<"classroom" | "online" | "self", string[]> = {
+      "online": ["Live Online Classroom"],
+      "classroom": ["Classroom", "Live Online Classroom"],
+      "self": ["Self Learning", "Self-Learning", "Self"]
+    };
+    
+    const allowedFormats = modeMap[activeMode] || [];
+    return allSchedules.filter(schedule => {
+      if (activeMode === "online") {
+        return schedule.mode === "Live Online Classroom";
+      }
+      // For classroom and self, show all for now (can be filtered later)
+      return true;
+    });
   };
-
-  const currentSchedules = getSchedulesForMode();
-
+  
+  // Filter schedules by course_code (STRICT: only show selected course)
+  const filteredSchedules = useMemo(() => {
+    let schedules = getSchedulesForMode();
+    
+    // Priority 1: Filter by course_code if provided (STRICT - only this course)
+    if (selectedCourseCode) {
+      schedules = schedules.filter((schedule) => schedule.courseCode === selectedCourseCode);
+    }
+    // Priority 2: Filter by category if no course_code
+    else if (selectedCategory) {
+      schedules = schedules.filter((schedule) => {
+        // Map course_code to category
+        const projectManagementCodes = ["PMP", "PMI-ACP", "CAPM", "PMI-PBA"];
+        const businessManagementCodes = ["CBAP", "ECBA", "CCBA"];
+        
+        if (selectedCategory === "project-management") {
+          return projectManagementCodes.includes(schedule.courseCode);
+        }
+        if (selectedCategory === "business-management") {
+          return businessManagementCodes.includes(schedule.courseCode);
+        }
+        return false;
+      });
+    }
+    
+    // For Self Learning tab, show only one card
+    if (activeMode === "self") {
+      schedules = schedules.slice(0, 1);
+    }
+    
+    return schedules;
+  }, [selectedCourseCode, selectedCategory, activeMode, allSchedules]);
+  
+  const currentSchedules = filteredSchedules;
+  
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
@@ -492,13 +275,12 @@ export default function Schedule() {
             alt="Schedule"
             className="w-full h-full object-cover opacity-30"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/60"></div>
         </div>
-        
-        <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold" data-testid="text-schedule-hero-title">
-            TRAINING SCHEDULE
-          </h1>
+        <div className="relative max-w-7xl mx-auto px-6 text-center z-10">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Training Schedule</h1>
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            Find the perfect training session that fits your schedule
+          </p>
         </div>
       </section>
 
@@ -550,6 +332,7 @@ export default function Schedule() {
                   key={schedule.id}
                   schedule={schedule}
                   index={index}
+                  activeMode={activeMode}
                   quantities={quantities}
                   expandedCard={expandedCard}
                   onQuantityChange={handleQuantityChange}
@@ -560,14 +343,24 @@ export default function Schedule() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-600">No schedules available for this mode.</p>
+              {selectedCourseCode ? (
+                <p className="text-gray-600">
+                  No schedules available for this course at the moment.
+                </p>
+              ) : selectedCategory ? (
+                <p className="text-gray-600">
+                  No enrollments available for this category at the moment.
+                </p>
+              ) : (
+                <p className="text-gray-600">No schedules available for this mode.</p>
+              )}
             </div>
           )}
         </div>
       </section>
 
       {/* Related Courses Section */}
-      <section className="py-16 bg-white" data-testid="section-related-courses">
+      <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Explore Our Courses</h2>
@@ -637,6 +430,7 @@ export default function Schedule() {
 function ScheduleCard({
   schedule,
   index,
+  activeMode,
   quantities,
   expandedCard,
   onQuantityChange,
@@ -645,258 +439,191 @@ function ScheduleCard({
 }: {
   schedule: Schedule;
   index: number;
+  activeMode: "classroom" | "online" | "self";
   quantities: Record<string, number>;
   expandedCard: string | null;
   onQuantityChange: (id: string, delta: number) => void;
   onToggleExpand: (id: string) => void;
   onEnroll: (schedule: Schedule) => void;
 }) {
-  const { formatPrice } = useCurrency();
-  const { pricing, loading, error } = useCoursePricing(schedule.courseId);
-  
-  // Debug logging
-  if (error) {
-    console.warn(`[ScheduleCard] Pricing error for ${schedule.courseId}:`, error);
-  }
-  if (pricing) {
-    console.log(`[ScheduleCard] Using Excel pricing for ${schedule.courseId}:`, pricing);
-  } else if (!loading) {
-    console.warn(`[ScheduleCard] No pricing found for ${schedule.courseId}, using fallback: ${schedule.price}`);
-  }
-  
-  // Use pricing from Excel if available, otherwise fallback to schedule price
-  // Note: Excel prices are already in local currency (INR, GBP, USD, etc.), not USD
-  const displayPrice = pricing ? pricing.total : schedule.price;
-  const displayOriginalPrice = pricing 
-    ? (pricing.amount + (pricing.sgst || 0) + (pricing.cgst || 0) + (pricing.salesTax || 0) + (pricing.vat || 0) + (pricing.tax || 0) + (pricing.serviceTax || 0) || pricing.amount * 1.18)
-    : schedule.originalPrice;
-  
-  // Format price: if from Excel, use its currency directly; otherwise use formatPrice (expects USD)
-  const formatDisplayPrice = (amount: number) => {
-    if (pricing) {
-      // Excel price is already in local currency, format it directly
-      try {
-        return new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: pricing.countryCurrency,
-          minimumFractionDigits: 0,
-          maximumFractionDigits: pricing.countryCurrency === "JPY" ? 0 : 2,
-        }).format(amount);
-      } catch {
-        return `${pricing.countryCurrency} ${amount.toLocaleString()}`;
-      }
-    } else {
-      // Fallback price is in USD, use formatPrice
-      return formatPrice(amount);
-    }
+  // Map course_code back to courseId for pricing lookup
+  const courseIdMap: Record<string, string> = {
+    "PMP": "pmp",
+    "PMI-ACP": "pmi-acp",
+    "PMI-PBA": "pmipba",
+    "CAPM": "capm",
+    "CBAP": "cbap",
+    "ECBA": "ecba",
+    "CCBA": "ccba",
   };
+  const courseId = courseIdMap[schedule.courseCode] || schedule.courseCode.toLowerCase();
+  const { country } = useCurrency();
+  
+  // Get hardcoded pricing based on course and country
+  const hardcodedPricing = getHardcodedCoursePricing(courseId, country || "");
+  
+  // Select price based on active mode (STRICT: no fallback to virtual)
+  let displayPrice: number;
+  let currency: string;
+  
+  if (hardcodedPricing) {
+    currency = hardcodedPricing.currency;
+    // Mode-specific price selection (NO FALLBACK)
+    if (activeMode === "online") {
+      displayPrice = hardcodedPricing.virtualLearningPrice;
+    } else if (activeMode === "classroom") {
+      displayPrice = hardcodedPricing.classroomLearningPrice;
+    } else if (activeMode === "self") {
+      displayPrice = hardcodedPricing.selfLearningPrice;
+    } else {
+      // Should never happen, but default to virtual if mode is invalid
+      displayPrice = hardcodedPricing.virtualLearningPrice;
+    }
+  } else {
+    // Use price from JSON schedule
+    displayPrice = schedule.price;
+    currency = schedule.currency;
+  }
+  
+  // Format price with currency
+  const formatDisplayPrice = (amount: number) => {
+    return formatMoney(amount, currency);
+  };
+  
   const quantity = quantities[schedule.id] || 1;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
+      transition={{ duration: 0.3, delay: index * 0.1 }}
     >
-      <Card 
-                    className="bg-white rounded-xl overflow-hidden transition-all duration-300 border-none"
-                    style={{
-                      boxShadow: expandedCard === schedule.id 
-                        ? "0 4px 16px rgba(0,0,0,0.12)" 
-                        : "0 2px 8px rgba(0,0,0,0.08)"
-                    }}
-                    data-testid={`card-schedule-${schedule.id}`}
-                  >
-                    {/* Main Card Content */}
-                    <div className="p-6">
-                      <div className="flex flex-col md:flex-row md:items-center gap-6">
-                        {/* Left Side - Course Info */}
-                        <div className="flex-1 space-y-3">
-                          <h3 className="text-xl font-semibold text-gray-900">
-                            {schedule.title}
-                          </h3>
-                          
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Calendar className="w-5 h-5 text-primary" />
-                            <span className="font-medium">{schedule.dates}</span>
-                          </div>
-                          
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Tag className="w-5 h-5 text-secondary" />
-                            <span>{schedule.mode}</span>
-                          </div>
-                        </div>
+      <Card className="bg-white shadow-lg border-0 overflow-hidden">
+        <div className="p-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <h3 className="text-xl font-bold text-gray-900">{schedule.title}</h3>
+                <Badge className="bg-primary/10 text-primary">{schedule.courseCode}</Badge>
+              </div>
+              {activeMode !== "self" && (
+                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-primary" />
+                    <span>{schedule.dates}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-secondary" />
+                    <span>{schedule.mode}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-primary" />
+                    <span>{schedule.days} Days</span>
+                  </div>
+                </div>
+              )}
+            </div>
 
-                        {/* Right Side - Quantity, Price, Enroll */}
-                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-                          {/* Quantity Selector */}
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600 font-medium">Qty:</span>
-                            <div className="flex items-center rounded-lg bg-gray-100">
-                              <button
-                                onClick={() => onQuantityChange(schedule.id, -1)}
-                                className="p-2 hover:bg-gray-200 transition-colors rounded-l-lg"
-                                data-testid={`button-decrease-${schedule.id}`}
-                              >
-                                <Minus className="w-4 h-4 text-gray-700" />
-                              </button>
-                              <input
-                                type="number"
-                                value={quantity}
-                                readOnly
-                                className="w-12 text-center border-0 bg-transparent focus:outline-none font-medium text-gray-900"
-                                data-testid={`input-quantity-${schedule.id}`}
-                              />
-                              <button
-                                onClick={() => onQuantityChange(schedule.id, 1)}
-                                className="p-2 hover:bg-gray-200 transition-colors rounded-r-lg"
-                                data-testid={`button-increase-${schedule.id}`}
-                              >
-                                <Plus className="w-4 h-4 text-gray-700" />
-                              </button>
+            <div className="flex items-center gap-4">
+              <div className="text-center">
+                <div className="text-sm text-gray-500 mb-1">Price</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {formatDisplayPrice(displayPrice * quantity)}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => onQuantityChange(schedule.id, -1)}
+                  className="p-2 hover:bg-gray-200 transition-colors rounded-l-lg"
+                >
+                  <Minus className="w-4 h-4 text-gray-700" />
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  readOnly
+                  className="w-12 text-center border-0 bg-transparent focus:outline-none font-medium text-gray-900"
+                />
+                <button
+                  onClick={() => onQuantityChange(schedule.id, 1)}
+                  className="p-2 hover:bg-gray-200 transition-colors rounded-r-lg"
+                >
+                  <Plus className="w-4 h-4 text-gray-700" />
+                </button>
+              </div>
+
+              <Button
+                onClick={() => onEnroll(schedule)}
+                className="bg-primary hover:bg-primary/90 text-white px-8 h-12 font-semibold"
+              >
+                Enroll Now
+              </Button>
+
+              <button
+                onClick={() => onToggleExpand(schedule.id)}
+                className="p-2 hover:bg-gray-200 transition-colors rounded-lg"
+              >
+                {expandedCard === schedule.id ? (
+                  <ChevronUp className="w-5 h-5 text-gray-700" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-gray-700" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <AnimatePresence>
+            {expandedCard === schedule.id && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <div className="px-6 pb-6 pt-2 bg-gray-50 border-t border-gray-200">
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-3">Course Details</h4>
+                      <div className="space-y-2 text-sm text-gray-700">
+                        {activeMode !== "self" && (
+                          <>
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-primary" />
+                              <span><strong>Duration:</strong> {schedule.days} Days</span>
                             </div>
-                          </div>
-
-                          {/* Price */}
-                          <div className="text-center">
-                            {loading ? (
-                              <div className="text-sm text-gray-500">Loading price...</div>
-                            ) : (
-                              <>
-                                <div 
-                                  className="text-2xl font-bold text-gray-900"
-                                  data-testid={`text-price-total-${schedule.id}`}
-                                >
-                                  {formatDisplayPrice(displayPrice * quantity)}
-                                </div>
-                                <div 
-                                  className="text-base text-gray-500 line-through"
-                                  data-testid={`text-price-original-${schedule.id}`}
-                                >
-                                  {formatDisplayPrice(displayOriginalPrice * quantity)}
-                                </div>
-                              </>
-                            )}
-                          </div>
-
-                          {/* Enroll Button */}
-                          <Button
-                            onClick={() => onEnroll(schedule)}
-                            className="bg-primary hover:bg-primary/90 text-white px-8 h-12 font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 min-w-[120px]"
-                            data-testid={`button-enroll-${schedule.id}`}
-                          >
-                            Enroll
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* More Details Toggle */}
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <button 
-                          onClick={() => onToggleExpand(schedule.id)}
-                          className="flex items-center gap-2 text-primary hover:text-secondary font-medium text-sm transition-all duration-300"
-                          data-testid={`button-more-details-${schedule.id}`}
-                        >
-                          {expandedCard === schedule.id ? (
-                            <>
-                              Show Less <ChevronUp className="w-4 h-4" />
-                            </>
-                          ) : (
-                            <>
-                              More Details <ChevronDown className="w-4 h-4" />
-                            </>
-                          )}
-                        </button>
+                            <div className="flex items-center gap-2">
+                              <Tag className="w-4 h-4 text-secondary" />
+                              <span><strong>Format:</strong> {schedule.mode}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Clock className="w-4 h-4 text-primary" />
+                              <span><strong>Dates:</strong> {schedule.dates}</span>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
 
-                    {/* Expanded Details */}
-                    <AnimatePresence>
-                      {expandedCard === schedule.id && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: "easeInOut" }}
-                          className="overflow-hidden"
-                        >
-                          <div className="px-6 pb-6 pt-2 bg-gray-50 border-t border-gray-200">
-                            <div className="space-y-6">
-                              {/* Description */}
-                              <div>
-                                <h4 className="text-lg font-semibold text-gray-900 mb-2">Course Description</h4>
-                                <p className="text-gray-700 leading-relaxed">{schedule.description}</p>
-                              </div>
-
-                              {/* What You'll Learn */}
-                              <div>
-                                <h4 className="text-lg font-semibold text-gray-900 mb-3">What You'll Learn</h4>
-                                <ul className="space-y-2">
-                                  {schedule.whatYouLearn.map((item, idx) => (
-                                    <li key={idx} className="flex items-start gap-2 text-gray-700">
-                                      <span className="text-green-600 mt-1">✓</span>
-                                      <span>{item}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-
-                              {/* Prerequisites */}
-                              <div>
-                                <h4 className="text-lg font-semibold text-gray-900 mb-3">Prerequisites</h4>
-                                <ul className="space-y-2">
-                                  {schedule.prerequisites.map((item, idx) => (
-                                    <li key={idx} className="flex items-start gap-2 text-gray-700">
-                                      <span className="text-gray-400">•</span>
-                                      <span>{item}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-
-                              {/* Curriculum */}
-                              <div>
-                                <h4 className="text-lg font-semibold text-gray-900 mb-3">Course Curriculum</h4>
-                                <div className="grid md:grid-cols-2 gap-2">
-                                  {schedule.curriculum.map((item, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 text-gray-700 text-sm">
-                                      <span className="text-primary font-semibold">{idx + 1}.</span>
-                                      <span>{item}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-
-                              {/* Instructor & Additional Info */}
-                              <div className="grid md:grid-cols-2 gap-6 pt-4 border-t border-gray-200">
-                                <div>
-                                  <h4 className="text-sm font-semibold text-gray-600 mb-1">Instructor</h4>
-                                  <p className="text-gray-900 font-medium">{schedule.instructor}</p>
-                                </div>
-                                <div>
-                                  <h4 className="text-sm font-semibold text-gray-600 mb-1">Course Details</h4>
-                                  <div className="space-y-1 text-sm text-gray-700">
-                                    <div className="flex items-center gap-2">
-                                      <Clock className="w-4 h-4 text-primary" />
-                                      <span>{schedule.time}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <MapPin className="w-4 h-4 text-secondary" />
-                                      <span>{schedule.venue}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Calendar className="w-4 h-4 text-primary" />
-                                      <span>{schedule.days} Days</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </Card>
+                    <div className="pt-4 border-t border-gray-200">
+                      <p className="text-sm text-gray-600 mb-4">
+                        For detailed course information, prerequisites, and curriculum, please visit the course details page.
+                      </p>
+                      <Link href={`/courses/${courseId}`}>
+                        <Button variant="outline">
+                          View Course Details →
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </Card>
     </motion.div>
   );
 }

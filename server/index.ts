@@ -4,10 +4,15 @@ import { setupVite, serveStatic, log } from "./vite";
 import dotenv from "dotenv";
 import path from "path";
 
-// Load .env from the server folder explicitly
-dotenv.config({
-  path: path.resolve(process.cwd(), "server/.env"),
-});
+// Load .env from project root
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+
+console.log('\n' + '='.repeat(60));
+console.log('[Server] Environment Configuration');
+console.log('='.repeat(60));
+console.log('[Server] RESEND_API_KEY:', process.env.RESEND_API_KEY ? '✓ Set (' + process.env.RESEND_API_KEY.substring(0, 10) + '...)' : '❌ NOT SET');
+console.log('[Server] PORT:', process.env.PORT || '5000 (default)');
+console.log('='.repeat(60) + '\n');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

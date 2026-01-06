@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Minus, Plus, Trash2, ShoppingCart, Tag, Lock, CreditCard } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingCart, Tag, Lock, Calendar } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -95,7 +95,8 @@ export default function Cart() {
     finalTax = afterDiscount * (taxRate1 + taxRate2);
   }
   
-  const total = afterDiscount + finalTax;
+  // Total equals subtotal (no tax added)
+  const total = afterDiscount;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -192,6 +193,12 @@ export default function Cart() {
                               <span className="flex items-center gap-1">
                                 <span className="font-medium">Format:</span> {item.format}
                               </span>
+                              {item.dates && (
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-3.5 h-3.5 text-gray-500" />
+                                  <span className="font-medium">Dates:</span> {item.dates}
+                                </span>
+                              )}
                             </div>
 
                             {/* Price - Show on mobile at top */}
@@ -293,44 +300,6 @@ export default function Cart() {
                       </div>
                     )}
 
-                    {/* Tax breakdown from Excel pricing */}
-                    {pricingLoading ? (
-                      <div className="text-sm text-gray-500">Loading tax information...</div>
-                    ) : taxBreakdown.length > 0 ? (
-                      taxBreakdown.map((tax, index) => {
-                        // Apply discount proportionally to tax
-                        const discountedTax = tax.amount * (afterDiscount / subtotal);
-                        return (
-                          <div key={index} className="flex justify-between text-sm sm:text-base text-gray-700">
-                            <span>{tax.label}:</span>
-                            <span className="font-semibold" data-testid={`text-summary-tax-${index}`}>
-                              {formatLocalPrice(Math.round(discountedTax))}
-                            </span>
-                          </div>
-                        );
-                      })
-                    ) : (
-                      // Fallback tax display
-                      <>
-                        <div className="flex justify-between text-sm sm:text-base text-gray-700">
-                          <span>
-                            {country === "India" ? "SGST (9%)" : country === "USA" ? "Sales Tax (9%)" : country === "UK" ? "VAT (20%)" : "Tax (9%)"}
-                          </span>
-                          <span className="font-semibold" data-testid="text-summary-tax1">
-                            {formatLocalPrice(Math.round(afterDiscount * (country === "UK" ? 0.20 : 0.09)))}
-                          </span>
-                        </div>
-                        {country === "India" && (
-                          <div className="flex justify-between text-sm sm:text-base text-gray-700">
-                            <span>CGST (9%):</span>
-                            <span className="font-semibold" data-testid="text-summary-tax2">
-                              {formatLocalPrice(Math.round(afterDiscount * 0.09))}
-                            </span>
-                          </div>
-                        )}
-                      </>
-                    )}
-
                     <div className="pt-3 sm:pt-4 border-t border-gray-200">
                       <div className="flex justify-between items-center">
                         <span className="text-base sm:text-lg font-bold text-primary">Total:</span>
@@ -338,32 +307,6 @@ export default function Cart() {
                           {formatLocalPrice(Math.round(total))}
                         </span>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Coupon Code */}
-                  <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 rounded-lg">
-                    <label className="text-xs sm:text-sm font-medium text-gray-700 mb-2 block">
-                      Have a promo code?
-                    </label>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Enter code"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value)}
-                        className="flex-1 border-[#E5E7EB] text-sm sm:text-base"
-                        data-testid="input-coupon-code"
-                        disabled={appliedCoupon}
-                      />
-                      <Button
-                        onClick={applyCoupon}
-                        variant="outline"
-                        className="border-primary text-primary hover:bg-primary/10 text-sm sm:text-base"
-                        disabled={appliedCoupon || !couponCode.trim()}
-                        data-testid="button-apply-coupon"
-                      >
-                        {appliedCoupon ? "Applied" : "Apply"}
-                      </Button>
                     </div>
                   </div>
 
@@ -380,9 +323,6 @@ export default function Cart() {
                   <div className="text-center text-xs text-gray-500 space-y-1.5 sm:space-y-2">
                     <p className="flex items-center justify-center gap-1.5 sm:gap-2">
                       <Lock className="w-3 h-3" /> Secure SSL encrypted payment
-                    </p>
-                    <p className="flex items-center justify-center gap-1.5 sm:gap-2">
-                      <CreditCard className="w-3 h-3" /> Multiple payment options available
                     </p>
                   </div>
                 </Card>

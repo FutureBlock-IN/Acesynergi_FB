@@ -32,32 +32,50 @@ export default function Checkout() {
   const paymentCurrency = getPaymentCurrency();
   const isFallbackCurrency = paymentCurrency !== currencyCode && currencyCode !== "USD";
 
-  // Calculate subtotal - use Excel pricing if available
+  // Format price in local currency (Excel prices are already in local currency, not USD)
+  const formatLocalPrice = (amount: number) => {
+    try {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currencyCode,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: currencyCode === "JPY" ? 0 : 2,
+      }).format(amount);
+    } catch {
+      return `${currencyCode} ${amount.toLocaleString()}`;
+    }
+  };
+
+  // Get pricing for a specific cart item from Excel
+  const getItemPricing = (item: typeof cartItems[0]) => {
+    if (!item.courseId) return null;
+    return Array.from(pricingData.values()).find(p => {
+      const courseNameLower = p.courseName.toLowerCase();
+      const courseIdLower = item.courseId!.toLowerCase();
+      return courseNameLower.includes(courseIdLower) || courseIdLower.includes(courseNameLower.split(' ')[0]);
+    }) || null;
+  };
+
+  // Calculate subtotal - use Excel pricing if available, otherwise use item price
   const subtotal = cartItems.reduce((sum, item) => {
+    // Try to find pricing from Excel for this item
     const pricing = Array.from(pricingData.values()).find(p => {
       if (!item.courseId) return false;
+      // Match course name with courseId
       const courseNameLower = p.courseName.toLowerCase();
       const courseIdLower = item.courseId.toLowerCase();
       return courseNameLower.includes(courseIdLower) || courseIdLower.includes(courseNameLower.split(' ')[0]);
     });
     
+    // Use Excel pricing amount if available, otherwise use item price
     if (pricing) {
       return sum + (pricing.amount * item.quantity);
     }
     return sum + (item.price * item.quantity);
   }, 0);
 
-  // Get tax breakdown from Excel
-  const taxBreakdown = getTotalTaxBreakdown();
-  const totalTax = getTotalTax();
-  
-  // Fallback tax calculation if no Excel data
-  const fallbackTax = taxBreakdown.length === 0 
-    ? subtotal * (country === "India" ? 0.18 : country === "USA" ? 0.09 : country === "UK" ? 0.20 : 0.18)
-    : 0;
-  
-  const finalTax = taxBreakdown.length > 0 ? totalTax : fallbackTax;
-  const total = subtotal + finalTax;
+  // Total equals subtotal (no tax added) - matching Cart page behavior
+  const total = subtotal;
 
   const formatPaymentAmount = (amount: number) => {
     return amount.toFixed(2);
@@ -156,26 +174,32 @@ export default function Checkout() {
                 <h2 className="text-xl font-bold mb-4 text-primary">Order Summary</h2>
                 
                 <div className="space-y-4">
-                  {cartItems.map((item) => (
-                    <div 
-                      key={item.id} 
-                      className="flex items-center gap-4 pb-4 border-b border-gray-100 last:border-0"
-                      data-testid={`checkout-item-${item.id}`}
-                    >
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-16 h-16 object-cover rounded-lg"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-800">{item.title}</h3>
-                        <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                  {cartItems.map((item) => {
+                    // Get Excel pricing for this item
+                    const itemPricing = getItemPricing(item);
+                    const displayPrice = itemPricing ? itemPricing.total : item.price;
+                    
+                    return (
+                      <div 
+                        key={item.id} 
+                        className="flex items-center gap-4 pb-4 border-b border-gray-100 last:border-0"
+                        data-testid={`checkout-item-${item.id}`}
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-800">{item.title}</h3>
+                          <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold text-primary">{formatLocalPrice(displayPrice * item.quantity)}</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-primary">{formatPrice(item.price * item.quantity)}</p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </Card>
 
@@ -215,43 +239,14 @@ export default function Checkout() {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-gray-700">
                     <span>Subtotal:</span>
-                    <span className="font-semibold" data-testid="text-checkout-subtotal">{formatPrice(subtotal)}</span>
+                    <span className="font-semibold" data-testid="text-checkout-subtotal">{formatLocalPrice(subtotal)}</span>
                   </div>
-
-                  {/* Tax breakdown from Excel */}
-                  {pricingLoading ? (
-                    <div className="text-sm text-gray-500">Loading tax information...</div>
-                  ) : taxBreakdown.length > 0 ? (
-                    taxBreakdown.map((tax, index) => (
-                      <div key={index} className="flex justify-between text-gray-700">
-                        <span>{tax.label}:</span>
-                        <span className="font-semibold">{formatPrice(Math.round(tax.amount))}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <>
-                      <div className="flex justify-between text-gray-700">
-                        <span>
-                          {country === "India" ? "SGST (9%)" : country === "USA" ? "Sales Tax (9%)" : country === "UK" ? "VAT (20%)" : "Tax (9%)"}
-                        </span>
-                        <span className="font-semibold">
-                          {formatPrice(Math.round(subtotal * (country === "UK" ? 0.20 : 0.09)))}
-                        </span>
-                      </div>
-                      {country === "India" && (
-                        <div className="flex justify-between text-gray-700">
-                          <span>CGST (9%):</span>
-                          <span className="font-semibold">{formatPrice(Math.round(subtotal * 0.09))}</span>
-                        </div>
-                      )}
-                    </>
-                  )}
 
                   <div className="pt-4 border-t border-gray-200">
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-bold text-primary">Total:</span>
                       <span className="text-2xl font-bold text-primary" data-testid="text-checkout-total">
-                        {formatPrice(Math.round(total))}
+                        {formatLocalPrice(Math.round(total))}
                       </span>
                     </div>
                     {isFallbackCurrency && (

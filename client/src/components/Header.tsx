@@ -432,6 +432,22 @@ export default function Header() {
                     </span>
                   </Link>
                 ))}
+                {/* Add "View Schedule" link for Project Management and Business Management */}
+                {/* {(category.name === "Project Management" || category.name === "Business Management") && (
+                  <div className="border-t border-gray-200 mt-2 pt-2">
+                    <Link href={`/schedule?category=${category.name === "Project Management" ? "project-management" : "business-management"}`}>
+                      <span
+                        onClick={() => {
+                          setIsCoursesOpen(false);
+                          handleLinkClick();
+                        }}
+                        className="block px-4 py-2.5 text-primary hover:bg-primary/5 cursor-pointer transition-colors font-semibold"
+                      >
+                        View Schedule
+                      </span>
+                    </Link>
+                  </div>
+                )} */}
               </motion.div>
             )}
           </div>
@@ -453,6 +469,15 @@ export default function Header() {
                 className="text-foreground hover:text-primary transition-colors font-medium cursor-pointer"
               >
                 Corporate
+              </span>
+            </Link>
+
+            <Link href="/blogs">
+              <span
+                onClick={handleLinkClick}
+                className="text-foreground hover:text-primary transition-colors font-medium cursor-pointer"
+              >
+                Blogs
               </span>
             </Link>
 
@@ -554,14 +579,14 @@ export default function Header() {
               </AnimatePresence>
             </div>
 
-            <Link href="/book-consultation">
+            {/* <Link href="/book-consultation">
               <Button 
                 onClick={handleLinkClick}
                 className="bg-primary hover:bg-primary/90 text-white px-5"
               >
                 Book Consultation
               </Button>
-            </Link>
+            </Link> */}
           </nav>
 
           <Button
@@ -658,6 +683,20 @@ export default function Header() {
                                         </span>
                                       </Link>
                                     ))}
+                                    {/* Add "View Schedule" link for Project Management and Business Management */}
+                                    {(category.name === "Project Management" || category.name === "Business Management") && (
+                                      <Link href={`/schedule?category=${category.name === "Project Management" ? "project-management" : "business-management"}`}>
+                                        <span
+                                          onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            handleLinkClick();
+                                          }}
+                                          className="block py-2 text-primary hover:text-primary/80 font-semibold transition-colors"
+                                        >
+                                          View Schedule
+                                        </span>
+                                      </Link>
+                                    )}
                                   </motion.div>
                                 )}
                               </AnimatePresence>
@@ -700,6 +739,18 @@ export default function Header() {
                   className="block py-3 text-gray-800 hover:text-primary font-medium transition-colors"
                 >
                   Corporate
+                </span>
+              </Link>
+
+              <Link href="/blogs">
+                <span
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleLinkClick();
+                  }}
+                  className="block py-3 text-gray-800 hover:text-primary font-medium transition-colors"
+                >
+                  Blogs
                 </span>
               </Link>
 

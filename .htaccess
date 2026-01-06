@@ -2,20 +2,31 @@
   RewriteEngine On
   RewriteBase /
 
-  # Don't rewrite files or directories
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  
   # Don't rewrite API routes - let Node.js handle them
   # cPanel Node.js Selector will automatically route these to your Node.js app
-  RewriteCond %{REQUEST_URI} !^/api/
-  RewriteCond %{REQUEST_URI} !^/paypal/
-  
+  RewriteCond %{REQUEST_URI} ^/api/ [OR]
+  RewriteCond %{REQUEST_URI} ^/paypal/
+  RewriteRule ^ - [L]
+
+  # Don't rewrite if the request is for a file that exists
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  # Don't rewrite if the request is for a directory that exists
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
   # Don't rewrite assets (CSS, JS, images, etc.)
-  RewriteCond %{REQUEST_URI} !\.(?:css|js|jpe?g|gif|png|svg|ico|woff2?|ttf|eot)$ [NC]
-  
-  # Rewrite everything else to index.html for React Router
-  RewriteRule ^ index.html [L]
+  RewriteCond %{REQUEST_URI} \.(css|js|jpe?g|gif|png|svg|ico|woff2?|ttf|eot|map|json)$ [NC]
+  RewriteRule ^ - [L]
+
+  # Don't rewrite index.html itself
+  RewriteCond %{REQUEST_URI} ^/index\.html$ [NC]
+  RewriteRule ^ - [L]
+
+  # Rewrite everything else to index.html for React Router (client-side routing)
+  # This handles all routes like /corporate, /courses, /blogs, etc.
+  RewriteRule ^(.*)$ /index.html [L]
 </IfModule>
 
 # Enable compression

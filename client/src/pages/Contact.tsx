@@ -220,7 +220,7 @@ export default function Contact() {
                           Email Id
                         </div>
                         <a
-                          href="mailto:support@learnersink.com"
+                          href="mailto:reachus@acesynergi.com"
                           className="text-sm text-primary hover:text-accent transition-colors"
                         >
                           reachus@acesynergi.com

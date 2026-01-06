@@ -2,6 +2,8 @@
  * Pricing utilities for fetching course prices from Excel-based API
  */
 
+import { getHardcodedCoursePricing } from "@/lib/hardcodedCoursePricing";
+
 // Map course IDs to course names (as stored in Excel)
 // Note: Excel has ® symbol for some courses, but matching handles this automatically
 export const courseNameMap: Record<string, string> = {
@@ -135,29 +137,28 @@ export async function fetchCoursePricing(
   courseId: string,
   country: string
 ): Promise<CoursePricing | null> {
-  try {
-    const courseName = getCourseName(courseId);
-    const url = `/api/pricing/${encodeURIComponent(courseName)}/${encodeURIComponent(country)}`;
-    console.log(`[Pricing] Fetching pricing for courseId="${courseId}", courseName="${courseName}", country="${country}"`);
-    console.log(`[Pricing] API URL: ${url}`);
-    
-    const response = await fetch(url);
+  // IMPORTANT: Pricing is fully hardcoded on the client (no API fetch).
+  // We keep this async signature to avoid touching all call sites.
+  const hardcoded = getHardcodedCoursePricing(courseId, country);
+  if (!hardcoded) return null;
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        console.warn(`[Pricing] Pricing not found (404) for ${courseName} in ${country}`);
-        return null; // Pricing not found
-      }
-      throw new Error(`Failed to fetch pricing: ${response.statusText}`);
-    }
-
-    const pricing = await response.json();
-    console.log(`[Pricing] Received pricing data:`, pricing);
-    return pricing;
-  } catch (error) {
-    console.error("[Pricing] Error fetching course pricing:", error);
-    return null;
-  }
+  // For backward compatibility with existing UI (courses list, schedule cards, cart tax breakdown),
+  // we map the new pricing to the old shape and treat "amount/total" as the Virtual Learning price.
+  return {
+    courseName: hardcoded.courseName,
+    country: hardcoded.country,
+    amount: hardcoded.virtualLearningPrice,
+    countryCurrency: hardcoded.currency,
+    total: hardcoded.virtualLearningPrice,
+    // Taxes not modeled for this hardcoded table
+    sgst: 0,
+    cgst: 0,
+    salesTax: 0,
+    vat: 0,
+    tax: 0,
+    serviceTax: 0,
+    countryTax: 0,
+  };
 }
 
 /**
@@ -166,19 +167,13 @@ export async function fetchCoursePricing(
 export async function fetchCoursePricingAllCountries(
   courseId: string
 ): Promise<CoursePricing[]> {
-  try {
-    const courseName = getCourseName(courseId);
-    const response = await fetch(`/api/pricing/${encodeURIComponent(courseName)}`);
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch pricing: ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching course pricing:", error);
-    return [];
+  const countries = ["India", "USA", "UK"];
+  const results: CoursePricing[] = [];
+  for (const c of countries) {
+    const p = await fetchCoursePricing(courseId, c);
+    if (p) results.push(p);
   }
+  return results;
 }
 
 /**
