@@ -1,0 +1,131 @@
+{
+  "courses": [
+    {
+      "course_code": "PMP",
+      "course_name": "PMP Certification Training",
+      "sessions": [
+        {
+          "start_date": "2025-12-27",
+          "end_date": "2025-12-30",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 10999 },
+          "quantity": 1
+        },
+        {
+          "start_date": "2026-01-09",
+          "end_date": "2026-01-12",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 10999 },
+          "quantity": 1
+        },
+        {
+          "start_date": "2026-01-15",
+          "end_date": "2026-01-18",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 10999 },
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "course_code": "CAPM",
+      "course_name": "CAPM Certification Training",
+      "sessions": [
+        {
+          "start_date": "2025-12-05",
+          "end_date": "2025-12-08",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 10999 },
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "course_code": "CBAP",
+      "course_name": "CBAP Certification Training",
+      "sessions": [
+        {
+          "start_date": "2025-12-05",
+          "end_date": "2025-12-08",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 14999 },
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "course_code": "ECBA",
+      "course_name": "ECBA Certification Training",
+      "sessions": [
+        {
+          "start_date": "2025-12-10",
+          "end_date": "2025-12-12",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 13999 },
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "course_code": "PMI-ACP",
+      "course_name": "PMI-ACP Certification Training",
+      "sessions": [
+        {
+          "start_date": "2026-01-20",
+          "end_date": "2026-01-23",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 14999 },
+          "quantity": 1
+        },
+        {
+          "start_date": "2026-02-10",
+          "end_date": "2026-02-13",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 14999 },
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "course_code": "PMI-PBA",
+      "course_name": "PMI PBA Certification Training",
+      "sessions": [
+        {
+          "start_date": "2026-01-25",
+          "end_date": "2026-01-28",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 14999 },
+          "quantity": 1
+        },
+        {
+          "start_date": "2026-02-15",
+          "end_date": "2026-02-18",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 14999 },
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "course_code": "CCBA",
+      "course_name": "CCBA Certification Training",
+      "sessions": [
+        {
+          "start_date": "2026-01-30",
+          "end_date": "2026-02-02",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 14999 },
+          "quantity": 1
+        },
+        {
+          "start_date": "2026-02-20",
+          "end_date": "2026-02-23",
+          "format": "Live Online Classroom",
+          "price": { "currency": "INR", "amount": 14999 },
+          "quantity": 1
+        }
+      ]
+    }
+  ]
+}
+

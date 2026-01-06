@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, BookOpen, Award, Users, TrendingUp, Phone, ChevronDown, CheckCircle } from "lucide-react";
 import Header from "@/components/Header";
@@ -10,6 +10,36 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { Link, useRoute } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import heroImg from "@assets/stock_images/professional_busines_e2b710fa.jpg";
+import { useCurrency } from "@/lib/currencyContext";
+import { formatMoney, getHardcodedCoursePricing } from "@/lib/hardcodedCoursePricing";
+
+// Helper function to map courseId to category slug
+function getCourseCategory(courseId: string): "project-management" | "business-management" | null {
+  const projectManagementCourses = ["pmp", "pmi-acp", "capm", "pmipba"];
+  const businessManagementCourses = ["cbap", "ecba", "ccba"];
+  
+  if (projectManagementCourses.includes(courseId)) {
+    return "project-management";
+  }
+  if (businessManagementCourses.includes(courseId)) {
+    return "business-management";
+  }
+  return null;
+}
+
+// Helper function to map courseId to course_code (matches Schedule.tsx)
+function getCourseCode(courseId: string): string {
+  const courseCodeMap: Record<string, string> = {
+    "pmp": "PMP",
+    "pmi-acp": "PMI-ACP",
+    "pmipba": "PMI-PBA",
+    "capm": "CAPM",
+    "cbap": "CBAP",
+    "ecba": "ECBA",
+    "ccba": "CCBA",
+  };
+  return courseCodeMap[courseId.toLowerCase()] || courseId.toUpperCase();
+}
 
 interface CurriculumSection {
   title: string;
@@ -959,11 +989,11 @@ const coursesData: Record<string, CourseData> = {
       },
       {
         question: "When Will I Receive The PMI Professional In Business Analysis Certificate?",
-        answer: "On completion of the PMI PBA training course, the candidate will receive a course completion certificate from Learners Ink and on clearing the exam, the PMI-Professional in Business Analysis certification from Project Management Institute is awarded.",
+        answer: "On completion of the PMI PBA training course, the candidate will receive a course completion certificate from Acesynergi and on clearing the exam, the PMI-Professional in Business Analysis certification from Project Management Institute is awarded.",
       },
       {
-        question: "What Is The Rate Of Passing For PMI PBA Training Offered By Learners Ink?",
-        answer: "The average pass rate of candidates who took up Learners Ink PMI PBA training programs is 98.6 %.",
+        question: "What Is The Rate Of Passing For PMI PBA Training Offered By Acesynergi?",
+        answer: "The average pass rate of candidates who took up Acesynergi PMI PBA training programs is 98.6 %.",
       },
       {
         question: "Will this training help me to get a better job with a high salary package?",
@@ -1317,16 +1347,24 @@ export default function CourseDetails() {
   const [match, params] = useRoute("/courses/:id");
   const courseId = params?.id || "cbap";
   const { toast } = useToast();
+  const { country } = useCurrency();
   
   const course = coursesData[courseId] || defaultCourse;
   
   const [activeTab, setActiveTab] = useState<"overview" | "curriculum" | "faqs">("overview");
+  const [activePricingTab, setActivePricingTab] = useState<
+    "virtual" | "classroom" | "self"
+  >("virtual");
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
   });
+
+  const pricing = useMemo(() => {
+    return getHardcodedCoursePricing(courseId, country);
+  }, [courseId, country]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1338,6 +1376,7 @@ export default function CourseDetails() {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
+          subject: `Course Inquiry: ${course.title}`,
           message: `Course inquiry for: ${course.title}`,
           type: "course_inquiry",
         }),
@@ -1613,6 +1652,104 @@ export default function CourseDetails() {
 
             {/* RIGHT SIDE - Sticky Sidebar */}
             <div className="lg:sticky lg:top-24 h-fit space-y-6">
+              {/* Pricing Options Card */}
+              <Card className="p-6 bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.1)] border-none">
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <h3 className="text-xl font-bold text-primary">Pricing</h3>
+                  <div className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary">
+                    {country || "Select Country"}
+                  </div>
+                </div>
+
+                {!pricing ? (
+                  <p className="text-sm text-muted-foreground">
+                    Pricing not available for this course in {country || "your selected country"}.
+                  </p>
+                ) : (
+                  <>
+                    {/* Tabs */}
+                    <div className="flex gap-2 mb-4">
+                      <button
+                        onClick={() => setActivePricingTab("virtual")}
+                        className={`flex-1 px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                          activePricingTab === "virtual"
+                            ? "bg-primary text-white"
+                            : "bg-gray-100 text-foreground hover:bg-gray-200"
+                        }`}
+                        data-testid="tab-pricing-virtual"
+                      >
+                        Virtual Learning
+                      </button>
+                      <button
+                        onClick={() => setActivePricingTab("classroom")}
+                        className={`flex-1 px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                          activePricingTab === "classroom"
+                            ? "bg-primary text-white"
+                            : "bg-gray-100 text-foreground hover:bg-gray-200"
+                        }`}
+                        data-testid="tab-pricing-classroom"
+                      >
+                        Classroom
+                      </button>
+                      <button
+                        onClick={() => setActivePricingTab("self")}
+                        className={`flex-1 px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                          activePricingTab === "self"
+                            ? "bg-primary text-white"
+                            : "bg-gray-100 text-foreground hover:bg-gray-200"
+                        }`}
+                        data-testid="tab-pricing-self"
+                      >
+                        Self Learning
+                      </button>
+                    </div>
+
+                    {/* Tab Content */}
+                    <div className="rounded-lg border border-gray-200 p-4 bg-gray-50">
+                      {activePricingTab === "virtual" && (
+                        <div data-testid="pricing-virtual">
+                          <div className="text-sm font-semibold text-gray-700 mb-1">
+                            Virtual Learning
+                          </div>
+                          <div className="text-3xl font-bold text-gray-900">
+                            {formatMoney(pricing.virtualLearningPrice, pricing.currency)}
+                          </div>
+                          <div className="text-xs text-gray-600 mt-1">
+                            Currency: {pricing.currency}
+                          </div>
+                        </div>
+                      )}
+                      {activePricingTab === "classroom" && (
+                        <div data-testid="pricing-classroom">
+                          <div className="text-sm font-semibold text-gray-700 mb-1">
+                            Classroom Learning
+                          </div>
+                          <div className="text-3xl font-bold text-gray-900">
+                            {formatMoney(pricing.classroomLearningPrice, pricing.currency)}
+                          </div>
+                          <div className="text-xs text-gray-600 mt-1">
+                            Currency: {pricing.currency}
+                          </div>
+                        </div>
+                      )}
+                      {activePricingTab === "self" && (
+                        <div data-testid="pricing-self">
+                          <div className="text-sm font-semibold text-gray-700 mb-1">
+                            Self Learning
+                          </div>
+                          <div className="text-3xl font-bold text-gray-900">
+                            {formatMoney(pricing.selfLearningPrice, pricing.currency)}
+                          </div>
+                          <div className="text-xs text-gray-600 mt-1">
+                            Currency: {pricing.currency}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </Card>
+
               {/* Course Features Card */}
               <Card className="p-6 bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.1)] border-none">
                 <h3 className="text-xl font-bold mb-6 text-primary">
@@ -1630,7 +1767,7 @@ export default function CourseDetails() {
                   })}
                 </div>
                 
-                <Link href="/schedule">
+                <Link href={`/schedule?course_code=${getCourseCode(courseId)}&category=${getCourseCategory(courseId) || ''}`}>
                   <Button
                     className="w-full mt-6 bg-primary hover:bg-primary/90 text-white h-12"
                     data-testid="button-view-schedules"

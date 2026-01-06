@@ -513,7 +513,7 @@ export default function Courses() {
             Browse our training schedules and enroll in your preferred certification program today.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/training-schedule">
+            <Link href="/schedule">
               <Button
                 size="lg"
                 className="px-8 bg-white text-primary font-semibold hover:bg-gray-100 shadow-lg"

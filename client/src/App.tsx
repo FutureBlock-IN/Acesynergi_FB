@@ -23,6 +23,9 @@ import Disclaimer from "@/pages/Disclaimer";
 import ReschedulingPolicy from "@/pages/ReschedulingPolicy";
 import AboutUs from "@/pages/AboutUs";
 import Blog from "@/pages/Blog";
+import BlogList from "@/pages/BlogList";
+import BlogDetail from "@/pages/BlogDetail";
+import BlogAdmin from "@/pages/BlogAdmin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -44,7 +47,10 @@ function Router() {
       <Route path="/disclaimer" component={Disclaimer} />
       <Route path="/rescheduling-policy" component={ReschedulingPolicy} />
       <Route path="/about-us" component={AboutUs} />
-      <Route path="/blog" component={Blog} />
+      <Route path="/blog" component={BlogList} />
+      <Route path="/blogs" component={BlogList} />
+      <Route path="/blogs/admin/:secretKey" component={BlogAdmin} />
+      <Route path="/blogs/:slug" component={BlogDetail} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -45,6 +45,7 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
       const savedCity = localStorage.getItem(STORAGE_KEY_CITY) || "";
       if (savedCountry) {
         setCountryState(savedCountry);
+        console.log(`Loaded saved country from localStorage: ${savedCountry}`);
       }
       if (savedCity) {
         setCityState(savedCity);
@@ -52,6 +53,7 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
       
       // Auto-detect country from IP if no saved country
       if (!savedCountry) {
+        console.log("No saved country found, detecting from IP address...");
         detectCountryFromIP()
           .then((detectedCountry) => {
             if (detectedCountry) {
@@ -59,7 +61,12 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
               const availableCountries = getAvailableCountries();
               if (availableCountries.includes(detectedCountry)) {
                 setCountryState(detectedCountry);
+                console.log(`Country auto-detected and set: ${detectedCountry}`);
+              } else {
+                console.warn(`Detected country ${detectedCountry} is not in available countries list`);
               }
+            } else {
+              console.log("Could not detect country from IP address");
             }
           })
           .catch((error) => {
@@ -69,6 +76,7 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
       }
     } catch (e) {
       // localStorage not available
+      console.warn("localStorage not available:", e);
     }
     setIsInitialized(true);
   }, []);
